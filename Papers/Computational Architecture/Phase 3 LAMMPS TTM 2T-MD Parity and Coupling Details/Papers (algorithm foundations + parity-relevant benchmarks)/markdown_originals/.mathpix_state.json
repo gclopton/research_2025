@@ -1,0 +1,37 @@
+{
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/Computational Architecture/Phase 3 LAMMPS TTM 2T-MD Parity and Coupling Details/Papers (algorithm foundations + parity-relevant benchmarks)/pdfs/Duffy and Rutherford 2007 - Including the effects of electronic stopping and electron-ion interactions in radiation damage simulations.pdf": {
+    "completed_at": "2026-03-19T03:00:35",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/Computational Architecture/Phase 3 LAMMPS TTM 2T-MD Parity and Coupling Details/Papers (algorithm foundations + parity-relevant benchmarks)/markdown_originals/Duffy and Rutherford 2007 - Including the effects of electronic stopping and electron-ion interactions in radiation damage simulations",
+    "pdf_id": "6720b71f-dd3d-4fcc-9f35-7231e17e64aa",
+    "submitted_at": "2026-03-19T03:00:27",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/Computational Architecture/Phase 3 LAMMPS TTM 2T-MD Parity and Coupling Details/Papers (algorithm foundations + parity-relevant benchmarks)/pdfs/Grossi et al 2019 - Electronic heat transport versus atomic heating in irradiated short metallic nanowires.pdf": {
+    "completed_at": "2026-03-19T03:00:47",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/Computational Architecture/Phase 3 LAMMPS TTM 2T-MD Parity and Coupling Details/Papers (algorithm foundations + parity-relevant benchmarks)/markdown_originals/Grossi et al 2019 - Electronic heat transport versus atomic heating in irradiated short metallic nanowires",
+    "pdf_id": "1678abcc-1c2b-4746-9d2e-a23f3663dd16",
+    "submitted_at": "2026-03-19T03:00:35",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/Computational Architecture/Phase 3 LAMMPS TTM 2T-MD Parity and Coupling Details/Papers (algorithm foundations + parity-relevant benchmarks)/pdfs/Phillips and Crozier 2009 - An energy-conserving two-temperature model of radiation damage in single-component and binary Lennard-Jones crystals.pdf": {
+    "completed_at": "2026-03-19T03:00:58",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/Computational Architecture/Phase 3 LAMMPS TTM 2T-MD Parity and Coupling Details/Papers (algorithm foundations + parity-relevant benchmarks)/markdown_originals/Phillips and Crozier 2009 - An energy-conserving two-temperature model of radiation damage in single-component and binary Lennard-Jones crystals",
+    "pdf_id": "62ad36e9-c94a-4fc8-a7f8-36d34f469e14",
+    "submitted_at": "2026-03-19T03:00:47",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/Computational Architecture/Phase 3 LAMMPS TTM 2T-MD Parity and Coupling Details/Papers (algorithm foundations + parity-relevant benchmarks)/pdfs/Rutherford and Duffy 2007 - The effect of electron-ion interactions on radiation damage simulations.pdf": {
+    "completed_at": "2026-03-19T03:01:06",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/Computational Architecture/Phase 3 LAMMPS TTM 2T-MD Parity and Coupling Details/Papers (algorithm foundations + parity-relevant benchmarks)/markdown_originals/Rutherford and Duffy 2007 - The effect of electron-ion interactions on radiation damage simulations",
+    "pdf_id": "0e3bf683-3e35-4fdc-a4c3-90d5d5fd572d",
+    "submitted_at": "2026-03-19T03:00:59",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/Computational Architecture/Phase 3 LAMMPS TTM 2T-MD Parity and Coupling Details/Papers (algorithm foundations + parity-relevant benchmarks)/pdfs/Shi et al 2024 - Modeling swift heavy ion irradiation of substrate-supported two-dimensional material via two-temperature molecular dynamics simulations.pdf": {
+    "completed_at": "2026-03-19T03:01:18",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/Computational Architecture/Phase 3 LAMMPS TTM 2T-MD Parity and Coupling Details/Papers (algorithm foundations + parity-relevant benchmarks)/markdown_originals/Shi et al 2024 - Modeling swift heavy ion irradiation of substrate-supported two-dimensional material via two-temperature molecular dynamics simulations",
+    "pdf_id": "848bec2c-e268-4ec8-a326-547e327845b4",
+    "submitted_at": "2026-03-19T03:01:07",
+    "zip_kind": "md.zip"
+  }
+}

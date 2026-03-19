@@ -1,0 +1,30 @@
+{
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/pdfs/Ko et al 2021 - A fourth-generation high-dimensional neural network potential with accurate electrostatics including non-local charge transfer.pdf": {
+    "completed_at": "2026-03-19T07:16:21.910723",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/markdown_originals/Ko et al 2021 - A fourth-generation high-dimensional neural network potential with accurate electrostatics including non-local charge transfer",
+    "pdf_id": "2edc8b0a-560c-4ef7-902a-d7497bc8b261",
+    "submitted_at": "2026-03-19T07:16:11.761092",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/pdfs/Malica and Marzari 2025 - Teaching oxidation states to neural networks.pdf": {
+    "completed_at": "2026-03-19T07:16:32.698292",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/markdown_originals/Malica and Marzari 2025 - Teaching oxidation states to neural networks",
+    "pdf_id": "59bb7748-a39c-4191-8225-44fca4a88ae0",
+    "submitted_at": "2026-03-19T07:16:22.308758",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/pdfs/Nasir et al 2025 - Modelling silica using MACE-MP machine learnt interatomic potentials.pdf": {
+    "completed_at": "2026-03-19T07:16:43.339223",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/markdown_originals/Nasir et al 2025 - Modelling silica using MACE-MP machine learnt interatomic potentials",
+    "pdf_id": "f896bd66-18c8-4699-aacd-df0f66da6cfd",
+    "submitted_at": "2026-03-19T07:16:33.223337",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/pdfs/Shin et al 2025 - Charge integrated graph neural network-based machine learning potential for amorphous and non-stoichiometric hafnium oxide.pdf": {
+    "completed_at": "2026-03-19T07:16:53.873226",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/markdown_originals/Shin et al 2025 - Charge integrated graph neural network-based machine learning potential for amorphous and non-stoichiometric hafnium oxide",
+    "pdf_id": "0cf96a6a-8e57-412a-b340-88a1e647fe8f",
+    "submitted_at": "2026-03-19T07:16:43.770364",
+    "zip_kind": "md.zip"
+  }
+}

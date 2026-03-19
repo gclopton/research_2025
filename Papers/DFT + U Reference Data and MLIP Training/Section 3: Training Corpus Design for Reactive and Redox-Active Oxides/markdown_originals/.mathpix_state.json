@@ -1,0 +1,86 @@
+{
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Baghishov et al 2026 - Application-specific machine-learned interatomic potentials; exploring the trade-off between DFT convergence, MLIP expressivity, and computational cost.pdf": {
+    "completed_at": "2026-03-19T07:12:45.252125",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Baghishov et al 2026 - Application-specific machine-learned interatomic potentials; exploring the trade-off between DFT convergence, MLIP expressivity, and computational cost",
+    "pdf_id": "05d9d33c-ac07-4715-b9f0-8bf3015b6ca1",
+    "submitted_at": "2026-03-19T07:12:32.133735",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Bernstein et al 2019 - De novo exploration and self-guided learning of potential-energy surfaces.pdf": {
+    "completed_at": "2026-03-19T07:12:55.822505",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Bernstein et al 2019 - De novo exploration and self-guided learning of potential-energy surfaces",
+    "pdf_id": "3431be7a-cdcd-475f-8d7c-ca9e253093eb",
+    "submitted_at": "2026-03-19T07:12:45.751289",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Gopal and van de Walle 2012 - Ab initio thermodynamics of intrinsic oxygen vacancies in ceria.pdf": {
+    "completed_at": "2026-03-19T07:13:03.986981",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Gopal and van de Walle 2012 - Ab initio thermodynamics of intrinsic oxygen vacancies in ceria",
+    "pdf_id": "600e2bc2-07e8-4d2d-b93f-9ae854223136",
+    "submitted_at": "2026-03-19T07:12:56.235237",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Hoh et al 2024 - A computational study of the structure of anion vacancy defects in the bulk and on the surfaces of ceria.pdf": {
+    "completed_at": "2026-03-19T07:13:15.127993",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Hoh et al 2024 - A computational study of the structure of anion vacancy defects in the bulk and on the surfaces of ceria",
+    "pdf_id": "481c2d30-7427-4926-8ea3-da047c1a6988",
+    "submitted_at": "2026-03-19T07:13:04.626127",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Hull et al 2009 - Oxygen vacancy ordering within anion-deficient Ceria.pdf": {
+    "completed_at": "2026-03-19T07:13:23.619276",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Hull et al 2009 - Oxygen vacancy ordering within anion-deficient Ceria",
+    "pdf_id": "c8508552-e357-42a5-9dca-588185bc04a9",
+    "submitted_at": "2026-03-19T07:13:15.394203",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Jacobs et al 2025 - A practical guide to machine learning interatomic potentials - Status and future.pdf": {
+    "completed_at": "2026-03-19T07:13:38.755072",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Jacobs et al 2025 - A practical guide to machine learning interatomic potentials - Status and future",
+    "pdf_id": "1eb97756-41d2-4a10-9024-494426a66e55",
+    "submitted_at": "2026-03-19T07:13:24.063793",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Jinnouchi et al 2019 - On-the-fly machine learning force field generation; Application to melting points.pdf": {
+    "completed_at": "2026-03-19T07:13:50.384927",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Jinnouchi et al 2019 - On-the-fly machine learning force field generation; Application to melting points",
+    "pdf_id": "ba44454d-8ced-4c27-9748-c504ecc43660",
+    "submitted_at": "2026-03-19T07:13:39.134625",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Jinnouchi et al 2020 - On-the-Fly Active Learning of Interatomic Potentials for Large-Scale Atomistic Simulations.pdf": {
+    "completed_at": "2026-03-19T07:13:59.451958",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Jinnouchi et al 2020 - On-the-Fly Active Learning of Interatomic Potentials for Large-Scale Atomistic Simulations",
+    "pdf_id": "0809d965-900e-477c-b689-f02354c45f2c",
+    "submitted_at": "2026-03-19T07:13:50.797111",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Kulichenko et al 2024 - Data Generation for Machine Learning Interatomic Potentials and Beyond.pdf": {
+    "completed_at": "2026-03-19T07:14:14.722685",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Kulichenko et al 2024 - Data Generation for Machine Learning Interatomic Potentials and Beyond",
+    "pdf_id": "4bcbce05-4812-4b2e-b2db-3e988c01546c",
+    "submitted_at": "2026-03-19T07:14:00.072302",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Murgida et al 2014 - Ordering of oxygen vacancies and excess charge localization in bulk ceria; A DFT+U study.pdf": {
+    "completed_at": "2026-03-19T07:14:25.494647",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Murgida et al 2014 - Ordering of oxygen vacancies and excess charge localization in bulk ceria; A DFT+U study",
+    "pdf_id": "511068d6-0416-4d08-9faa-e1057eec6349",
+    "submitted_at": "2026-03-19T07:14:15.118158",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Stippell et al 2024 - Building a DFT+U machine learning interatomic potential for uranium dioxide.pdf": {
+    "completed_at": "2026-03-19T07:14:35.734524",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Stippell et al 2024 - Building a DFT+U machine learning interatomic potential for uranium dioxide",
+    "pdf_id": "a945d0ce-77cb-4392-a22a-ec88c5a5cddc",
+    "submitted_at": "2026-03-19T07:14:25.866728",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Vandermause et al 2020 - On-the-fly active learning of interpretable Bayesian force fields for atomistic rare events.pdf": {
+    "completed_at": "2026-03-19T07:14:46.323928",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Vandermause et al 2020 - On-the-fly active learning of interpretable Bayesian force fields for atomistic rare events",
+    "pdf_id": "478dc1b6-9c0e-481d-979d-592c7c13b7f7",
+    "submitted_at": "2026-03-19T07:14:35.987376",
+    "zip_kind": "md.zip"
+  }
+}
