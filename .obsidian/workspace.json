@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Papers/Computational Architecture/Phase 0 Foundations and Model Taxonomy/Reviews and Landscape Maps/markdown_originals/Lang et al 2015 - Advances in understanding of swift-heavy-ion tracks in complex ceramics/Lang et al 2015 - Advances in understanding of swift-heavy-ion tracks in complex ceramics.md",
+                "file": "Posters/Multiscale Modeling of Swift Heavy-Ion Track Formation in Redox Active Materials/Multiscale Modeling of Swift Heavy-Ion Track Formation in Redox Active Materials/Talk Multiscale Modeling of Swift Heavy-Ion Track Formation in Redox Active Materials.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Lang et al 2015 - Advances in understanding of swift-heavy-ion tracks in complex ceramics"
+              "title": "Talk Multiscale Modeling of Swift Heavy-Ion Track Formation in Redox Active Materials"
             }
           }
         ]
@@ -232,6 +232,8 @@
   },
   "active": "0212b3ef9516251e",
   "lastOpenFiles": [
+    "Presentations/September CDAC Presendation (Transcript Draft).md",
+    "Papers/Computational Architecture/Phase 0 Foundations and Model Taxonomy/Reviews and Landscape Maps/markdown_originals/Lang et al 2015 - Advances in understanding of swift-heavy-ion tracks in complex ceramics/Lang et al 2015 - Advances in understanding of swift-heavy-ion tracks in complex ceramics.md",
     "Papers/Computational Architecture/Phase 0 Foundations and Model Taxonomy/Reviews and Landscape Maps/markdown_originals/Klaumunzer 2006 - Thermal-Spike Models for Ion Track Physics (A Critical Examination)/Klaumunzer 2006 - Thermal-Spike Models for Ion Track Physics (A Critical Examination).md",
     "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Castleton et al 2007 - Tuning LDA+U for electron localization and structure at oxygen vacancies in ceria/Castleton et al 2007 - Tuning LDA+U for electron localization and structure at oxygen vacancies in ceria.md",
     "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Cococcioni and de Gironcoli 2005 - Linear response approach to the calculation of the effective interaction parameters in the LDA+U method/Cococcioni and de Gironcoli 2005 - Linear response approach to the calculation of the effective interaction parameters in the LDA+U method.md",
@@ -257,7 +259,6 @@
     "Papers/Computational Architecture/Phase 0 Foundations and Model Taxonomy/Reviews and Landscape Maps/markdown_originals/Ridgway et al 2015 - Ion-solid interactions at the extremes of electronic energy loss/images",
     "Papers/Computational Architecture/Phase 0 Foundations and Model Taxonomy/Reviews and Landscape Maps/markdown_originals/Ridgway et al 2015 - Ion-solid interactions at the extremes of electronic energy loss",
     "Papers/Computational Architecture/Phase 0 Foundations and Model Taxonomy/Reviews and Landscape Maps/markdown_originals/Lang et al 2015 - Advances in understanding of swift-heavy-ion tracks in complex ceramics/images",
-    "Papers/Computational Architecture/Phase 0 Foundations and Model Taxonomy/Reviews and Landscape Maps/markdown_originals/Lang et al 2015 - Advances in understanding of swift-heavy-ion tracks in complex ceramics/Lang et al 2015 - Advances in understanding of swift-heavy-ion tracks in complex ceramics.md",
     "Papers/Computational Architecture/Phase 0 Foundations and Model Taxonomy/Reviews and Landscape Maps/markdown_originals/Lang et al 2015 - Advances in understanding of swift-heavy-ion tracks in complex ceramics",
     "Papers/Computational Architecture/Phase 0 Foundations and Model Taxonomy/Reviews and Landscape Maps/markdown_originals/Klaumunzer 2006 - Thermal-Spike Models for Ion Track Physics (A Critical Examination)/images",
     "Papers/Computational Architecture/Phase 0 Foundations and Model Taxonomy/Reviews and Landscape Maps/markdown_originals/Agullo-Lopez et al 2016 - Ion beam modification of dielectric materials in the electronic excitation regime (Cumulative and exciton models)/Agullo-Lopez et al 2016 - Ion beam modification of dielectric materials in the electronic excitation regime (Cumulative and exciton models).md",
@@ -276,7 +277,6 @@
     "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Ray et al 1975 - X-ray and neutron diffraction study of intermediate phases in nonstoichiometric cerium dioxide/Ray et al 1975 - X-ray and neutron diffraction study of intermediate phases in nonstoichiometric cerium dioxide.md",
     "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Ray and Cox 1975 - Neutron diffraction determination of the crystal structure of Ce7O12/Ray and Cox 1975 - Neutron diffraction determination of the crystal structure of Ce7O12.md",
     "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Perkins et al 2001 - Self-Diffusion in Ceria/Perkins et al 2001 - Self-Diffusion in Ceria.md",
-    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Okamoto 2008 - Ce-O (Cerium-Oxygen)/Okamoto 2008 - Ce-O (Cerium-Oxygen).md",
-    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Nolan et al 2006 - Oxygen vacancy formation and migration in ceria/Nolan et al 2006 - Oxygen vacancy formation and migration in ceria.md"
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Okamoto 2008 - Ce-O (Cerium-Oxygen)/Okamoto 2008 - Ce-O (Cerium-Oxygen).md"
   ]
 }
