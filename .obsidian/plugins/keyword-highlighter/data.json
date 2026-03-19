@@ -1,13 +1,13 @@
 {
   "keywords": [
     {
-      "keyword": "[qblock]",
+      "keyword": "DATED?",
       "color": "#ffffff",
-      "backgroundColor": "#f56b6b",
+      "backgroundColor": "#ff80fb",
       "fontModifiers": []
     },
     {
-      "keyword": "[--qblock]",
+      "keyword": "TODO",
       "color": "#ffffff",
       "backgroundColor": "#ff7070",
       "fontModifiers": []
@@ -31,19 +31,19 @@
       "fontModifiers": []
     },
     {
-      "keyword": "[qtable]",
+      "keyword": "title:output",
       "color": "#1e1e1e",
       "backgroundColor": "#44ff00",
       "fontModifiers": []
     },
     {
-      "keyword": "[--qtable]",
+      "keyword": "SEARCH:",
       "color": "#1e1e1e",
       "backgroundColor": "#6aff00",
       "fontModifiers": []
     },
     {
-      "keyword": "[mc]",
+      "keyword": "[Note #1]",
       "color": "#1e1e1e",
       "backgroundColor": "#00d5ff",
       "fontModifiers": []

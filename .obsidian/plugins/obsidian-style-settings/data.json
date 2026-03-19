@@ -7,5 +7,14 @@
   "blue-topaz-theme@@print-h5-color@@dark": "#0097FF",
   "blue-topaz-theme@@print-h6-color@@dark": "#8400FF",
   "blue-topaz-theme@@accent-strong@@dark": "#0AF4B0",
-  "blue-topaz-theme@@accent-strong@@light": "#0039FF"
+  "blue-topaz-theme@@accent-strong@@light": "#0039FF",
+  "blue-topaz-theme@@fancy-hr": "fancy-hr-no-icon",
+  "blue-topaz-theme@@fancy-hr-icon": "'🔵'",
+  "blue-topaz-theme@@bg-color-highlight-1@@light": "#FF00F134",
+  "blue-topaz-theme@@bg-color-highlight-1@@dark": "#C865C36F",
+  "blue-topaz-theme@@accent-em@@dark": "#00F5FF",
+  "pandoc-reference-list@@pwc-citation-color@@dark": "#3DFF00",
+  "pandoc-reference-list@@pwc-citation-underline-color@@dark": "#00FF2C",
+  "pandoc-reference-list@@pwc-citation-underline-color-missing@@dark": "#FF0000",
+  "pandoc-reference-list@@pwc-citation-color-missing@@dark": "#FF0000"
 }

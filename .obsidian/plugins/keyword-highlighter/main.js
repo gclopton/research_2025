@@ -161,12 +161,24 @@ var Color = class {
 };
 
 // src/editor-extension/highlight-mark.ts
-var highlightMark = (keyword) => import_view.Decoration.mark({
-  class: getCssClasses(keyword),
-  attributes: {
-    style: `--kh-c: ${keyword.color}; --kh-bgc: ${keyword.backgroundColor}`
+var highlightMark = (keyword) => {
+  var _a, _b;
+  const styles = [];
+  const showColor = (_a = keyword.showColor) != null ? _a : true;
+  if (showColor) {
+    styles.push(`--kh-c: ${keyword.color}`);
   }
-});
+  const showBackgroundColor = (_b = keyword.showBackgroundColor) != null ? _b : true;
+  if (showBackgroundColor) {
+    styles.push(`--kh-bgc: ${keyword.backgroundColor}`);
+  }
+  return import_view.Decoration.mark({
+    class: getCssClasses(keyword),
+    attributes: {
+      style: styles.join(";")
+    }
+  });
+};
 
 // src/editor-extension/editor-highlighter.ts
 var import_search = require("@codemirror/search");
@@ -330,6 +342,53 @@ function generateInitialColors(container) {
   return [foregroundColor, backgroundColor];
 }
 
+// src/settings/checkbox-component.ts
+var _container2, _element, _label, _state2, _onClick;
+var CheckboxComponent = class {
+  constructor(container) {
+    __privateAdd(this, _container2, void 0);
+    __privateAdd(this, _element, null);
+    __privateAdd(this, _label, void 0);
+    __privateAdd(this, _state2, false);
+    __privateAdd(this, _onClick, void 0);
+    __privateSet(this, _container2, container);
+  }
+  setLabel(label) {
+    __privateSet(this, _label, label);
+    this.render();
+    return this;
+  }
+  setState(newState) {
+    __privateSet(this, _state2, newState);
+    this.render();
+    return this;
+  }
+  setOnClick(action) {
+    __privateSet(this, _onClick, action);
+    this.render();
+    return this;
+  }
+  render() {
+    if (__privateGet(this, _element)) {
+      __privateGet(this, _container2).removeChild(__privateGet(this, _element));
+    }
+    __privateSet(this, _element, __privateGet(this, _container2).createEl("input"));
+    __privateGet(this, _element).type = "checkbox";
+    __privateGet(this, _element).title = __privateGet(this, _label);
+    __privateGet(this, _element).checked = __privateGet(this, _state2);
+    __privateGet(this, _element).classList.add("kh-checkbox");
+    __privateGet(this, _element).onclick = () => {
+      __privateSet(this, _state2, !__privateGet(this, _state2));
+      __privateGet(this, _onClick).call(this, __privateGet(this, _state2));
+    };
+  }
+};
+_container2 = new WeakMap();
+_element = new WeakMap();
+_label = new WeakMap();
+_state2 = new WeakMap();
+_onClick = new WeakMap();
+
 // src/settings/setting-tab.ts
 var SettingTab = class extends import_obsidian.PluginSettingTab {
   constructor(app, plugin) {
@@ -348,7 +407,6 @@ var SettingTab = class extends import_obsidian.PluginSettingTab {
     );
   }
   createKeywordSetting(keyword, index, container) {
-    var _a;
     const setting = new import_obsidian.Setting(container).setName(`Keyword #${index}`).setDesc(
       "Enter a keyword, font modifiers, a font color and a background color"
     ).addText(
@@ -356,21 +414,41 @@ var SettingTab = class extends import_obsidian.PluginSettingTab {
         keyword.keyword = value;
       })
     );
+    this.addFontModifiers(setting, keyword);
+    this.addFontColorConfig(setting, keyword);
+    this.addBackgroundColorConfig(setting, keyword);
+    this.addRemoveButton(setting, keyword, container);
+    setting.controlEl.style.flexShrink = "0";
+  }
+  addFontModifiers(setting, keyword) {
+    var _a;
     new ToggleButtonComponent(setting.controlEl).setOptions({
       bold: "<b>b</b>",
       italic: "<i>i</i>",
       underline: "<u>u</u>",
       lineThrough: "<s>s</s>"
     }).setState((_a = keyword.fontModifiers) != null ? _a : []).setOnOptionClick((modifiers) => keyword.fontModifiers = modifiers);
+  }
+  addFontColorConfig(setting, keyword) {
+    var _a;
+    new CheckboxComponent(setting.controlEl).setState((_a = keyword.showColor) != null ? _a : true).setLabel("Activate to modify the font color").setOnClick((state) => keyword.showColor = state);
     setting.addColorPicker(
       (cp) => cp.setValue(keyword.color).onChange(async (value) => {
         keyword.color = value;
       })
-    ).addColorPicker(
+    );
+  }
+  addBackgroundColorConfig(setting, keyword) {
+    var _a;
+    new CheckboxComponent(setting.controlEl).setState((_a = keyword.showBackgroundColor) != null ? _a : true).setLabel("Activate to modify the background color").setOnClick((state) => keyword.showBackgroundColor = state);
+    setting.addColorPicker(
       (cp) => cp.setValue(keyword.backgroundColor).onChange(async (value) => {
         keyword.backgroundColor = value;
       })
-    ).addExtraButton(
+    );
+  }
+  addRemoveButton(setting, keyword, container) {
+    setting.addExtraButton(
       (button) => button.setIcon("minus-with-circle").setTooltip("Remove keyword").onClick(async () => {
         const i = main_default.settings.keywords.indexOf(keyword);
         if (i > -1) {
@@ -380,7 +458,6 @@ var SettingTab = class extends import_obsidian.PluginSettingTab {
         }
       })
     );
-    setting.controlEl.style.flexShrink = "0";
   }
   addKeywordSetting(container, value) {
     const [foregroundColor, backgroundColor] = generateInitialColors(container);
@@ -388,7 +465,9 @@ var SettingTab = class extends import_obsidian.PluginSettingTab {
       keyword: value != null ? value : "",
       color: foregroundColor.toHex(),
       backgroundColor: backgroundColor.toHex(),
-      fontModifiers: []
+      fontModifiers: [],
+      showColor: true,
+      showBackgroundColor: true
     });
     const newKeyword = main_default.settings.keywords.last();
     this.createKeywordSetting(
@@ -435,10 +514,17 @@ function replaceWithHighlight(node, keyword) {
   node.childNodes.forEach((child) => replaceWithHighlight(child, keyword));
 }
 function getHighlightNode(parent, searchText, keyword) {
+  var _a, _b;
   const highlight = parent.createSpan();
   highlight.classList.add(...getCssClasses(keyword).split(" "));
-  highlight.style.setProperty("--kh-c", keyword.color);
-  highlight.style.setProperty("--kh-bgc", keyword.backgroundColor);
+  const showColor = (_a = keyword.showColor) != null ? _a : true;
+  if (showColor) {
+    highlight.style.setProperty("--kh-c", keyword.color);
+  }
+  const showBackgroundColor = (_b = keyword.showBackgroundColor) != null ? _b : true;
+  if (showBackgroundColor) {
+    highlight.style.setProperty("--kh-bgc", keyword.backgroundColor);
+  }
   highlight.setText(searchText);
   return highlight;
 }
@@ -479,19 +565,25 @@ var DEFAULT_SETTINGS = {
       keyword: "TODO",
       color: "#000",
       backgroundColor: "#A9CCE3",
-      fontModifiers: []
+      fontModifiers: [],
+      showColor: true,
+      showBackgroundColor: true
     },
     {
       keyword: "ADD",
       color: "#000",
       backgroundColor: "#8DE3C2",
-      fontModifiers: []
+      fontModifiers: [],
+      showColor: true,
+      showBackgroundColor: true
     },
     {
       keyword: "FIXME",
       color: "#000",
       backgroundColor: "#BAA2E8",
-      fontModifiers: []
+      fontModifiers: [],
+      showColor: true,
+      showBackgroundColor: true
     }
   ]
 };
@@ -527,3 +619,5 @@ var KeywordHighlighterPlugin = class extends import_obsidian3.Plugin {
 
 // main.ts
 var main_default = KeywordHighlighterPlugin;
+
+/* nosourcemap */

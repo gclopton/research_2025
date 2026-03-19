@@ -9,7 +9,6 @@
   "obsidian-markdown-formatting-assistant-plugin",
   "mathlinks",
   "obsidian-shellcommands",
-  "smart-connections",
   "obsidian-code-block-enhancer",
   "ketcher",
   "obsidian-excalidraw-plugin",
@@ -44,5 +43,11 @@
   "quick-explorer",
   "oin-gotoheading",
   "enhanced-tables",
-  "markdown-table-editor"
+  "markdown-table-editor",
+  "mehrmaid",
+  "mermaid-tools",
+  "obsidian-graphviz",
+  "obsidian-pandoc-reference-list",
+  "obsidian-zotero-desktop-connector",
+  "obsidian-go-to-line"
 ]
