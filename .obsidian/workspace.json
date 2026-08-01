@@ -4,24 +4,111 @@
     "type": "split",
     "children": [
       {
-        "id": "b3b380750803cd26",
+        "id": "18274f9b3de796f0",
         "type": "tabs",
         "children": [
           {
-            "id": "0212b3ef9516251e",
+            "id": "333de519e0d19d98",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Papers/DFT + U Reference Data and MLIP Training/Section 4 Reference-Surface Governance and Branch-Consistency Policy/markdown_originals/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U"
+            }
+          },
+          {
+            "id": "c94933d32feab23a",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Papers/DFT + U Reference Data and MLIP Training/Section 4 Reference-Surface Governance and Branch-Consistency Policy/markdown_originals/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U/Summary Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U.md",
+                "mode": "source",
+                "source": false
+              },
+              "pinned": true,
+              "icon": "lucide-file",
+              "title": "Summary Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U"
+            }
+          },
+          {
+            "id": "11c755cc7690cc8d",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 1: Ceria as a Surrogate for PuO2 and MOX Fuel Context/markdown_originals/Kim et al 2008 - Applicability of CeO2 as a surrogate for PuO2 in a MOX fuel development/Kim et al 2008 - Applicability of CeO2 as a surrogate for PuO2 in a MOX fuel development.md",
+                "file": "Scratch/Untitled 1.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Kim et al 2008 - Applicability of CeO2 as a surrogate for PuO2 in a MOX fuel development"
+              "title": "Untitled 1"
+            }
+          },
+          {
+            "id": "bdd207e04e14f7c8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Papers/DFT + U Reference Data and MLIP Training/Paper Index (DFT+U Reference Data & MLIP Training).md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Paper Index (DFT+U Reference Data & MLIP Training)"
+            }
+          },
+          {
+            "id": "6e922bd79d5334f1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Clusters/Campus Cluster/Can't open cursor remote session.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Can't open cursor remote session"
+            }
+          },
+          {
+            "id": "9351cecbb7609be6",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "Manuscripts/Access Proposal, July 2026/PDFs/MAXIMIZE ACCESS - Main Document - July 2026.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "MAXIMIZE ACCESS - Main Document - July 2026"
+            }
+          },
+          {
+            "id": "cec7943068f66e15",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Curriculum/01. Physics.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "01. Physics"
             }
           }
-        ]
+        ],
+        "currentTab": 6
       }
     ],
     "direction": "vertical"
@@ -78,7 +165,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 495.5
+    "width": 313.5
   },
   "right": {
     "id": "c8b8d22a9e942901",
@@ -142,12 +229,13 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "Curriculum/01. Physics.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of 01. Physics"
             }
           },
           {
@@ -205,8 +293,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 403.5,
-    "collapsed": true
+    "width": 280.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -230,53 +317,53 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "0212b3ef9516251e",
+  "active": "789b682e5063149b",
   "lastOpenFiles": [
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 2: Plutonium Immobilization, Waste Forms, and Radiation-Tolerant Ceramics/markdown_originals/Ewing et al 2004 - Nuclear waste disposal-pyrochlore (A2B2O7); Nuclear waste form for the immobilization of plutonium and minor actinides/Ewing et al 2004 - Nuclear waste disposal-pyrochlore (A2B2O7); Nuclear waste form for the immobilization of plutonium and minor actinides.md",
-    "Manuscripts/Vacancy Controlled SHI Track Formation and Early Recovery in Ceria with Two-Temperature MD 1.md",
-    "Manuscripts/Vacancy Controlled SHI Track Formation and Early Recovery in Ceria with Two-Temperature MD.md",
-    "Presentations/CDAC UPDATE MAR 19 2026/Slide Plan.md",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Paper Index (Actinide Context, Surrogacy & Stockpile Stewardship) backup 2026-03-19_09-11-27_md_link_fix.md",
-    "Papers/DFT + U Reference Data and MLIP Training/Paper Index (DFT+U Reference Data & MLIP Training) backup 2026-03-19_09-11-27_md_link_fix.md",
-    "Papers/Computational Architecture/Paper Index (Computational Architecture) backup 2026-03-19_09-11-27_md_link_fix.md",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Wirth et al 2001 - Fundamental Studies of Plutonium Aging/images/08afc257-07b6-4442-93aa-71b9fe128742-4_572_573_1080_157.jpg",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Wirth et al 2001 - Fundamental Studies of Plutonium Aging/images/08afc257-07b6-4442-93aa-71b9fe128742-4_567_571_1688_157.jpg",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Wirth et al 2001 - Fundamental Studies of Plutonium Aging/images/08afc257-07b6-4442-93aa-71b9fe128742-4_541_1186_1903_770.jpg",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Wirth et al 2001 - Fundamental Studies of Plutonium Aging/images/08afc257-07b6-4442-93aa-71b9fe128742-4_431_572_1438_770.jpg",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Wirth et al 2001 - Fundamental Studies of Plutonium Aging/images/08afc257-07b6-4442-93aa-71b9fe128742-3_529_571_1877_1395.jpg",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Wirth et al 2001 - Fundamental Studies of Plutonium Aging/images/08afc257-07b6-4442-93aa-71b9fe128742-2_425_1198_1886_150.jpg",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Wirth et al 2001 - Fundamental Studies of Plutonium Aging/images",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Wirth et al 2001 - Fundamental Studies of Plutonium Aging/Wirth et al 2001 - Fundamental Studies of Plutonium Aging.md",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Wirth et al 2001 - Fundamental Studies of Plutonium Aging",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 1: Ceria as a Surrogate for PuO2 and MOX Fuel Context/markdown_originals/Kim et al 2008 - Applicability of CeO2 as a surrogate for PuO2 in a MOX fuel development/images/db76da38-79bd-45d6-b44e-9bc82c578906-6_602_837_990_167.jpg",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 1: Ceria as a Surrogate for PuO2 and MOX Fuel Context/markdown_originals/Kim et al 2008 - Applicability of CeO2 as a surrogate for PuO2 in a MOX fuel development/images/db76da38-79bd-45d6-b44e-9bc82c578906-6_589_808_234_176.jpg",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 1: Ceria as a Surrogate for PuO2 and MOX Fuel Context/markdown_originals/Kim et al 2008 - Applicability of CeO2 as a surrogate for PuO2 in a MOX fuel development/images/db76da38-79bd-45d6-b44e-9bc82c578906-6_559_761_232_1139.jpg",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 1: Ceria as a Surrogate for PuO2 and MOX Fuel Context/markdown_originals/Kim et al 2008 - Applicability of CeO2 as a surrogate for PuO2 in a MOX fuel development/images/db76da38-79bd-45d6-b44e-9bc82c578906-5_591_1392_230_316.jpg",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 1: Ceria as a Surrogate for PuO2 and MOX Fuel Context/markdown_originals/Kim et al 2008 - Applicability of CeO2 as a surrogate for PuO2 in a MOX fuel development/images",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 1: Ceria as a Surrogate for PuO2 and MOX Fuel Context/markdown_originals/Kim et al 2008 - Applicability of CeO2 as a surrogate for PuO2 in a MOX fuel development/Kim et al 2008 - Applicability of CeO2 as a surrogate for PuO2 in a MOX fuel development.md",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 1: Ceria as a Surrogate for PuO2 and MOX Fuel Context/markdown_originals/Kim et al 2008 - Applicability of CeO2 as a surrogate for PuO2 in a MOX fuel development",
-    "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 1: Comparative Radiation Response in Fluorite Oxides (CeO2 vs UO2 and Relatives)/markdown_originals/Cureton et al 2019 - Effects of irradiation temperature on the response of CeO2, ThO2, and UO2 to highly ionizing radiation/images",
-    "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 1: Comparative Radiation Response in Fluorite Oxides (CeO2 vs UO2 and Relatives)/markdown_originals/Cureton et al 2019 - Effects of irradiation temperature on the response of CeO2, ThO2, and UO2 to highly ionizing radiation/Cureton et al 2019 - Effects of irradiation temperature on the response of CeO2, ThO2, and UO2 to highly ionizing radiation.md",
-    "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 1: Comparative Radiation Response in Fluorite Oxides (CeO2 vs UO2 and Relatives)/markdown_originals/Cureton et al 2019 - Effects of irradiation temperature on the response of CeO2, ThO2, and UO2 to highly ionizing radiation",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Acknowledgments/Acknowledgments.md",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Acknowledgments/images",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Acknowledgments",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Martz and Schwartz 2003 - Plutonium; Aging mechanisms and weapon pit lifetime assessment/images",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Martz and Schwartz 2003 - Plutonium; Aging mechanisms and weapon pit lifetime assessment/Martz and Schwartz 2003 - Plutonium; Aging mechanisms and weapon pit lifetime assessment.md",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 3: Plutonium Aging and Stockpile Stewardship/markdown_originals/Martz and Schwartz 2003 - Plutonium; Aging mechanisms and weapon pit lifetime assessment",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 2: Plutonium Immobilization, Waste Forms, and Radiation-Tolerant Ceramics/markdown_originals/Weber et al 1998 - Radiation effects in crystalline ceramics for the immobilization of high-level nuclear waste and plutonium/Weber et al 1998 - Radiation effects in crystalline ceramics for the immobilization of high-level nuclear waste and plutonium.md",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Section 1: Ceria as a Surrogate for PuO2 and MOX Fuel Context/markdown_originals/Acknowledgments/Acknowledgments.md",
-    "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 1: Comparative Radiation Response in Fluorite Oxides (CeO2 vs UO2 and Relatives)/markdown_originals/Acknowledgments/Acknowledgments.md",
-    "Papers/Actinide Context, Surrogacy and Stockpile Stewardship/Paper Index (Actinide Context, Surrogacy & Stockpile Stewardship).md",
-    "Papers/Alphabetical Paper Index backup 2026-03-19_09-02-37_stockpile_batch.md",
-    "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Paper Index (Ceria Radiation Chemistry & Hypothesis Anchors) backup 2026-03-19_09-02-37_stockpile_batch.md",
-    "Papers/Alphabetical Paper Index.md",
-    "Papers/Computational Architecture/Phase 1 Reproducible Forcing Inputs/Reproducible SRIM-Based Stopping Curves/markdown_originals/Aftab et al 2022 - Swift Heavy Ion-Induced Reactivity and Surface Modifications in Indium Thin Films/Aftab et al 2022 - Swift Heavy Ion-Induced Reactivity and Surface Modifications in Indium Thin Films.md",
-    "Papers/Alphabetical Paper Index backup 2026-03-19_manuscript_refs_pre_table_edit.md",
-    "Papers/DFT + U Reference Data and MLIP Training/Paper Index (DFT+U Reference Data & MLIP Training) backup 2026-03-19_manuscript_refs_pre_table_edit.md",
-    "Papers/Computational Architecture/Paper Index (Computational Architecture) backup 2026-03-19_manuscript_refs_pre_table_edit.md",
-    "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Paper Index (Ceria Radiation Chemistry & Hypothesis Anchors) backup 2026-03-19_manuscript_refs_pre_table_edit.md",
-    "Papers/Computational Architecture/Phase 7A: Multi-material track-simulation papers for reusable protocol and metric definitions/markdown_originals/Rymzhanov et al 2018 - Overlap of swift heavy ion tracks in Al2O3/Rymzhanov et al 2018 - Overlap of swift heavy ion tracks in Al2O3.md",
-    "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Sonoda et al 2008 - Clarification of the properties and accumulation effects of ion tracks in CeO2/Sonoda et al 2008 - Clarification of the properties and accumulation effects of ion tracks in CeO2.md"
+    "Scratch/curriculum_backups/01. Physics.2026-08-01-0414.md",
+    "Scratch/curriculum_backups",
+    "Curriculum/1.1 Solid-State Physics and Quantum Theory of Solids.md",
+    "Curriculum/01. Physics.md",
+    "Curriculum/02. Materials Science and Solid-State Chemistry.md",
+    "Curriculum/00. Master Curriculum Map.md",
+    "Curriculum/04. Computational and Numerical Methods.md",
+    "Curriculum/08. Experimental Characterization and Validation.md",
+    "Curriculum/03. Applied Mathematics.md",
+    "Curriculum/07. Machine Learning for Atomistic Materials.md",
+    "Curriculum/06. Radiation–Matter Interaction and Radiation Effects.md",
+    "Curriculum/05. Continuum Transport and Mechanics.md",
+    "Lit Survey/1. SHI Track Formation Papers Bulk Crystals.md",
+    "Curriculum/5823780.md",
+    "Papers/Computational Architecture/Loschen_2007_Cerium_oxides_LDA+U_GGA+U/Review/first-principles-lda--u-and-gga--u-study-of-cerium-oxides-026684a5-d7f5-409e-8654-52d15d91a905.md",
+    "Papers/Computational Architecture/Loschen_2007_Cerium_oxides_LDA+U_GGA+U/markdown_originals/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter.md",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter.md",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/pdfs/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter.pdf",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/pdfs/Castleton et al 2007 - Tuning LDA+U for electron localization and structure at oxygen vacancies in ceria.pdf",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Castleton et al 2007 - Tuning LDA+U for electron localization and structure at oxygen vacancies in ceria/Castleton et al 2007 - Tuning LDA+U for electron localization and structure at oxygen vacancies in ceria.md",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Das et al 2018 - Anisotropic chemical strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles/Das et al 2018 - Anisotropic chemical strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles.md",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+    "Manuscripts/CDAC NNSA Review/~$rustIII-GC.docx",
+    "Manuscripts/CDAC NNSA Review/ThrustIII-GC.docx",
+    "Manuscripts/CDAC NNSA Review/~$rustIII-AMOM.docx",
+    "Manuscripts/CDAC NNSA Review/ThrustIII-SK.docx",
+    "Manuscripts/CDAC NNSA Review/ThrustIII-AMOM.docx",
+    "Manuscripts/CDAC NNSA Review/Thrust3-Outline.docx",
+    "Manuscripts/CDAC NNSA Review/~$Review_Meeting2026-Thrust 3_Compiled.pptx",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 4 Reference-Surface Governance and Branch-Consistency Policy/markdown_originals/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U/Summary Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U.md",
+    "Manuscripts/Access Proposal, July 2026/FIGURE N/vesta-scenes/06_pristine_ceo2_3d_lattice.svg",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 4 Reference-Surface Governance and Branch-Consistency Policy/markdown_originals/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U.md",
+    "Clusters/Campus Cluster/Can't open cursor remote session.md",
+    "Manuscripts/Access Proposal, July 2026/FIGURE N/vesta-scenes/01_pristine_ceo2.svg",
+    "Manuscripts/Access Proposal, July 2026/OUTLINE.md",
+    "Manuscripts/Access Proposal, July 2026/FIGURE N/vesta-scenes/03_vo_localized_ce3.svg",
+    "Manuscripts/Access Proposal, July 2026/FIGURE N/02_oxygen_vacancy_ceo2x_slab.svg",
+    "Manuscripts/Access Proposal, July 2026/FIGURE N/04_bond_distortion_variants.svg",
+    "Manuscripts/Access Proposal, July 2026/FIGURE N/05_ce2o3_reference_slab.svg",
+    "Manuscripts/Access Proposal, July 2026/FIGURE N/06_figure_n_workflow.svg",
+    "Manuscripts/Access Proposal, July 2026/FIGURE N/editable-svg/pristine_ceo2_patch.svg",
+    "Manuscripts/Access Proposal, July 2026/FIGURE N/editable-svg/figure_n_full_editable.svg",
+    "Manuscripts/Access Proposal, July 2026/FIGURE N/editable-svg/README.md",
+    "Manuscripts/Access Proposal, July 2026/FIGURE N/editable-svg/oxygen_vacancy_patch.svg",
+    "Manuscripts/Access Proposal, July 2026/FIGURE N/README_VESTA.md",
+    "Manuscripts/Access Proposal, July 2026/DRAFT 1.md"
   ]
 }

@@ -7,6 +7,10 @@ When Cursor’s Remote-SSH connection to Campus Cluster suddenly stops working, 
 
 Cursor Remote-SSH fails during “installing server.” The log usually includes `Error creating server install directory ... ~/.cursor-server/bin/...` and `Disk quota exceeded`. You may also see repeated `quota: ... Quota not enabled`, which is typically just the quota-reporting tool failing (not the actual reason Cursor can’t install).
 
+
+
+
+
 ## Quick fix (recommended): symlink `~/.cursor-server` to scratch
 
 1) SSH to the cluster normally (terminal, not Cursor):

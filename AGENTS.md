@@ -64,6 +64,19 @@ When you create or edit these question callouts:
 Legacy tag handling: treat `[ACCURACY: ...]` as equivalent to `[DATED: ...]` (ACCURACY is deprecated).
 
 
+# Bridges-2 DTN Access
+
+When research-vault work needs files from Bridges-2, use the transfer endpoint alias `bridges-data` (`data.bridges2.psc.edu`) for `rsync`/`sftp` operations. Do not treat `ssh bridges-data` shell denial as a transfer failure; the DTN is transfer-only and may report `Login denied: Only file transfers are allowed on this account`.
+
+Check whether the DTN has an authenticated control socket with:
+
+```bash
+ssh -O check bridges-data
+```
+
+If it returns `Master running`, agents can use DTN transfer commands. If not, the user can prime the socket with `pss bridges pw` followed by `sftp bridges-data`, paste the password, and exit with `bye`. Agents should not read, print, or paste the stored password themselves.
+
+
 # # Rules for Editing Chapters
 
 

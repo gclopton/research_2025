@@ -87,10 +87,10 @@ Finite-size effects are controlled by surrounding the active track-forming regio
 # RESULTS
 
 
-![[Pasted image 20260223092942.png|500]]
+![[Pasted image 20260223092942.png|888]]
 
 
-![[Pasted image 20260223093005.png|500]]
+![[Pasted image 20260223093005.png|621]]
 
 The central purpose of the DFT+U calibration is to ensure that the reference electronic structure used to label the MLIP training set places the key Ce–O states in physically meaningful positions, especially the relative alignment of the $\mathrm{O}(2p)$ valence manifold with the Ce-derived $\mathrm{4f}$ and $\mathrm{5d}$ manifolds. These alignments control whether reduced configurations exhibit localized $\mathrm{Ce}^{3+}$-like behavior (occupied $4f$ weight and nonzero spin polarization) and whether the oxidized end member remains a robust insulator with a clean separation between $\mathrm{O}(2p)$-dominated valence states and the lowest unoccupied Ce-derived states. In the diagnostics reported here, the “$2p$–$4f$” and “$2p$–$5d$” metrics summarize these alignments by measuring the separation between the $\mathrm{O}(2p)$ manifold and the dominant Ce($4f$) or Ce($5d$) feature used as the relevant near-gap reference for a given phase. The DOS panels and the accompanying magnetization/band-alignment summary therefore serve as the practical checks used to select and validate an appropriate $U_{\mathrm{eff}}$ window for dataset generation.
 

@@ -1,8 +1,8 @@
 # 4-Year Reading Plan: Computational Nuclear Materials, Radiation Physics, and Machine Learning
 
-*A structured roadmap toward MIT-caliber faculty expertise in multiscale modeling of radiation effects in redox-active materials, machine-learned interatomic potentials, and the theoretical foundations that underpin them.*
 
----
+
+
 
 ## How to Use This Plan
 

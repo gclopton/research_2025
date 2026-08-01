@@ -44,10 +44,10 @@ This work establishes the electronic-structure and dataset foundations needed fo
 # RESULTS
 
 
-![[Pasted image 20260223092942.png|500]]
+![[Pasted image 20260223092942.png|1190]]
 
 
-![[Pasted image 20260223093005.png|500]]
+![[Pasted image 20260223093005.png|875]]
 
 - $\mathrm{CeO}_2$ is relatively insensitive to $U_{\text {eff. }}$ The calculations remain non-magnetic (reported magnetization $=0$ ) and preserve a clear insulating DOS with the $\mathrm{O}(2 \mathrm{p})$ valence manifold separated from Ce-derived unoccupied states.
 - Reduced compositions are strongly spin-polarized, consistent with localized 4 f physics. $\mathrm{Ce}_2 \mathrm{O}_3$ and $\mathrm{Ce}_7 \mathrm{O}_{12}$ exhibit large moments (see table) and prominent $\mathrm{Ce}(4 \mathrm{f})$ features near the gap region, indicating substantially stronger correlation sensitivity than $\mathrm{CeO}_2$.

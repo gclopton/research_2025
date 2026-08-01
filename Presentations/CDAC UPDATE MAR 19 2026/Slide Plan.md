@@ -8,13 +8,29 @@
 
 ---
 
-## Slide 2: Motivation (NNSA / Applied Context)
-*Pending literature search results. Framing: stockpile stewardship, pit aging, ceramic waste forms, ceria as PuO₂ surrogate.*
+## Slide 2: Motivation — Radiation Damage in Nuclear Materials
+*Fission fragments, alpha-decay recoils, and self-irradiation damage nuclear fuels, waste forms, and weapon pits. Predicting long-term damage evolution without underground testing is central to NNSA's Stockpile Stewardship mission.*
+
+**Key papers:**
+- Weber et al 1998 (J. Nucl. Mater.) — Comprehensive review of radiation effects in ceramics for waste immobilization and Pu disposal.
+- Martz & Schwartz 2003 (JOM) — Plutonium aging mechanisms and weapon pit lifetime assessment. Radiation damage is the largest uncertainty in pit lifetime estimates.
+- Wirth et al 2001 (JOM) — Fundamental studies of Pu aging: displacement cascades, helium bubble formation, defect clustering kinetics.
+- Ewing et al 2004 (J. Appl. Phys.) — Pyrochlore waste forms for Pu immobilization; radiation tolerance as a design requirement.
+
+
 
 ---
 
-## Slide 3: Motivation (Scientific)
-*Why does redox chemistry matter for radiation damage? Broader significance.*
+## Slide 3: Motivation — Ceria as Surrogate and the Redox Hypothesis
+*CeO₂ is the standard surrogate for PuO₂/UO₂. The key shared property is Ce⁴⁺ ⇌ Ce³⁺ redox flexibility. Tracy et al 2015 showed that this redox flexibility produces qualitatively different radiation response from redox-inert ThO₂.*
+
+**Key papers:**
+- Nelson et al 2014 (J. Am. Ceram. Soc.) — Thermophysical property comparison confirming CeO₂ as valid surrogate for UO₂ and PuO₂.
+- Kim et al 2008 (J. Nucl. Mater.) — Fabrication validation: Ce-MOX replicates Pu-MOX sintering, microstructure, and thermal properties.
+- Tracy et al 2015 (Nature Comms.) — Redox response of actinide materials to ionizing radiation. ThO₂ vs CeO₂ comparison proves redox is not passive.
+- Cureton et al 2018 (Acta Mater.) — Head-to-head CeO₂/ThO₂/UO₂ grain-size study under identical irradiation.
+- Lang et al 2015 (Curr. Opin. Solid State Mater. Sci.) — SHI tracks in complex ceramics for nuclear applications.
+- Sickafus et al 2000 (Science) — Structural flexibility as competing explanation for radiation tolerance.
 
 ---
 

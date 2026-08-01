@@ -38,6 +38,18 @@ mv "$TMPDIR/cluster_utilities" "$CODEBASE/cluster_utilities"
 
 After updating, you may inspect the code and report findings, but **do not commit/push** the snapshot changes.
 
+## Bridges-2 DTN Access
+
+For cluster file-transfer troubleshooting, use the Bridges-2 DTN alias `bridges-data` (`data.bridges2.psc.edu`) with `rsync` or `sftp`. Do not use shell login as the health check: `ssh bridges-data` may authenticate and then report `Login denied: Only file transfers are allowed on this account` because the DTN is transfer-only.
+
+Check for a reusable authenticated socket with:
+
+```bash
+ssh -O check bridges-data
+```
+
+If it reports `Master running`, DTN transfers can proceed. If no socket exists and PSC key auth is not registered, the user can prime the socket with `pss bridges pw` and `sftp bridges-data`; agents should not read or paste the stored password themselves.
+
 
 
 | ENCUT (eV) | noU steps | Last \|dE\| (eV) | Last RMS | Mean s/iter |

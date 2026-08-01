@@ -1,7 +1,61 @@
 
+1. **What are swift heavy ions, and how do they deposit energy in solids?**
+    
 
-- Oxygen-deficiency sweep: model $\mathrm{CeO}_{2-x}$ from $\mathrm{CeO}_2(x=0)$ toward reduced compositions.
-- Compositions sampled (vacancy ordering ↑ , reduction ↑ ): $\mathrm{CeO}_2(x=0), \mathrm{Ce}_{11} \mathrm{O}_{20}(x=2 / 11)$, $\mathrm{Ce}_7 \mathrm{O}_{12}(x=2 / 7), \mathrm{Ce}_2 \mathrm{O}_3(x=1 / 2)$.
-- Average Ce valence in $\mathrm{CeO}_{2-x}$ is $\bar{v}_{\mathrm{Ce}}=4-2 x$ (larger $x \Rightarrow$ more $\mathrm{Ce}^{3+}$ ).
-- Redox-frozen models: fixed charges + fixed stoichiometry. Allow spike-driven disorder/defects but no explicit $\mathrm{Ce}^{3+} / \mathrm{Ce}^{4+}$ charge transfer.
-- Redox-enabled models: permit charge redistribution (and, where applicable, reactive defect chemistry) to test whether redox pathways change track observables under identical TTM forcing.
+
+
+
+2. **What does the morphology of swift-heavy-ion tracks reveal about a material?**
+
+
+
+3. **What does experimental evidence suggest about how swift-heavy-ion damage proceeds in ceria?**
+
+
+
+
+4. **Why is ceria a challenging system to simulate under swift-heavy-ion irradiation?**
+
+
+
+5. **Why are fixed-charge interatomic potentials inadequate for modeling swift-heavy-ion damage in ceria?**
+
+
+
+
+6. **Why is direct DFT+U not a viable approach for simulating nanometer-scale tracks in ceria?**
+
+
+
+
+7. **What is the central scientific question motivating this work? (i.e., is track formation and annealing in ceria governed entirely by thermal-spike mechanics, or does redox chemistry actively reshape the defect landscape?)**
+
+
+
+8. **What multiscale framework is developed to address this question?**
+
+
+
+9. **What do preliminary TTM-MD simulations with a classical rigid-ion potential capture, and where do they fall short?**
+
+
+
+10. **Which reference systems are used to calibrate the DFT+U data underlying the MLIP?**
+
+
+
+
+11. **What types of training configurations are generated for the Allegro neural network potential?**
+
+
+
+
+12. **What range of ceria chemistries is the resulting MLIP designed to represent?**
+
+
+
+13. **What will a redox-capable versus fixed-charge comparison allow the authors to quantify?**
+
+
+
+14. **What broader question about radiation tolerance in fluorite oxides does this work aim to inform?**
