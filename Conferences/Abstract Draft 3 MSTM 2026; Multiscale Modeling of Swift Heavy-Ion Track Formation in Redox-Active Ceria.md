@@ -1,0 +1,8 @@
+
+
+
+Several experiments have now shown that for reducible oxides such as ceria, reduction of the cation is a major driver of SHI track formation and is not a mere byproduct of the thermal spike. However, current computational approaches are unable to directly resolve the role of redox chemistry in track formation, leaving a gap between experimental evidence and explanation from first principles. Classical molecular dynamics cannot capture the electronic processes that drive ionization induced oxidation/reduction: fixed-charge force fields have no representation of valence charges, and variable-charge approaches are unable to track the non-adiabatic electron cascade relaxation involved in track formation. Electronic structure methods that can describe such redox chemistry, such as DFT + U, are restricted to length and timescales far shorter than those needed to model track formation, and this challenge is compounded in f-block oxides where the f electrons of cerium and the light actinides require careful treatment of strongly correlated, near-degenerate electronic configurations. To close this gap, we develop a multiscale computational method that combines DFT+U with a redox-capable machine-learning interatomic potential (MLIP), and two-temperature molecular dynamics (TTM-MD). We first calibrate a DFT+U reference across the $CeO_{2-x}$ reduction series, and use it to generate training configurations for an Allegro neural network potential. Using this resulting redox-aware MLIP in place of the classical potential, allows us to test directly whether cation reduction is once of the important drivers of track formation in ceria, as experimental evidence suggests.
+
+
+
+

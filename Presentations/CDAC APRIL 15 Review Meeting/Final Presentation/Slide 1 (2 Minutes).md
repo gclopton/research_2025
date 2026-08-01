@@ -1,0 +1,13 @@
+
+
+![[Pasted image 20260415042001.png]]
+
+
+
+This work develops a **multiscale simulation framework** to reconstruct **swift-heavy-ion track formation** in **redox-active oxides** such as ceria, and to test whether redox chemistry can be an active driver of track formation or merely a byproduct of the **thermal spike**.
+
+Swift-heavy-ion damage in an **insulating oxide** is not solely a **defect-production problem**, and purely **thermomechanical descriptions** capture only part of the physics. One of the central challenges is that track formation is a multiscale, multiphysics process in which energy passes through a _sequence of coupled stages_ spanning roughly _fifteen orders of magnitude in time_. The ion deposits energy first into the **electronic subsystem** on sub-femtosecond timescales; that excitation is transferred to the lattice through electron-phonon coupling over picoseconds; and the subsequent quench extends into the nanosecond regime. The final state of this coupled sequence, is observed experimentally as a typically underdense, largely crystalline cylinder.
+
+From track morphology alone, we cannot uniquely identify the pathway that produced it. Experimental observation is necessarily **retrospective**: the ion has passed, the spike has quenched, and the lattice has relaxed. Very different histories can therefore lead to similar endpoints. A purely **thermomechanical melt-and-quench pathway**, and a pathway in which oxygen redistribution and partial $\mathrm{Ce}^{3+}$ reoxidation promote recovery of fluorite order, may produce similar post-irradiation morphologies. At present, no in situ probe combines the spatial and temporal resolution required to resolve that full sequence directly.
+
+The pathway must therefore be reconstructed computationally, but no single method can do so on its own. First-principles methods provide the necessary electronic-structure fidelity, but not at the spatial and temporal scales required for track formation. Classical interatomic potentials reach those scales, but fixed-charge, fixed-topology models cannot represent a cerium ion that is $\mathrm{Ce}^{4+}$ in one local environment and $\mathrm{Ce}^{3+}$ in another. That limitation is decisive in a redox-active oxide, because oxygen migration, vacancy formation, and $\mathrm{Ce}^{4+} / \mathrm{Ce}^{3+}$ reduction are not secondary details; they are potential components of the track-formation mechanism itself. They are also the same chemical degrees of freedom that make ceria important as an oxygen buffer, a catalytic oxide, and a fluorite-structure surrogate for $\mathrm{UO}_2$. Reconstructing that coupled pathway is therefore the central aim of this work.
