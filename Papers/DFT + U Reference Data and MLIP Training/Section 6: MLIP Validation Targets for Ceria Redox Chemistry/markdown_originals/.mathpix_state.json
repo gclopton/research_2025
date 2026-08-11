@@ -145,5 +145,26 @@
     "pdf_id": "2ce0dc70-314a-4a1a-b799-6c7e1147161e",
     "submitted_at": "2026-03-19T07:19:53.914512",
     "zip_kind": "md.zip"
+  },
+  "/private/tmp/bdm_citation_papers_src/Kolodiazhnyi et al 2018 - Giant magnetocapacitance in cerium sesquioxide.pdf": {
+    "completed_at": "2026-08-11T16:30:09.088677",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Kolodiazhnyi et al 2018 - Giant magnetocapacitance in cerium sesquioxide",
+    "pdf_id": "821c6360-943a-4538-bc5c-cc27c5ddb06e",
+    "submitted_at": "2026-08-11T16:30:00.018487",
+    "zip_kind": "md.zip"
+  },
+  "/private/tmp/bdm_citation_papers_src/Mochizuki 1982 - Infrared optical properties of cerium dioxide.pdf": {
+    "completed_at": "2026-08-11T16:30:20.421821",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Mochizuki 1982 - Infrared optical properties of cerium dioxide",
+    "pdf_id": "d8dc327d-0d95-4dd2-8fd7-142eac0abaa7",
+    "submitted_at": "2026-08-11T16:30:11.740002",
+    "zip_kind": "md.zip"
+  },
+  "/private/tmp/bdm_citation_papers_src/Santha et al 2004 - Effect of Doping on the Dielectric Properties of Cerium Oxide in the Microwave and Far-Infrared Frequency Range.pdf": {
+    "completed_at": "2026-08-11T16:30:29.622343",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Santha et al 2004 - Effect of Doping on the Dielectric Properties of Cerium Oxide in the Microwave and Far-Infrared Frequency Range",
+    "pdf_id": "9735d998-6d90-4384-abc5-c6fa3dd5119b",
+    "submitted_at": "2026-08-11T16:30:20.718236",
+    "zip_kind": "md.zip"
   }
 }
