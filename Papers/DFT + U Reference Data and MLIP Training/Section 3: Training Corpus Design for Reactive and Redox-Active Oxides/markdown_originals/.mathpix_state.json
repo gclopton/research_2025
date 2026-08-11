@@ -13,6 +13,20 @@
     "submitted_at": "2026-03-19T07:12:45.751289",
     "zip_kind": "md.zip"
   },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Freysoldt et al 2009 - Fully Ab Initio Finite-Size Corrections for Charged-Defect Supercell Calculations.pdf": {
+    "completed_at": "2026-08-11T15:34:21.787441",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Freysoldt et al 2009 - Fully Ab Initio Finite-Size Corrections for Charged-Defect Supercell Calculations",
+    "pdf_id": "1b8e584e-28ed-40ed-aa25-2591ed587037",
+    "submitted_at": "2026-08-11T15:34:12.839813",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Freysoldt et al 2014 - First-principles calculations for point defects in solids.pdf": {
+    "completed_at": "2026-08-11T15:34:35.658914",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Freysoldt et al 2014 - First-principles calculations for point defects in solids",
+    "pdf_id": "bbc9c370-e94e-4a93-a76c-dc2bffd9f997",
+    "submitted_at": "2026-08-11T15:34:22.359904",
+    "zip_kind": "md.zip"
+  },
   "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Gopal and van de Walle 2012 - Ab initio thermodynamics of intrinsic oxygen vacancies in ceria.pdf": {
     "completed_at": "2026-03-19T07:13:03.986981",
     "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Gopal and van de Walle 2012 - Ab initio thermodynamics of intrinsic oxygen vacancies in ceria",
@@ -60,6 +74,13 @@
     "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Kulichenko et al 2024 - Data Generation for Machine Learning Interatomic Potentials and Beyond",
     "pdf_id": "4bcbce05-4812-4b2e-b2db-3e988c01546c",
     "submitted_at": "2026-03-19T07:14:00.072302",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Kumagai and Oba 2014 - Electrostatics-based finite-size corrections for first-principles point defect calculations.pdf": {
+    "completed_at": "2026-08-11T15:34:47.138235",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Kumagai and Oba 2014 - Electrostatics-based finite-size corrections for first-principles point defect calculations",
+    "pdf_id": "b89b4a43-a807-423f-a2d9-6749350b72bc",
+    "submitted_at": "2026-08-11T15:34:36.039768",
     "zip_kind": "md.zip"
   },
   "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/pdfs/Murgida et al 2014 - Ordering of oxygen vacancies and excess charge localization in bulk ceria; A DFT+U study.pdf": {
