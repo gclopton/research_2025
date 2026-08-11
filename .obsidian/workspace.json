@@ -85,30 +85,16 @@
             "id": "9351cecbb7609be6",
             "type": "leaf",
             "state": {
-              "type": "pdf",
+              "type": "image",
               "state": {
-                "file": "Manuscripts/Access Proposal, July 2026/PDFs/MAXIMIZE ACCESS - Main Document - July 2026.pdf"
+                "file": "Pasted image 20260331140100.png"
               },
-              "icon": "lucide-file-text",
-              "title": "MAXIMIZE ACCESS - Main Document - July 2026"
-            }
-          },
-          {
-            "id": "cec7943068f66e15",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Curriculum/01. Physics.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "01. Physics"
+              "icon": "lucide-image",
+              "title": "Pasted image 20260331140100"
             }
           }
         ],
-        "currentTab": 6
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -128,7 +114,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -229,13 +217,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Curriculum/01. Physics.md",
+                "file": "Curriculum/1. Foundations/F1. Physics.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 01. Physics"
+              "title": "Outline of F1. Physics"
             }
           },
           {
@@ -317,53 +305,53 @@
       "mermaid-tools:Open Mermaid Toolbar": false
     }
   },
-  "active": "789b682e5063149b",
+  "active": "c94933d32feab23a",
   "lastOpenFiles": [
-    "Scratch/curriculum_backups/01. Physics.2026-08-01-0414.md",
-    "Scratch/curriculum_backups",
-    "Curriculum/1.1 Solid-State Physics and Quantum Theory of Solids.md",
-    "Curriculum/01. Physics.md",
-    "Curriculum/02. Materials Science and Solid-State Chemistry.md",
-    "Curriculum/00. Master Curriculum Map.md",
-    "Curriculum/04. Computational and Numerical Methods.md",
-    "Curriculum/08. Experimental Characterization and Validation.md",
-    "Curriculum/03. Applied Mathematics.md",
-    "Curriculum/07. Machine Learning for Atomistic Materials.md",
-    "Curriculum/06. Radiation–Matter Interaction and Radiation Effects.md",
-    "Curriculum/05. Continuum Transport and Mechanics.md",
-    "Lit Survey/1. SHI Track Formation Papers Bulk Crystals.md",
-    "Curriculum/5823780.md",
-    "Papers/Computational Architecture/Loschen_2007_Cerium_oxides_LDA+U_GGA+U/Review/first-principles-lda--u-and-gga--u-study-of-cerium-oxides-026684a5-d7f5-409e-8654-52d15d91a905.md",
-    "Papers/Computational Architecture/Loschen_2007_Cerium_oxides_LDA+U_GGA+U/markdown_originals/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter.md",
-    "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter.md",
-    "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/pdfs/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter.pdf",
-    "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/pdfs/Castleton et al 2007 - Tuning LDA+U for electron localization and structure at oxygen vacancies in ceria.pdf",
-    "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Castleton et al 2007 - Tuning LDA+U for electron localization and structure at oxygen vacancies in ceria/Castleton et al 2007 - Tuning LDA+U for electron localization and structure at oxygen vacancies in ceria.md",
-    "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Das et al 2018 - Anisotropic chemical strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles/Das et al 2018 - Anisotropic chemical strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles.md",
-    "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
-    "Manuscripts/CDAC NNSA Review/~$rustIII-GC.docx",
-    "Manuscripts/CDAC NNSA Review/ThrustIII-GC.docx",
-    "Manuscripts/CDAC NNSA Review/~$rustIII-AMOM.docx",
-    "Manuscripts/CDAC NNSA Review/ThrustIII-SK.docx",
-    "Manuscripts/CDAC NNSA Review/ThrustIII-AMOM.docx",
-    "Manuscripts/CDAC NNSA Review/Thrust3-Outline.docx",
-    "Manuscripts/CDAC NNSA Review/~$Review_Meeting2026-Thrust 3_Compiled.pptx",
-    "Papers/DFT + U Reference Data and MLIP Training/Section 4 Reference-Surface Governance and Branch-Consistency Policy/markdown_originals/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U/Summary Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U.md",
-    "Manuscripts/Access Proposal, July 2026/FIGURE N/vesta-scenes/06_pristine_ceo2_3d_lattice.svg",
     "Papers/DFT + U Reference Data and MLIP Training/Section 4 Reference-Surface Governance and Branch-Consistency Policy/markdown_originals/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U.md",
-    "Clusters/Campus Cluster/Can't open cursor remote session.md",
-    "Manuscripts/Access Proposal, July 2026/FIGURE N/vesta-scenes/01_pristine_ceo2.svg",
-    "Manuscripts/Access Proposal, July 2026/OUTLINE.md",
-    "Manuscripts/Access Proposal, July 2026/FIGURE N/vesta-scenes/03_vo_localized_ce3.svg",
-    "Manuscripts/Access Proposal, July 2026/FIGURE N/02_oxygen_vacancy_ceo2x_slab.svg",
-    "Manuscripts/Access Proposal, July 2026/FIGURE N/04_bond_distortion_variants.svg",
-    "Manuscripts/Access Proposal, July 2026/FIGURE N/05_ce2o3_reference_slab.svg",
-    "Manuscripts/Access Proposal, July 2026/FIGURE N/06_figure_n_workflow.svg",
-    "Manuscripts/Access Proposal, July 2026/FIGURE N/editable-svg/pristine_ceo2_patch.svg",
-    "Manuscripts/Access Proposal, July 2026/FIGURE N/editable-svg/figure_n_full_editable.svg",
-    "Manuscripts/Access Proposal, July 2026/FIGURE N/editable-svg/README.md",
-    "Manuscripts/Access Proposal, July 2026/FIGURE N/editable-svg/oxygen_vacancy_patch.svg",
-    "Manuscripts/Access Proposal, July 2026/FIGURE N/README_VESTA.md",
-    "Manuscripts/Access Proposal, July 2026/DRAFT 1.md"
+    "Papers/DFT + U Reference Data and MLIP Training/Section 4 Reference-Surface Governance and Branch-Consistency Policy/markdown_originals/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U/Summary Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U.md",
+    "Pasted image 20260331140100.png",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Wang et al 2006 - Oxidation energies of transition metal oxides within the GGA+U framework/images/8dce329f-f2ab-48e6-8423-845dc9325293-3_737_707_193_249.jpg",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Wang et al 2006 - Oxidation energies of transition metal oxides within the GGA+U framework/images/8dce329f-f2ab-48e6-8423-845dc9325293-3_1179_855_191_1091.jpg",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Wang et al 2006 - Oxidation energies of transition metal oxides within the GGA+U framework/images",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Wang et al 2006 - Oxidation energies of transition metal oxides within the GGA+U framework/Wang et al 2006 - Oxidation energies of transition metal oxides within the GGA+U framework.md",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Wang et al 2006 - Oxidation energies of transition metal oxides within the GGA+U framework",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Prokofiev et al 1996 - Periodicity in the band gap variation of Ln2X3 (X = O, S, Se) in the lanthanide series/images/fb471e43-0623-402b-8504-0d00390efd2a-4_957_723_245_231.jpg",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Prokofiev et al 1996 - Periodicity in the band gap variation of Ln2X3 (X = O, S, Se) in the lanthanide series/images/fb471e43-0623-402b-8504-0d00390efd2a-3_793_694_211_249.jpg",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Prokofiev et al 1996 - Periodicity in the band gap variation of Ln2X3 (X = O, S, Se) in the lanthanide series/images",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Prokofiev et al 1996 - Periodicity in the band gap variation of Ln2X3 (X = O, S, Se) in the lanthanide series/Prokofiev et al 1996 - Periodicity in the band gap variation of Ln2X3 (X = O, S, Se) in the lanthanide series.md",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Prokofiev et al 1996 - Periodicity in the band gap variation of Ln2X3 (X = O, S, Se) in the lanthanide series",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Acknowledgments/images/fb471e43-0623-402b-8504-0d00390efd2a-4_957_723_245_231.jpg",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Acknowledgments/images/fb471e43-0623-402b-8504-0d00390efd2a-3_793_694_211_249.jpg",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Acknowledgments/images",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Acknowledgments/Acknowledgments.md",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Acknowledgments",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Kumagai and Oba 2014 - Electrostatics-based finite-size corrections for first-principles point defect calculations/images/b89b4a43-a807-423f-a2d9-6749350b72bc-13_518_1779_174_180.jpg",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Kumagai and Oba 2014 - Electrostatics-based finite-size corrections for first-principles point defect calculations/images/b89b4a43-a807-423f-a2d9-6749350b72bc-12_773_846_174_193.jpg",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Kumagai and Oba 2014 - Electrostatics-based finite-size corrections for first-principles point defect calculations/images/b89b4a43-a807-423f-a2d9-6749350b72bc-11_2269_1781_172_183.jpg",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Kumagai and Oba 2014 - Electrostatics-based finite-size corrections for first-principles point defect calculations/images",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Kumagai and Oba 2014 - Electrostatics-based finite-size corrections for first-principles point defect calculations/Kumagai and Oba 2014 - Electrostatics-based finite-size corrections for first-principles point defect calculations.md",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Kumagai and Oba 2014 - Electrostatics-based finite-size corrections for first-principles point defect calculations",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Freysoldt et al 2014 - First-principles calculations for point defects in solids/images",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Freysoldt et al 2014 - First-principles calculations for point defects in solids/Freysoldt et al 2014 - First-principles calculations for point defects in solids.md",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Freysoldt et al 2014 - First-principles calculations for point defects in solids",
+    "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Freysoldt et al 2009 - Fully Ab Initio Finite-Size Corrections for Charged-Defect Supercell Calculations/Freysoldt et al 2009 - Fully Ab Initio Finite-Size Corrections for Charged-Defect Supercell Calculations.md",
+    "Papers/Alphabetical Paper Index 1.md",
+    "Papers/Alphabetical Paper Index.md",
+    "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Kumar et al 2026 - Swift heavy ion-induced defect formation and electronic structure evolution in Zr-doped CeO2 (Ce0.8Zr0.2O2)/Kumar et al 2026 - Swift heavy ion-induced defect formation and electronic structure evolution in Zr-doped CeO2 (Ce0.8Zr0.2O2).md",
+    "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 6: Theoretical Frameworks for Coupled Redox-Thermal Track Models/pdfs/Schmalzried 1995 - Chemical Kinetics of Solids/markdown_originals/chapters/01 - Introduction/01 - Introduction.md",
+    "Curriculum/1. Foundations/F1. Physics.md",
+    "Curriculum/2. Research/01. Physics.md",
+    "Curriculum/2. Research/00. Master Curriculum Map.md",
+    "Curriculum/2. Research/05. Continuum Transport and Mechanics.md",
+    "Curriculum/1. Foundations/F2. Thermal, Fluids, and Continuum Physics.md",
+    "Curriculum/2. Research/04. Computational and Numerical Methods.md",
+    "Curriculum/2. Research/07. Machine Learning for Atomistic Materials.md",
+    "Curriculum/2. Research/06. Radiation–Matter Interaction and Radiation Effects.md",
+    "Curriculum/1. Foundations/F0. Foundations Map.md",
+    "Curriculum/1. Foundations/F5. Computation.md",
+    "Curriculum/01. Physics.md",
+    "Curriculum/1. Foundations/F6. Nuclear and Radiation.md",
+    "Curriculum/1. Foundations/F4. Chemistry and Materials.md",
+    "Curriculum/1. Foundations/F3. Mathematics.md"
   ]
 }
