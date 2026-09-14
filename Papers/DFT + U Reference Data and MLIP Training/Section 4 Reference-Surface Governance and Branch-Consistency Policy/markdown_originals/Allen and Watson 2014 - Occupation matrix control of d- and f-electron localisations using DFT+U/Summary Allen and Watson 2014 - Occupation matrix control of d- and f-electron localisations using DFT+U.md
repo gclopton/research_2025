@@ -27,6 +27,9 @@ The whole study is organized as a $2 \times 3$ matrix: two material families - T
 | Ti (a $d^{1}$ system)  | Octahedral $\left[\mathrm{Ti}(\mathrm{CO})_6\right]^{3+}$ and tetrahedral $\left[\operatorname{Ti}(\mathrm{CO})_4\right]^3$ |                                             |                                            |
 | Ce (an $f^{1}$ system) |                                                                                                                             |                                             |                                            |
 
+
+
+
 ## Group 1 Ti Compounds (§3.1.1)
 
 **Goal:**
