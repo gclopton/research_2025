@@ -1,0 +1,577 @@
+{
+  "version": 1,
+  "claims": {
+    "xrd-recovery": {
+      "label": "xrd recovery",
+      "papers": [
+        {
+          "citekey": "palomares2015annealing",
+          "label": "Palomares et al 2015",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Palomares et al 2015 - In situ defect annealing of swift heavy ion irradiated CeO2 and ThO2 using synchrotron X-ray diffraction and a hydrothermal diamond anvil cell/Palomares et al 2015 - In situ defect annealing of swift heavy ion irradiated CeO2 and ThO2 using synchrotron X-ray diffraction and a hydrothermal diamond anvil cell.md",
+          "selections": [
+            {
+              "quote": "the samples were isochronally annealed for 20 minutes"
+            },
+            {
+              "quote": "temperature steps from 300 K to 1075 K"
+            },
+            {
+              "quote": "After each heating step, the samples were quenched to ambient temperature"
+            },
+            {
+              "quote": "the annealing was performed in an air environment"
+            },
+            {
+              "quote": "reduction of unit cell parameters at low temperatures is accompanied by the relaxation of heterogeneous microstrain"
+            },
+            {
+              "quote": "combined influences on the strain field reduction by ionic radii changes and agglomerate defect annealing make it difficult to decouple individual contributions"
+            },
+            {
+              "image": "images/50a88a72-1a16-4327-bf8a-639f7a6b813f-27_1048_1331_562_395.jpg",
+              "whole": true,
+              "sha256": "c0fd85e7679e153fb554177b8a04d2e023750486883d0ecf92db4cb50a87861c"
+            },
+            {
+              "quote": "The loaded gasket was sealed between the diamond-anvils without exerting pressure on the samples.",
+              "comment": "Air-loaded sealed gasket; this differs from flowing simulated air in the DSC experiment. The text does not establish that oxygen was exhausted."
+            }
+          ]
+        }
+      ]
+    },
+    "xrd-activation": {
+      "label": "xrd activation",
+      "papers": [
+        {
+          "citekey": "palomares2015annealing",
+          "label": "Palomares et al 2015",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Palomares et al 2015 - In situ defect annealing of swift heavy ion irradiated CeO2 and ThO2 using synchrotron X-ray diffraction and a hydrothermal diamond anvil cell/Palomares et al 2015 - In situ defect annealing of swift heavy ion irradiated CeO2 and ThO2 using synchrotron X-ray diffraction and a hydrothermal diamond anvil cell.md",
+          "selections": [
+            {
+              "quote": "can be used to determine the most probable activation energy corresponding to the temperature for maximum recovery in each annealing stage"
+            },
+            {
+              "quote": "as suggested by Weber for the isostructural oxides"
+            },
+            {
+              "quote": "The derived activation energies are 0.99"
+            }
+          ]
+        }
+      ]
+    },
+    "heat-atmosphere": {
+      "label": "heat atmosphere",
+      "papers": [
+        {
+          "citekey": "shelyugEnergeticsDefectProduction2018",
+          "label": "Shelyug et al 2018",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Shelyug et al 2018 - Energetics of defect production in fluorite-structured CeO2 induced by highly ionizing radiation/Shelyug et al 2018 - Energetics of defect production in fluorite-structured CeO2 induced by highly ionizing radiation.md",
+          "selections": [
+            {
+              "quote": "powder was put into the platinum crucibles with a cap and heated to 1000"
+            },
+            {
+              "quote": "simulated air"
+            },
+            {
+              "quote": "release heat in two distinguishable steps"
+            },
+            {
+              "quote": "the mechanism responsible for the annealing regime of the first step is less favorable (kinetically, thermodynamically, or both) in the absence of oxygen"
+            },
+            {
+              "image": "images/360db616-0cce-455b-b7d8-ed38eff94408-08_1057_868_241_1080.jpg",
+              "whole": true,
+              "sha256": "7e42f848713c585fbfc6d504cc1af55ba6beb300a71941aeffeffd95baf1bef6"
+            },
+            {
+              "quote": "The processes seem to be slower in inert atmosphere in all samples."
+            },
+            {
+              "quote": "the peaks are less intense and very broad with significant overlap across the entire temperature regime"
+            },
+            {
+              "quote": "Signal intensity also increases in the temperature range 400-500"
+            }
+          ]
+        }
+      ]
+    },
+    "heat-balance": {
+      "label": "heat balance",
+      "papers": [
+        {
+          "citekey": "shelyugEnergeticsDefectProduction2018",
+          "label": "Shelyug et al 2018",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Shelyug et al 2018 - Energetics of defect production in fluorite-structured CeO2 induced by highly ionizing radiation/Shelyug et al 2018 - Energetics of defect production in fluorite-structured CeO2 induced by highly ionizing radiation.md",
+          "selections": [
+            {
+              "table": 2,
+              "whole": true,
+              "sha256": "6662a38ad14beb6eb4db29edb26c2f4a9be1ff4316c1cf336c92d4ed6b4e5edb"
+            },
+            {
+              "quote": "The enthalpies of the drop solution of the samples into molten sodium molybdate"
+            },
+            {
+              "quote": "can be calculated using Hess's law"
+            },
+            {
+              "quote": "DSC scans were measured only once so the error cannot be propagated."
+            },
+            {
+              "quote": "Correction was performed using the second run on the same sample."
+            },
+            {
+              "quote": "in order to ensure an oxidative environment and evolved gas evacuation"
+            },
+            {
+              "quote": "The sum of heat effects in DSC also gives the same values as those from oxide melt solution calorimetry."
+            }
+          ]
+        }
+      ]
+    },
+    "overlap-recovery": {
+      "label": "overlap recovery",
+      "papers": [
+        {
+          "citekey": "yasudaDefectFormationAccumulation2013",
+          "label": "Yasuda et al 2013",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Yasuda et al 2013 - Defect formation and accumulation in CeO2 irradiated with swift heavy ions/Yasuda et al 2013 - Defect formation and accumulation in CeO2 irradiated with swift heavy ions.md",
+          "selections": [
+            {
+              "quote": "the pre-existing core damage regions are fully recovered within the influence region"
+            },
+            {
+              "quote": "If one assumes partial recovery for the pre-existing damage region, a larger value of the influence region might be obtained."
+            },
+            {
+              "quote": "Data obtained at ambient temperature"
+            },
+            {
+              "quote": "fitted results by an numerical simulation"
+            },
+            {
+              "quote": "the fitting analysis was carried out without differentiation of data points"
+            },
+            {
+              "quote": "evolves to saturation at higher fluences than"
+            },
+            {
+              "image": "images/16c0e990-3fc5-4a04-9de2-f4efc2138945-3_507_649_232_262.jpg",
+              "whole": true,
+              "sha256": "035e28abf31b9f83090e0c8ac4dbc58b0966dfc50b6877f80152948f1469af88"
+            }
+          ]
+        }
+      ]
+    },
+    "interstitial-charge": {
+      "label": "interstitial charge",
+      "papers": [
+        {
+          "citekey": "xiaoStabilityMigrationCharged2013",
+          "label": "Xiao et al 2013",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2.md",
+          "selections": [
+            {
+              "quote": "Our calculations suggest that oxygen interstitial migration"
+            },
+            {
+              "quote": "is influenced by the charge state, configuration of the oxygen interstitial, and the composition of host material."
+            },
+            {
+              "quote": "These results suggest that oxygen interstitials behave as donor- and acceptor-like defects"
+            },
+            {
+              "quote": "the two oxygens interact with their neighbors rather than forming a free"
+            },
+            {
+              "quote": "Energy barrier for oxygen interstitial migration in"
+            }
+          ]
+        }
+      ]
+    },
+    "transport-boundary": {
+      "label": "transport boundary",
+      "papers": [
+        {
+          "citekey": "ackermannDiffusionOxygenCeria2014",
+          "label": "Ackermann et al 2014",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Ackermann et al 2014 - Diffusion of Oxygen in Ceria at Elevated Temperatures and Its Application to H2O - CO2 Splitting Thermochemical Redox Cycles/Ackermann et al 2014 - Diffusion of Oxygen in Ceria at Elevated Temperatures and Its Application to H2O - CO2 Splitting Thermochemical Redox Cycles.md",
+          "selections": [
+            {
+              "quote": "The rate of oxygen flux into and out of the sample surface is known from the temporal mass change measured by the TGA"
+            },
+            {
+              "quote": "assuming that mass changes are only due to oxygen uptake/ release."
+            },
+            {
+              "quote": "While the experimental results and accompanying modeling agree well within the range of conditions considered, extrapolation to other conditions is questionable."
+            },
+            {
+              "quote": "surface-limited effects begin to dominate as the characteristic length scale becomes smaller and smaller."
+            },
+            {
+              "quote": "we postulate in this study that"
+            }
+          ]
+        }
+      ]
+    },
+    "migration-edge": {
+      "label": "migration edge",
+      "papers": [
+        {
+          "citekey": "nakayamaConcertedMigrationMechanism2012",
+          "label": "Nakayama et al 2012",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen Transport in Reduced Ceria/markdown_originals/Nakayama et al 2012 - A concerted migration mechanism of mixed oxide ion and electron conduction in reduced ceria/Nakayama et al 2012 - A concerted migration mechanism of mixed oxide ion and electron conduction in reduced ceria.md",
+          "selections": [
+            {
+              "quote": "oxide ions jump between NN tetrahedral sites and pass through a particular type of cation shared edge."
+            },
+            {
+              "quote": "The migration energy for Model A was ~0.62 eV"
+            },
+            {
+              "quote": "resulting in migration energies of ~0.55 and ~0.45 eV for Models B and C, respectively."
+            },
+            {
+              "quote": "In this manner, the electronic structure of"
+            },
+            {
+              "quote": "cannot jump to neighbouring sites to reduce the two repulsive interactions"
+            },
+            {
+              "quote": "it was assumed that the migration path can be linearized from two configurations."
+            },
+            {
+              "image": "images/05657f72-b3de-414f-8e31-2c707a6a4fda-4_617_696_194_244.jpg",
+              "whole": true,
+              "sha256": "5c65be04498cf8de9bea819cd53d48265f2293ec253ddbb0247014f94def0e49"
+            },
+            {
+              "quote": "modified Perdew-Burke-Ernzerhof generalized gradient approximation (PBEsol-GGA)"
+            },
+            {
+              "quote": "Therefore, the assumption of fast"
+            }
+          ]
+        }
+      ]
+    },
+    "interaction-range": {
+      "label": "interaction range",
+      "papers": [
+        {
+          "citekey": "grieshammerAssociationDefectsDoped2016",
+          "label": "Grieshammer et al 2016",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen Transport in Reduced Ceria/markdown_originals/Grieshammer et al 2016 - Association of defects in doped non-stoichiometric ceria from first principles/Grieshammer et al 2016 - Association of defects in doped non-stoichiometric ceria from first principles.md",
+          "selections": [
+            {
+              "quote": "The interaction range was cut off at a distance of"
+            },
+            {
+              "quote": "as all interaction energies are small (<0.1 eV) beyond this distance."
+            },
+            {
+              "quote": "farther interactions are negligible."
+            },
+            {
+              "quote": "An energy of 0.10 ± 0.01 eV was obtained for all interactions"
+            },
+            {
+              "quote": "application of the ramping method to all calculations yielded interaction energies of -0.14 eV for 1NN and -0.19 eV for 2NN."
+            },
+            {
+              "quote": "These experimental values are in the same range as the simulated values"
+            },
+            {
+              "quote": "The number of polarons in 2NN position of an oxygen vacancy is approximately one order of magnitude larger than in 1NN position."
+            }
+          ]
+        }
+      ]
+    },
+    "interaction-extension": {
+      "label": "Finite interaction range in Arnold transport model",
+      "papers": [
+        {
+          "citekey": "arnoldTransportWindEffect2025",
+          "label": "Arnold 2025, Table M.2",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen Transport in Reduced Ceria/markdown_originals/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria.md",
+          "selections": [
+            {
+              "table": 2,
+              "whole": true,
+              "sha256": "3b274c783ae93d2bab7c5df2a5ffaedf01c7f178a6e0a4ffdb1582e2a9508960"
+            }
+          ]
+        }
+      ]
+    },
+    "track-regrowth": {
+      "label": "Recovery of an existing track by a later ion",
+      "papers": [
+        {
+          "citekey": "rymzhanov2025ceria",
+          "label": "Rymzhanov et al. 2025, section 3.2 and Fig. 4",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2/Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2.md",
+          "selections": [
+            {
+              "quote": "The new ion impact induces complete recovery of existing defects at the distances of 2 and 4 nm between ion trajectories."
+            },
+            {
+              "quote": "At distances of 6 and 8 nm the observed recovery is partial, showing the reduction of the track size."
+            },
+            {
+              "quote": "the total annealing is observed when initially disordered region overlaps the existing ion track."
+            },
+            {
+              "quote": "It is based on the embedded-atom method (EAM) accounting many-body interactions combined with coulombic forces of partially charged ions."
+            },
+            {
+              "quote": "The recovery process is usually layer by layer restoration of a crystal lattice, which can be observed by the"
+            },
+            {
+              "image": "images/75e74863-6e66-45b2-8a81-0ed33d285cd7-5_1642_1595_189_236.jpg",
+              "whole": true,
+              "sha256": "d05724a3c4f255ff99db6321adbbb40175b2811e488316c5f9cf548e8798f3ae"
+            }
+          ]
+        }
+      ]
+    },
+    "peripheral-recovery": {
+      "label": "peripheral recovery",
+      "papers": [
+        {
+          "citekey": "rymzhanov2025ceria",
+          "label": "Rymzhanov et al. 2025, section 3.2 and Fig. 4",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2/Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2.md",
+          "selections": [
+            {
+              "quote": "At distances of 6 and 8 nm the observed recovery is partial, showing the reduction of the track size."
+            },
+            {
+              "quote": "the recovery is only partial and is supposed to be due to the elevated temperature in the periphery of the region excited by the second SHI."
+            }
+          ]
+        }
+      ]
+    },
+    "selection-locality": {
+      "label": "Local migration environments and compact interaction ranges",
+      "papers": [
+        {
+          "citekey": "nakayamaConcertedMigrationMechanism2012",
+          "label": "Nakayama et al 2012",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen Transport in Reduced Ceria/markdown_originals/Nakayama et al 2012 - A concerted migration mechanism of mixed oxide ion and electron conduction in reduced ceria/Nakayama et al 2012 - A concerted migration mechanism of mixed oxide ion and electron conduction in reduced ceria.md",
+          "selections": [
+            {
+              "quote": "oxide ions jump between NN tetrahedral sites and pass through a particular type of cation shared edge."
+            },
+            {
+              "quote": "The migration energy for Model A was ~0.62 eV"
+            },
+            {
+              "quote": "resulting in migration energies of ~0.55 and ~0.45 eV for Models B and C, respectively."
+            },
+            {
+              "quote": "In this manner, the electronic structure of"
+            },
+            {
+              "quote": "cannot jump to neighbouring sites to reduce the two repulsive interactions"
+            },
+            {
+              "quote": "it was assumed that the migration path can be linearized from two configurations."
+            },
+            {
+              "image": "images/05657f72-b3de-414f-8e31-2c707a6a4fda-4_617_696_194_244.jpg",
+              "whole": true,
+              "sha256": "5c65be04498cf8de9bea819cd53d48265f2293ec253ddbb0247014f94def0e49"
+            },
+            {
+              "quote": "modified Perdew-Burke-Ernzerhof generalized gradient approximation (PBEsol-GGA)"
+            },
+            {
+              "quote": "Therefore, the assumption of fast"
+            }
+          ]
+        },
+        {
+          "citekey": "grieshammerAssociationDefectsDoped2016",
+          "label": "Grieshammer et al 2016",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen Transport in Reduced Ceria/markdown_originals/Grieshammer et al 2016 - Association of defects in doped non-stoichiometric ceria from first principles/Grieshammer et al 2016 - Association of defects in doped non-stoichiometric ceria from first principles.md",
+          "selections": [
+            {
+              "quote": "The interaction range was cut off at a distance of"
+            },
+            {
+              "quote": "as all interaction energies are small (<0.1 eV) beyond this distance."
+            },
+            {
+              "quote": "farther interactions are negligible."
+            },
+            {
+              "quote": "An energy of 0.10 ± 0.01 eV was obtained for all interactions"
+            },
+            {
+              "quote": "application of the ramping method to all calculations yielded interaction energies of -0.14 eV for 1NN and -0.19 eV for 2NN."
+            },
+            {
+              "quote": "These experimental values are in the same range as the simulated values"
+            },
+            {
+              "quote": "The number of polarons in 2NN position of an oxygen vacancy is approximately one order of magnitude larger than in 1NN position."
+            }
+          ]
+        },
+        {
+          "citekey": "arnoldTransportWindEffect2025",
+          "label": "Arnold 2025, Table M.2",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen Transport in Reduced Ceria/markdown_originals/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria.md",
+          "selections": [
+            {
+              "table": 2,
+              "whole": true,
+              "sha256": "3b274c783ae93d2bab7c5df2a5ffaedf01c7f178a6e0a4ffdb1582e2a9508960"
+            }
+          ]
+        }
+      ]
+    },
+    "selection-vacancy-pairs": {
+      "label": "Vacancy pair geometry, formation energies and experimental ordering",
+      "papers": [
+        {
+          "citekey": "murgidaOrderingOxygenVacancies2014",
+          "label": "Murgida et al 2014 - Ordering of oxygen vacancies and excess charge localization in bulk ceria; A DFT+U study",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Murgida et al 2014 - Ordering of oxygen vacancies and excess charge localization in bulk ceria; A DFT+U study/Murgida et al 2014 - Ordering of oxygen vacancies and excess charge localization in bulk ceria; A DFT+U study.md",
+          "selections": [
+            {
+              "table": 5,
+              "whole": true,
+              "sha256": "578396227a9edfa7b22f8b3f22f179094183714c9f4d98b571d91a38a2df4960"
+            },
+            {
+              "quote": "results in a formation energy increase of about 0.1 eV ."
+            }
+          ]
+        },
+        {
+          "citekey": "hullOxygenVacancyOrdering2009",
+          "label": "Hull et al 2009 - Oxygen vacancy ordering within anion-deficient Ceria",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Hull et al 2009 - Oxygen vacancy ordering within anion-deficient Ceria/Hull et al 2009 - Oxygen vacancy ordering within anion-deficient Ceria.md",
+          "selections": [
+            {
+              "table": 2,
+              "whole": true,
+              "sha256": "c15278999affe6b5f1b09e087c1e54af2bd6b0ec0dafe63f5d00abdfd1335269"
+            },
+            {
+              "quote": "but there is no evidence for one particular type of"
+            }
+          ]
+        }
+      ]
+    },
+    "interaction-initial-model": {
+      "label": "Initial crystalline interaction model",
+      "papers": [
+        {
+          "citekey": "arnoldTransportWindEffect2025",
+          "label": "Arnold 2025, Table M.2",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen Transport in Reduced Ceria/markdown_originals/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria.md",
+          "selections": [
+            {
+              "table": 2,
+              "whole": true,
+              "sha256": "3b274c783ae93d2bab7c5df2a5ffaedf01c7f178a6e0a4ffdb1582e2a9508960"
+            }
+          ]
+        },
+        {
+          "citekey": "grieshammerAssociationDefectsDoped2016",
+          "label": "Grieshammer et al 2016",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen Transport in Reduced Ceria/markdown_originals/Grieshammer et al 2016 - Association of defects in doped non-stoichiometric ceria from first principles/Grieshammer et al 2016 - Association of defects in doped non-stoichiometric ceria from first principles.md",
+          "selections": [
+            {
+              "quote": "The interaction range was cut off at a distance of"
+            },
+            {
+              "quote": "as all interaction energies are small (<0.1 eV) beyond this distance."
+            },
+            {
+              "quote": "farther interactions are negligible."
+            },
+            {
+              "quote": "An energy of 0.10 ± 0.01 eV was obtained for all interactions"
+            },
+            {
+              "quote": "application of the ramping method to all calculations yielded interaction energies of -0.14 eV for 1NN and -0.19 eV for 2NN."
+            },
+            {
+              "quote": "These experimental values are in the same range as the simulated values"
+            },
+            {
+              "quote": "The number of polarons in 2NN position of an oxygen vacancy is approximately one order of magnitude larger than in 1NN position."
+            }
+          ]
+        }
+      ]
+    },
+    "liquid-viscosity": {
+      "label": "Simulated liquid viscosity",
+      "papers": [
+        {
+          "citekey": "rymzhanov2025ceria",
+          "label": "Rymzhanov et al 2025, Table1",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2/Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2.md",
+          "selections": [
+            {
+              "table": 1,
+              "whole": true,
+              "sha256": "487b8c77cd5d48db92ab079ca67bd64b01e77488b3d65b6d3d412151bab04ac4",
+              "comment": "Table1 reports simulated liquid viscosity at100K above melting. Surface tension is liquid–vapor, not solid–liquid interfacial energy."
+            }
+          ]
+        }
+      ]
+    },
+    "electron-reservoir": {
+      "label": "Electron reservoir and charge-state energy reference",
+      "papers": [
+        {
+          "citekey": "freysoldtFirstprinciplesCalculationsPoint2014",
+          "label": "Freysoldt et al. 2014 — charged-defect thermodynamics",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive and Redox-Active Oxides/markdown_originals/Freysoldt et al 2014 - First-principles calculations for point defects in solids/Freysoldt et al 2014 - First-principles calculations for point defects in solids.md",
+          "selections": [
+            {
+              "quote": "Chemical potentials represent the energy of the reservoirs with which atoms are being exchanged; they are discussed in detail in Sec. II.B.2."
+            },
+            {
+              "quote": "An alignment procedure is required to relate the potential in the supercell to that in the bulk material; this is discussed in Sec. III.C."
+            },
+            {
+              "quote": "It should be emphasized that the relevant Fermi energy here is not the (artificial) Fermi energy of the DFT calculations."
+            },
+            {
+              "quote": "In practice, however, the supercell sizes required to reach such absolute convergence would be too large for feasible calculations as was recognized early on (Leslie and Gillan, 1985; Makov, Shah, and Payne, 1996; Puska et al., 1998)."
+            },
+            {
+              "quote": "accomplished through exchanging electrons with an electron reservoir"
+            },
+            {
+              "quote": "These different charge states may correspond to quite different local lattice configurations."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
