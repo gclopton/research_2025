@@ -1,0 +1,543 @@
+{
+  "version": 1,
+  "claims": {
+    "charge-configuration": {
+      "label": "Charge-dependent interstitial configurations",
+      "papers": [
+        {
+          "citekey": "xiaoStabilityMigrationCharged2013",
+          "label": "Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2.md",
+          "selections": [
+            {
+              "quote": "Our calculations indicate that the stability of oxygen interstitial depends on the charge state, Fermi level and oxygen interstitial configuration.",
+              "comment": "Charge and geometric configuration jointly affect stability; the present study compares configurations at fixed charge.",
+              "color": "#FFF2B3"
+            },
+            {
+              "image": "./images/figure-04.jpg",
+              "whole": true,
+              "sha256": "04704035fcdbd3f36b27a743fabf720a4beaaf4e5898565251eff99f544c5831",
+              "comment": "Formation-energy diagram; solid octahedral and dashed split configurations."
+            },
+            {
+              "quote": "interstitials are the lowest-energy configurations in the Fermi energy ranges 0-0.39, 0.39-1.76 and 1.76-2.17 eV, respectively, as shown in Fig. 4b.",
+              "comment": "CeO2 paragraph: the preceding formulas identify +1 split, neutral split and −2 octahedral configurations, respectively.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "fluorite-sites": {
+      "label": "Fluorite lattice sites",
+      "papers": [
+        {
+          "citekey": "curetonReviewSwiftHeavy2021",
+          "label": "Cureton et al 2021 - Review of Swift Heavy Ion Irradiation Effects in CeO2",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 5: Competing Mechanisms and Non-Redox Controls/markdown_originals/Cureton et al 2021 - Review of Swift Heavy Ion Irradiation Effects in CeO2/Cureton et al 2021 - Review of Swift Heavy Ion Irradiation Effects in CeO2.md",
+          "selections": [
+            {
+              "quote": "In this phase, Ce cations arrange in a face-centered cubic array on 4a Wyckoff sites with a simple cubic substructure of oxygen anions occupying 8c sites (Figure 1).",
+              "comment": "Host crystal structure and site labels.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "bond-distortion-search": {
+      "label": "Chemically guided bond distortions",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "Specifically, we use the number of missing/additional valence electrons of the defect species to determine the number of nearest neighbour atoms to distort.",
+              "comment": "Electron counting selects how many nearest-neighbor bonds to distort.",
+              "color": "#FFF2B3"
+            },
+            {
+              "quote": "Therefore rattling was applied to all atoms in the simulation supercell.",
+              "comment": "Published all-atom rattle; the campaign implementation excludes O97 and the already distorted oxygens.",
+              "color": "#FFF2B3"
+            },
+            {
+              "quote": "In general, we found values between 0.05-0.25 Å to give good performance, and adopted 0.25 Å since it was the only distortion capable of finding the ground state",
+              "comment": "Rattle width in the published method.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "electron-count": {
+      "label": "Number of distorted neighbors",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "Specifically, we use the number of missing/additional valence electrons of the defect species to determine the number of nearest neighbour atoms to distort.",
+              "comment": "Electron counting selects how many nearest-neighbor bonds to distort.",
+              "color": "#FFF2B3"
+            },
+            {
+              "quote": "Best performance (i.e., widest range of distortions yielding the ground state) was obtained when distorting two neighbours, supporting the feature choice given that the vacancy site lacks two valence electrons relative to the original Cd atom.",
+              "comment": "Electron-count example; campaign formal-oxidation-state accounting is supplied by the linked implementation.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "distortion-range": {
+      "label": "Distortion mesh",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "While these parameters may be varied, in our work, we found a distortion range of ± 60%",
+              "comment": "The remainder of this paragraph specifies factors 0.4–1.6 and increments of 10%.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "split-bond-lengths": {
+      "label": "Split-interstitial bond lengths",
+      "papers": [
+        {
+          "citekey": "xiaoStabilityMigrationCharged2013",
+          "label": "Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2.md",
+          "selections": [
+            {
+              "table": 1,
+              "whole": true,
+              "sha256": "5cd122a2137283eb6336eea773b56ff7d9ce9b2e5c654651f36fbd2fb497978c",
+              "comment": "CeO2 columns: split interstitial distances 1.35, 1.39 and 1.40 Å for charges +1, 0 and −1."
+            }
+          ]
+        }
+      ]
+    },
+    "doubly-negative-comparison": {
+      "label": "Doubly negative split and octahedral configurations",
+      "papers": [
+        {
+          "citekey": "xiaoStabilityMigrationCharged2013",
+          "label": "Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2.md",
+          "selections": [
+            {
+              "table": 1,
+              "whole": true,
+              "sha256": "5cd122a2137283eb6336eea773b56ff7d9ce9b2e5c654651f36fbd2fb497978c",
+              "comment": "Doubly negative split O–O separation 2.35 Å; octahedral interstitial–oxygen separation 2.47 Å."
+            },
+            {
+              "image": "./images/figure-04.jpg",
+              "whole": true,
+              "sha256": "04704035fcdbd3f36b27a743fabf720a4beaaf4e5898565251eff99f544c5831",
+              "comment": "Panel b: compare doubly negative octahedral and split formation-energy lines."
+            },
+            {
+              "quote": "interstitials are the lowest-energy configurations in the Fermi energy ranges 0-0.39, 0.39-1.76 and 1.76-2.17 eV, respectively, as shown in Fig. 4b.",
+              "comment": "CeO2 paragraph: the preceding formulas identify +1 split, neutral split and −2 octahedral configurations, respectively.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "dudarev-functional": {
+      "label": "Rotationally invariant Hubbard correction",
+      "papers": [
+        {
+          "citekey": "dudarevElectronenergylossSpectraStructural1998",
+          "label": "Dudarev et al 1998 - Electron-energy-loss spectra and the structural stability of nickel oxide; An LSDA+U study",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Dudarev et al 1998 - Electron-energy-loss spectra and the structural stability of nickel oxide; An LSDA+U study/Dudarev et al 1998 - Electron-energy-loss spectra and the structural stability of nickel oxide; An LSDA+U study.md",
+          "selections": [
+            {
+              "quote": "It is a simple matter to see how Eq. (4) can be written in a form which is invariant with respect to a unitary transformation of orbitals.",
+              "comment": "The equations immediately below show U−J multiplying the density-matrix correction.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "hubbard-dependence": {
+      "label": "Dependence on Hubbard parameter and observable",
+      "papers": [
+        {
+          "citekey": "castletonTuningLDAU2007",
+          "label": "Castleton et al 2007 - Tuning LDA+U for electron localization and structure at oxygen vacancies in ceria",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Castleton et al 2007 - Tuning LDA+U for electron localization and structure at oxygen vacancies in ceria/Castleton et al 2007 - Tuning LDA+U for electron localization and structure at oxygen vacancies in ceria.md",
+          "selections": [
+            {
+              "quote": "Several quantification schemes show that the charge starts to become localized at",
+              "comment": "The following numerical clause in the abstract gives maximum localization near 5.5 eV for GGA+U.",
+              "color": "#FFF2B3"
+            }
+          ]
+        },
+        {
+          "citekey": "loschenFirstprinciplesLDAU2007",
+          "label": "Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter.md",
+          "selections": [
+            {
+              "quote": "Nevertheless, an optimum value appears to be property dependent",
+              "comment": "The optimum Hubbard parameter depends on the observable being compared.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "short-dimer-interpretation": {
+      "label": "Interpreting short O–O contacts",
+      "papers": [
+        {
+          "citekey": "keatingAnalysisIntrinsicDefects2012",
+          "label": "Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like GGA+U Approach",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like GGA+U Approach/Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like GGA+U Approach.md",
+          "selections": [
+            {
+              "quote": "However, the interstitial ion could relax from its original position toward the lattice oxygen, forming a peroxide ion, and hence no holes would be observed",
+              "comment": "The oxygen-interstitial discussion gives O–O lengths 1.45 Å for Ce-only U and 1.48 Å with an O correction.",
+              "color": "#FFF2B3"
+            },
+            {
+              "quote": "which is characteristic of a peroxide species.",
+              "comment": "Immediately preceding formula gives O–O lengths 1.45 Å (Ce-only U) and 1.48 Å (Ce and O U); the paragraph also states minimal differences between the two treatments.",
+              "color": "#FFF2B3"
+            }
+          ]
+        },
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "Rather than leading to hole localisation in the interstitial atom and/or neighbouring anions (metastable state), the defect can accommodate the charge deficiency by forming oxygen dimers, resulting in highly favourable reconstructions (Table 1).",
+              "comment": "Oxygen dimers provide an alternative to separate localized holes.",
+              "color": "#FFF2B3"
+            },
+            {
+              "quote": "which is 1.5-2.0 eV more favourable than the metastable double polaron state.",
+              "comment": "Dimerisation paragraph: immediately preceding formula gives 1.45 Å for the peroxide; the next sentence gives the additional hole, pi-star orbital and 1.31 Å example. These are oxide analogies, not present ceria calculations.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "orbital-alternatives": {
+      "label": "Multiple orbital solutions on one Ce",
+      "papers": [
+        {
+          "citekey": "allenOccupationMatrixControl2014",
+          "label": "Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U.md",
+          "selections": [
+            {
+              "quote": "with none relaxing to alternative configurations.",
+              "comment": "Bulk ceria excess-electron results in §3.2.2; multiple self-consistent 4f orbital occupations.",
+              "color": "#FFF2B3"
+            },
+            {
+              "image": "./images/88ffc107-e475-46c8-b055-4a34d5382513-15_981_901_726_566.jpg",
+              "whole": true,
+              "sha256": "0cb6fdf8c52d188d5e7c561a420d87f1a4171e4f7b15d81117545eaead13e781",
+              "comment": "Figure 8: bulk ceria orbital alternatives and their relative energies."
+            }
+          ]
+        }
+      ]
+    },
+    "structure-comparison": {
+      "label": "Structural comparison and displacement measure",
+      "papers": [
+        {
+          "citekey": "mosquera2022shakenbreak",
+          "label": "Mosquera-Lois et al 2022 - ShakeNBreak - Navigating the defect configurational landscape",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2022 - ShakeNBreak - Navigating the defect configurational landscape/Mosquera-Lois et al 2022 - ShakeNBreak - Navigating the defect configurational landscape.md",
+          "selections": [
+            {
+              "quote": "Within its analysis toolbox, ShakeNBreak includes methods to quantify structural similarity (Figure 1a), compare the defect local environments (Figure 1c,d) and analyse site- and orbital-decomposed magnetisations (Figure 1b).",
+              "comment": "Software analysis capabilities. The campaign energy and total-displacement tolerances are specified in its linked method and implemented scripts.",
+              "color": "#FFF2B3"
+            }
+          ]
+        },
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "As expected given the large energy differences, the metastable and ground state configurations also display significant structural differences, which we quantify here by summing the atomic displacements between structures which are above a 0.1 Å threshold.",
+              "comment": "Source of the 0.1 Å displacement threshold used in the sum.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "escape-local-minimum": {
+      "label": "Why sample distorted starts?",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "these initial distortions aim to escape the local energy basin in which the ideal, undistorted structure may be trapped.",
+              "comment": "Distorted starts help reach reconstructions missed by relaxation from the ideal geometry.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "xiao-method-bonds": {
+      "label": "LDA bond-length comparison",
+      "papers": [
+        {
+          "citekey": "xiaoStabilityMigrationCharged2013",
+          "label": "Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2.md",
+          "selections": [
+            {
+              "table": 1,
+              "whole": true,
+              "sha256": "5cd122a2137283eb6336eea773b56ff7d9ce9b2e5c654651f36fbd2fb497978c",
+              "comment": "Compare CeO2 positive and neutral split bond lengths, 1.35 and 1.39 Å."
+            },
+            {
+              "quote": "The exchange-correlation effects were treated by the local-density approximation (LDA) in the Ceperley-Alder parametrization [29], with spin-polarized effects considered. Structural optimizations were carried out at variable cell shape and volume",
+              "comment": "Computational details; the rest of this paragraph specifies 4×4×4 sampling and 550 eV cutoff.",
+              "color": "#FFF2B3"
+            },
+            {
+              "quote": "Consequently, the plus U correction is not considered in the subsequent calculations, and all the following results and discussions are based on standard LDA calculations.",
+              "comment": "Section 4.1 specifies which of the methods supplies the reported comparison values.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "peroxide-bond-lengths": {
+      "label": "Peroxide lengths with different Hubbard corrections",
+      "papers": [
+        {
+          "citekey": "keatingAnalysisIntrinsicDefects2012",
+          "label": "Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like GGA+U Approach",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like GGA+U Approach/Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like GGA+U Approach.md",
+          "selections": [
+            {
+              "quote": "However, the interstitial ion could relax from its original position toward the lattice oxygen, forming a peroxide ion, and hence no holes would be observed",
+              "comment": "The oxygen-interstitial discussion gives O–O lengths 1.45 Å for Ce-only U and 1.48 Å with an O correction.",
+              "color": "#FFF2B3"
+            },
+            {
+              "image": "./images/d10190c1-eb99-4892-a451-1124464de064-06_1121_663_228_266.jpg",
+              "whole": true,
+              "sha256": "aff78c108b34b5450e3ccaeb94203a5a7f569612d5075c3d4e2ce01ec86dca72",
+              "comment": "Figure 7: peroxide geometry and density of states; oxygen-interstitial text gives both Hubbard-parameter choices."
+            },
+            {
+              "quote": "which is characteristic of a peroxide species.",
+              "comment": "Immediately preceding formula gives O–O lengths 1.45 Å (Ce-only U) and 1.48 Å (Ce and O U); the paragraph also states minimal differences between the two treatments.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "antibonding-hole": {
+      "label": "Antibonding hole: main-text interpretation",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "which is 1.5-2.0 eV more favourable than the metastable double polaron state.",
+              "comment": "Dimerisation paragraph: immediately preceding formula gives 1.45 Å for the peroxide; the next sentence gives the additional hole, pi-star orbital and 1.31 Å example. These are oxide analogies, not present ceria calculations.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "neutral-peroxide": {
+      "label": "Closed-shell neutral peroxide",
+      "papers": [
+        {
+          "citekey": "keatingAnalysisIntrinsicDefects2012",
+          "label": "Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like GGA+U Approach",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like GGA+U Approach/Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like GGA+U Approach.md",
+          "selections": [
+            {
+              "quote": "However, the interstitial ion could relax from its original position toward the lattice oxygen, forming a peroxide ion, and hence no holes would be observed",
+              "comment": "The oxygen-interstitial discussion gives O–O lengths 1.45 Å for Ce-only U and 1.48 Å with an O correction.",
+              "color": "#FFF2B3"
+            },
+            {
+              "image": "./images/d10190c1-eb99-4892-a451-1124464de064-06_1121_663_228_266.jpg",
+              "whole": true,
+              "sha256": "aff78c108b34b5450e3ccaeb94203a5a7f569612d5075c3d4e2ce01ec86dca72",
+              "comment": "Figure 7: peroxide geometry and density of states; oxygen-interstitial text gives both Hubbard-parameter choices."
+            },
+            {
+              "quote": "which is characteristic of a peroxide species.",
+              "comment": "Immediately preceding formula gives O–O lengths 1.45 Å (Ce-only U) and 1.48 Å (Ce and O U); the paragraph also states minimal differences between the two treatments.",
+              "color": "#FFF2B3"
+            },
+            {
+              "quote": "Integrating these peaks gives approximately 10 electrons, suggesting occupation of a",
+              "comment": "The remainder of this sentence specifies sigma, two pi and two pi-star orbitals expected for peroxide.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "negative-charge-stability": {
+      "label": "Singly negative split interstitial in LDA",
+      "papers": [
+        {
+          "citekey": "xiaoStabilityMigrationCharged2013",
+          "label": "Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2.md",
+          "selections": [
+            {
+              "table": 1,
+              "whole": true,
+              "sha256": "5cd122a2137283eb6336eea773b56ff7d9ce9b2e5c654651f36fbd2fb497978c",
+              "comment": "CeO2 singly negative split O–O distance 1.40 Å."
+            },
+            {
+              "image": "./images/figure-04.jpg",
+              "whole": true,
+              "sha256": "04704035fcdbd3f36b27a743fabf720a4beaaf4e5898565251eff99f544c5831",
+              "comment": "Panel b: singly negative formation-energy line is never lowest."
+            },
+            {
+              "quote": "interstitials are the lowest-energy configurations in the Fermi energy ranges 0-0.39, 0.39-1.76 and 1.76-2.17 eV, respectively, as shown in Fig. 4b.",
+              "comment": "CeO2 paragraph: the preceding formulas identify +1 split, neutral split and −2 octahedral configurations, respectively.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "ce-orbital-energies": {
+      "label": "Energies of Ce orbital alternatives",
+      "papers": [
+        {
+          "citekey": "allenOccupationMatrixControl2014",
+          "label": "Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U/Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U.md",
+          "selections": [
+            {
+              "image": "./images/88ffc107-e475-46c8-b055-4a34d5382513-15_981_901_726_566.jpg",
+              "whole": true,
+              "sha256": "0cb6fdf8c52d188d5e7c561a420d87f1a4171e4f7b15d81117545eaead13e781",
+              "comment": "Figure 8: bulk ceria orbital alternatives and their relative energies."
+            },
+            {
+              "quote": "with none relaxing to alternative configurations.",
+              "comment": "Section 3.2.2 lists t2u as reference, t1u at 0.15 eV and a2u at 0.23 eV; unrestricted rotated orbital 0.03 eV lower.",
+              "color": "#FFF2B3"
+            },
+            {
+              "quote": "This additional term is only applied to bulk",
+              "comment": "Methods paragraph: U=5.0 eV on Ce 4f and additional U=5.5 eV on O 2p for bulk ceria.",
+              "color": "#FFF2B3"
+            },
+            {
+              "quote": "which has a relative energy of 0.23 eV",
+              "comment": "The preceding clause gives t1u at 0.15 eV; this clause is a2u at 0.23 eV. The next sentences give the unconstrained rotated orbital 0.03 eV below t2u.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "negative-octahedron": {
+      "label": "Expansion around doubly negative interstitial",
+      "papers": [
+        {
+          "citekey": "xiaoStabilityMigrationCharged2013",
+          "label": "Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2.md",
+          "selections": [
+            {
+              "table": 1,
+              "whole": true,
+              "sha256": "5cd122a2137283eb6336eea773b56ff7d9ce9b2e5c654651f36fbd2fb497978c",
+              "comment": "CeO2 doubly negative octahedral interstitial–oxygen distance 2.47 Å; surrounding text discusses electrostatic repulsion."
+            },
+            {
+              "quote": "will push the nearest lattice oxygens away due to the repulsive interaction",
+              "comment": "Mechanism in section 4.2. The neighboring charge-trend sentence conflicts with Table 1; the manuscript uses only this mechanism and the tabulated distance.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "screen-to-final": {
+      "label": "Dense-mesh relaxation after structure searching",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "Following the Γ-point structure searching calculations, the defect ground state and metastable geometry (obtained by relaxing the high-symmetry, undistorted structure) were optimised with denser reciprocal space sampling (converged within 3 meV/atom), from which the final energy differences were obtained.",
+              "comment": "Comparison of separately reoptimized structures; computational details also state HSE and SOC for ceria.",
+              "color": "#FFF2B3"
+            }
+          ]
+        }
+      ]
+    },
+    "antibonding-hole-supplement": {
+      "label": "Antibonding hole: supplementary COHP",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al 2023 - Supporting Information - Identifying the ground state structures of point defects in solids",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Supporting Information - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "image": "supplementary-images/supplementary-figure-14.png",
+              "whole": true,
+              "sha256": "a666140d69676adc3ea3dbc0113700e98942a8069764a699b1042ecff4448111",
+              "comment": "Supplementary Figure 14: COHP evidence for the hole in the antibonding peroxide orbital in In2O3; this is an analogy for ceria."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
