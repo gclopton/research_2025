@@ -1,0 +1,298 @@
+{
+  "version": 1,
+  "questions": [],
+  "comments": [
+    {
+      "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2.md",
+      "quote": "technologically important",
+      "before": "INTRODUCTION\n\nCeria ( $\\mathrm{CeO}_{2}$ ) is a ",
+      "after": " rare-earth oxide with broad applications in sev",
+      "anchors": [
+        {
+          "id": "c733933f-5ca2-4d5f-b771-8a5f4a804eb9",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2.md",
+          "quote": "technologically important",
+          "before": "INTRODUCTION\n\nCeria ( $\\mathrm{CeO}_{2}$ ) is a ",
+          "after": " rare-earth oxide with broad applications in sev",
+          "renderedQuote": "technologically important",
+          "renderedBefore": "Ceria (  ) is a ",
+          "renderedAfter": " rare-earth oxide with broad applications in sev",
+          "kind": "text"
+        }
+      ],
+      "id": "4be22fbc-9c07-4027-b4f7-2d9efd0cddc0",
+      "comment": "1. **Catalysis**\n    1. heterogeneous catalysis\n    2. solid oxide fuel cells (SOFCs)\n    3. important catalytic processes:\n        1. slective methane oxidation to methanol\n        2. $CO_{2}$ conversion reactions\n        3. hydrogen reduction through water splitting",
+      "color": "#c94f86",
+      "darkColor": "#f3a1c5",
+      "intent": "Main takeaway",
+      "updated": "2026-10-14T14:07:39.033Z",
+      "created": "2026-10-13T23:37:53.414Z",
+      "resolved": false
+    },
+    {
+      "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2.md",
+      "quote": "Kröger-Vink notation",
+      "before": "on-Frenkel pair. ${ }^{16}$ Here, we employ the ",
+      "after": " ${ }^{17}$ for a point defect $\\mathrm{M}_{\\mat",
+      "anchors": [
+        {
+          "id": "92fb6722-c159-47ba-aee6-be8ce13ac32f",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2.md",
+          "quote": "Kröger-Vink notation",
+          "before": "on-Frenkel pair. ${ }^{16}$ Here, we employ the ",
+          "after": " ${ }^{17}$ for a point defect $\\mathrm{M}_{\\mat",
+          "renderedQuote": "Kröger-Vink notation",
+          "renderedBefore": "orm an\nanion-Frenkel pair.  Here, we employ the ",
+          "renderedAfter": "  for a point defect , in which M is the defect ",
+          "kind": "text"
+        }
+      ],
+      "id": "247ac250-1e91-42a0-97fe-7b2ae0bafe3a",
+      "comment": "\n- sdf\n- \n\n",
+      "intent": "Indigo",
+      "color": "#5146a3",
+      "darkColor": "#8c8cff",
+      "markStyle": "highlight",
+      "updated": "2026-10-14T04:02:36.255Z",
+      "resolved": false
+    }
+  ],
+  "palette": [
+    {
+      "color": "#e2b714",
+      "darkColor": "#ffe066",
+      "meaning": "Definitions"
+    },
+    {
+      "color": "#398c50",
+      "darkColor": "#82d99b",
+      "meaning": "Examples / worked problems"
+    },
+    {
+      "color": "#2675bd",
+      "darkColor": "#8bc9ff",
+      "meaning": "Important mathematics"
+    },
+    {
+      "color": "#757575",
+      "darkColor": "#bdbdbd",
+      "meaning": "Research discrepancy"
+    },
+    {
+      "color": "#c94f86",
+      "darkColor": "#f3a1c5",
+      "meaning": "Main takeaway"
+    },
+    {
+      "color": "#b83b43",
+      "darkColor": "#ff6b6b",
+      "meaning": "Red"
+    },
+    {
+      "color": "#b56720",
+      "darkColor": "#ffb86b",
+      "meaning": "Orange"
+    },
+    {
+      "color": "#5146a3",
+      "darkColor": "#8c8cff",
+      "meaning": ""
+    },
+    {
+      "color": "#883da8",
+      "darkColor": "#d78cf5",
+      "meaning": "Violet"
+    }
+  ],
+  "paletteSpectrumVersion": 1,
+  "palettes": {
+    "highlight": [
+      {
+        "color": "#e2b714",
+        "darkColor": "#ffe066",
+        "meaning": "Definitions"
+      },
+      {
+        "color": "#398c50",
+        "darkColor": "#82d99b",
+        "meaning": "Examples / worked problems"
+      },
+      {
+        "color": "#2675bd",
+        "darkColor": "#8bc9ff",
+        "meaning": "Important mathematics"
+      },
+      {
+        "color": "#757575",
+        "darkColor": "#bdbdbd",
+        "meaning": "Research discrepancy"
+      },
+      {
+        "color": "#c94f86",
+        "darkColor": "#f3a1c5",
+        "meaning": "Main takeaway"
+      },
+      {
+        "color": "#b83b43",
+        "darkColor": "#ff6b6b",
+        "meaning": "Red"
+      },
+      {
+        "color": "#b56720",
+        "darkColor": "#ffb86b",
+        "meaning": "Orange"
+      },
+      {
+        "color": "#5146a3",
+        "darkColor": "#8c8cff",
+        "meaning": ""
+      },
+      {
+        "color": "#883da8",
+        "darkColor": "#d78cf5",
+        "meaning": "Violet"
+      }
+    ],
+    "underline": [
+      {
+        "color": "#b83b43",
+        "darkColor": "#ff6b6b",
+        "meaning": "Red"
+      },
+      {
+        "color": "#b56720",
+        "darkColor": "#ffb86b",
+        "meaning": "Orange"
+      },
+      {
+        "color": "#e2b714",
+        "darkColor": "#ffe066",
+        "meaning": "Yellow"
+      },
+      {
+        "color": "#398c50",
+        "darkColor": "#82d99b",
+        "meaning": "Green"
+      },
+      {
+        "color": "#2675bd",
+        "darkColor": "#8bc9ff",
+        "meaning": "Blue"
+      },
+      {
+        "color": "#5146a3",
+        "darkColor": "#8c8cff",
+        "meaning": "Indigo"
+      },
+      {
+        "color": "#883da8",
+        "darkColor": "#d78cf5",
+        "meaning": "Violet"
+      },
+      {
+        "color": "#c94f86",
+        "darkColor": "#f3a1c5",
+        "meaning": "Pink"
+      },
+      {
+        "color": "#757575",
+        "darkColor": "#bdbdbd",
+        "meaning": "Grey"
+      }
+    ],
+    "text": [
+      {
+        "color": "#a52a34",
+        "darkColor": "#ff6b6b",
+        "meaning": "Red"
+      },
+      {
+        "color": "#995000",
+        "darkColor": "#ffb86b",
+        "meaning": "Orange"
+      },
+      {
+        "color": "#806400",
+        "darkColor": "#ffe066",
+        "meaning": "Yellow"
+      },
+      {
+        "color": "#286c3c",
+        "darkColor": "#82d99b",
+        "meaning": "Green"
+      },
+      {
+        "color": "#285c8d",
+        "darkColor": "#8bc9ff",
+        "meaning": "Blue"
+      },
+      {
+        "color": "#5146a3",
+        "darkColor": "#8c8cff",
+        "meaning": "Indigo"
+      },
+      {
+        "color": "#883da8",
+        "darkColor": "#d78cf5",
+        "meaning": "Violet"
+      },
+      {
+        "color": "#a33668",
+        "darkColor": "#f3a1c5",
+        "meaning": "Pink"
+      },
+      {
+        "color": "#555555",
+        "darkColor": "#bdbdbd",
+        "meaning": "Grey"
+      }
+    ],
+    "sticky": [
+      {
+        "color": "#b83b43",
+        "darkColor": "#ff6b6b",
+        "meaning": "Red"
+      },
+      {
+        "color": "#b56720",
+        "darkColor": "#ffb86b",
+        "meaning": "Orange"
+      },
+      {
+        "color": "#e2b714",
+        "darkColor": "#ffe066",
+        "meaning": "Yellow"
+      },
+      {
+        "color": "#398c50",
+        "darkColor": "#82d99b",
+        "meaning": "Green"
+      },
+      {
+        "color": "#2675bd",
+        "darkColor": "#8bc9ff",
+        "meaning": "Blue"
+      },
+      {
+        "color": "#5146a3",
+        "darkColor": "#8c8cff",
+        "meaning": "Indigo"
+      },
+      {
+        "color": "#883da8",
+        "darkColor": "#d78cf5",
+        "meaning": "Violet"
+      },
+      {
+        "color": "#c94f86",
+        "darkColor": "#f3a1c5",
+        "meaning": "Pink"
+      },
+      {
+        "color": "#757575",
+        "darkColor": "#bdbdbd",
+        "meaning": "Grey"
+      }
+    ]
+  }
+}

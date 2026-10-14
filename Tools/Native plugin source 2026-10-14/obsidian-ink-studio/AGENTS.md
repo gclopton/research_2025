@@ -1,0 +1,3 @@
+# Ink Studio development
+
+Develop only in this repository and `/Users/gradyclopton/ObsidianVaults/ink_studio_lab`. Existing research vaults are read-only reference sources. Keep personal plugin settings, credentials, third-party plugin binaries and real notes out of Git. Use synthetic fixtures. Do not overwrite user-modified lab notes. Build one accepted milestone at a time; keep SPEC.md and VERIFICATION.md current. Do not report installation as evidence of runtime compatibility. Preserve native Markdown and editable assets. Do not create automatic cloud calls or enable external services as part of setup.

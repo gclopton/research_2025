@@ -1,0 +1,23 @@
+{
+  "name": "obsidian-code-links",
+  "version": "0.4.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc --noEmit && node build.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "esbuild": "0.25.0",
+    "jsdom": "^29.1.1",
+    "obsidian": "1.13.1",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@codemirror/lang-cpp": "6.0.3",
+    "@codemirror/lang-javascript": "6.2.3",
+    "@codemirror/lang-python": "6.2.1",
+    "@codemirror/language": "6.11.3",
+    "@codemirror/state": "6.5.0",
+    "@codemirror/view": "6.38.6"
+  }
+}

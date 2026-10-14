@@ -619,3 +619,14 @@ body.theme-dark .study-comment-popover{border-left-color:var(--critique-dark)}
 .study-comment-popover>.markdown-rendered>:last-child{margin-bottom:0}
 
 .study-margin-note.is-selected{background:color-mix(in srgb,var(--interactive-accent) 9%,transparent)}
+
+/* Margin live formatting preserves native source and reveals selected tokens. */
+.study-live-strong{font-weight:700}
+.study-live-em{font-style:italic}
+.study-live-code{font-family:var(--font-monospace);background:var(--background-secondary);border-radius:3px}
+.study-live-link{color:var(--link-color);text-decoration:underline}
+.study-live-heading{font-size:1.15em;font-weight:700}
+.study-live-list-mark{color:var(--text-muted)}
+.study-written-input>.study-written-preview[hidden],.study-written-input>.study-written-surface[hidden]{display:none!important}
+.study-written-preview{min-height:2em;cursor:text}
+.study-live-strike{text-decoration:line-through}

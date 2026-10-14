@@ -1,0 +1,1799 @@
+[
+  {
+    "section": "1.1",
+    "definition": {
+      "version": 1,
+      "id": "fk-particle",
+      "title": "Continuum particle",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 1.1",
+        "Continuum particle"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "Small relative to field-variation lengths."
+        },
+        {
+          "id": "o1",
+          "text": "Large relative to molecular spacing."
+        },
+        {
+          "id": "o2",
+          "text": "Exactly one molecule."
+        },
+        {
+          "id": "o3",
+          "text": "Always stationary in space."
+        }
+      ],
+      "correct": [
+        "o0",
+        "o1"
+      ],
+      "shuffle": true
+    },
+    "prompt": "Which two requirements make a fluid particle suitable for continuum mechanics? Select both.",
+    "explanation": "A continuum particle carries meaningful averages while remaining locally representative."
+  },
+  {
+    "section": "1.1",
+    "definition": {
+      "version": 1,
+      "id": "fk-label",
+      "title": "What a particle label holds fixed",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 1.1",
+        "What a particle label holds fixed"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "The material label $\\mathbf X$."
+        },
+        {
+          "id": "o1",
+          "text": "The current position $\\mathbf r$."
+        },
+        {
+          "id": "o2",
+          "text": "The velocity."
+        },
+        {
+          "id": "o3",
+          "text": "The observation time."
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "In $\\mathbf r(\\mathbf X,t)$, what remains fixed when computing the velocity of one particle?",
+    "explanation": ""
+  },
+  {
+    "section": "1.1",
+    "definition": {
+      "version": 1,
+      "id": "fk-map",
+      "title": "Convert a motion map to a velocity field",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 1.1",
+        "Convert a motion map to a velocity field"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "$u_L=aXe^{at}$, $X=xe^{-at}$, so $u_E(x,t)=ax$.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Differentiates at fixed $X$ to obtain $aXe^{at}$."
+          },
+          {
+            "id": "r1",
+            "text": "Uses $X=xe^{-at}$."
+          },
+          {
+            "id": "r2",
+            "text": "Obtains $u_E=ax$ without treating $X$ as the current position."
+          }
+        ]
+      }
+    },
+    "prompt": "For $x=Xe^{at}$ with constant $a$, find the Lagrangian velocity, invert the motion map, and obtain the Eulerian velocity.",
+    "explanation": ""
+  },
+  {
+    "section": "1.2",
+    "definition": {
+      "version": 1,
+      "id": "fk-observer",
+      "title": "Stationary and moving observers",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 1.2",
+        "Stationary and moving observers"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "$\\partial T/\\partial t$ at $x_0$."
+        },
+        {
+          "id": "o1",
+          "text": "$DT/Dt$ along a particle."
+        },
+        {
+          "id": "o2",
+          "text": "$u\\,\\partial T/\\partial x$ only."
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "A thermometer fixed at $x_0$ records which derivative of a temperature field $T(x,t)$?",
+    "explanation": "A stationary probe holds position fixed."
+  },
+  {
+    "section": "1.2",
+    "definition": {
+      "version": 1,
+      "id": "fk-steady",
+      "title": "Steady does not mean unchanged for a particle",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 1.2",
+        "Steady does not mean unchanged for a particle"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "The field is steady because $\\partial T/\\partial t=0$. A particle experiences $DT/Dt=Ub$, which need not vanish.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Distinguishes fixed-position steadiness from a particle rate."
+          },
+          {
+            "id": "r1",
+            "text": "Computes $Ub$ with its sign."
+          }
+        ]
+      }
+    },
+    "prompt": "Let $T(x)=T_0+bx$ and $u=U$ with constant nonzero $b,U$. Is the temperature field steady? What temperature rate does a particle experience?",
+    "explanation": ""
+  },
+  {
+    "section": "1.3",
+    "definition": {
+      "version": 1,
+      "id": "fk-system",
+      "title": "System versus control volume",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 1.3",
+        "System versus control volume"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "A system retains the same particles; a control volume may admit fluid across its boundary."
+        },
+        {
+          "id": "o1",
+          "text": "Every control volume must be stationary."
+        },
+        {
+          "id": "o2",
+          "text": "A system boundary must have a fixed shape."
+        },
+        {
+          "id": "o3",
+          "text": "A moving control volume is automatically a system."
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "Which statement is correct?",
+    "explanation": ""
+  },
+  {
+    "section": "1.3",
+    "definition": {
+      "version": 1,
+      "id": "fk-boundary",
+      "title": "Moving boundary is not enough",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 1.3",
+        "Moving boundary is not enough"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "The fluid must have zero normal velocity relative to the boundary: $(\\mathbf V-\\mathbf V_b)\\cdot\\mathbf n=0$. Merely moving the boundary does not ensure it follows the same fluid.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "States no mass crosses a system boundary."
+          },
+          {
+            "id": "r1",
+            "text": "Describes matching normal boundary and fluid velocities; does not require zero tangential slip."
+          }
+        ]
+      }
+    },
+    "prompt": "Explain why a moving control volume is not necessarily a material system. State the additional condition needed.",
+    "explanation": ""
+  },
+  {
+    "section": "2.1",
+    "definition": {
+      "version": 1,
+      "id": "fk-streamline",
+      "title": "An instantaneous flow picture",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 2.1",
+        "An instantaneous flow picture"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "Streamline"
+        },
+        {
+          "id": "o1",
+          "text": "Pathline"
+        },
+        {
+          "id": "o2",
+          "text": "Streakline"
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "A curve is tangent everywhere to the velocity at one fixed observation time. What is it?",
+    "explanation": ""
+  },
+  {
+    "section": "2.1",
+    "definition": {
+      "version": 1,
+      "id": "fk-slope",
+      "title": "Streamline slope",
+      "type": "blank",
+      "concepts": [
+        "Kinematics 2.1",
+        "Streamline slope"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "answers": [
+        {
+          "id": "a0",
+          "accepted": [
+            "3"
+          ]
+        }
+      ]
+    },
+    "prompt": "For $u=2$ and $v=x$ at the observation time, at $x=6$ the streamline slope $dy/dx$ is {{blank:a0}}. Enter a number.",
+    "explanation": "$dy/dx=v/u=6/2=3$."
+  },
+  {
+    "section": "2.2",
+    "definition": {
+      "version": 1,
+      "id": "fk-pathline",
+      "title": "One marked particle",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 2.2",
+        "One marked particle"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "Pathline"
+        },
+        {
+          "id": "o1",
+          "text": "Streamline in every unsteady flow"
+        },
+        {
+          "id": "o2",
+          "text": "Streakline from continuous releases"
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "A camera records the successive positions of one marked particle. Which curve does it record?",
+    "explanation": ""
+  },
+  {
+    "section": "2.3",
+    "definition": {
+      "version": 1,
+      "id": "fk-streakline",
+      "title": "Continuous dye release",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 2.3",
+        "Continuous dye release"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "Streakline"
+        },
+        {
+          "id": "o1",
+          "text": "A single particle pathline"
+        },
+        {
+          "id": "o2",
+          "text": "A streamline in every unsteady flow"
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "A photograph shows all particles injected continuously at a fixed nozzle, at their positions at one instant. Which curve is visible?",
+    "explanation": ""
+  },
+  {
+    "section": "2.4",
+    "definition": {
+      "version": 1,
+      "id": "fk-release",
+      "title": "Release time versus observation time",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 2.4",
+        "Release time versus observation time"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "For one pathline fix $\\tau$ and vary $t$. For a streakline fix observation time $t_*$ and vary release time $\\tau\\le t_*$.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Correct fixed and varying parameters for the pathline."
+          },
+          {
+            "id": "r1",
+            "text": "Correct fixed and varying parameters for the streakline."
+          }
+        ]
+      }
+    },
+    "prompt": "For $\\mathbf r(t;\\tau)$ describing particles released at a fixed nozzle at time $\\tau$, explain what is held fixed and what varies to construct a pathline and a streakline.",
+    "explanation": ""
+  },
+  {
+    "section": "2.4",
+    "definition": {
+      "version": 1,
+      "id": "fk-coincide",
+      "title": "When flow curves coincide",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 2.4",
+        "When flow curves coincide"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "The three curves through the same point lie on the same streamline (over their traced portions)."
+        },
+        {
+          "id": "o1",
+          "text": "They coincide in every unsteady flow."
+        },
+        {
+          "id": "o2",
+          "text": "A steady field forces every particle to remain at rest."
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "Under a steady smooth velocity field with unique trajectories, which statement holds?",
+    "explanation": ""
+  },
+  {
+    "section": "2.4",
+    "definition": {
+      "version": 1,
+      "id": "fk-unsteady-curves",
+      "title": "Construct two curves in unsteady flow",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 2.4",
+        "Construct two curves in unsteady flow"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "The streamline is $y=t_*x$ because time is fixed while integrating $dy/dx=t_*$. The pathline has $x=t,\\ y=t^2/2$, hence $y=x^2/2$ for $t\\ge0$.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Holds observation time fixed for streamline slope."
+          },
+          {
+            "id": "r1",
+            "text": "Solves both particle ODEs with the initial condition."
+          },
+          {
+            "id": "r2",
+            "text": "Distinguishes the straight line and parabola."
+          }
+        ]
+      }
+    },
+    "prompt": "In nondimensional variables let $u=1,\\ v=t$. Find the streamline through the origin at time $t_*$ and the pathline of the particle at the origin at $t=0$.",
+    "explanation": ""
+  },
+  {
+    "section": "3",
+    "definition": {
+      "version": 1,
+      "id": "fk-chain",
+      "title": "Derive the material derivative",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 3",
+        "Derive the material derivative"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "$Df/Dt=\\partial_t f+\\dot x\\,\\partial_xf+\\dot y\\,\\partial_yf+\\dot z\\,\\partial_zf=\\partial_t f+u\\partial_xf+v\\partial_yf+w\\partial_zf$.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Applies the chain rule along the trajectory."
+          },
+          {
+            "id": "r1",
+            "text": "Identifies coordinate rates as local velocity components."
+          },
+          {
+            "id": "r2",
+            "text": "Includes both local and advective terms."
+          }
+        ]
+      }
+    },
+    "prompt": "Starting with $f(\\mathbf r(\\mathbf X,t),t)$ at fixed $\\mathbf X$, derive the Eulerian scalar material derivative.",
+    "explanation": ""
+  },
+  {
+    "section": "3.1",
+    "definition": {
+      "version": 1,
+      "id": "fk-accel-map",
+      "title": "Acceleration from a steady velocity field",
+      "type": "blank",
+      "concepts": [
+        "Kinematics 3.1",
+        "Acceleration from a steady velocity field"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "answers": [
+        {
+          "id": "a0",
+          "accepted": [
+            "12"
+          ]
+        }
+      ]
+    },
+    "prompt": "For $u=ax$ with constant $a=2\\ \\mathrm{s}^{-1}$, at $x=3\\ \\mathrm m$ the particle acceleration is {{blank:a0}} $\\mathrm{m/s^2}$. Enter a number.",
+    "explanation": "$Du/Dt=u\\,\\partial_xu=a^2x=12$. The local acceleration is zero."
+  },
+  {
+    "section": "3.2",
+    "definition": {
+      "version": 1,
+      "id": "fk-zero-local",
+      "title": "What vanishes in steady flow",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 3.2",
+        "What vanishes in steady flow"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "Local acceleration."
+        },
+        {
+          "id": "o1",
+          "text": "Convective acceleration."
+        },
+        {
+          "id": "o2",
+          "text": "Total acceleration."
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "Steadiness guarantees that which acceleration term vanishes?",
+    "explanation": ""
+  },
+  {
+    "section": "3.2",
+    "definition": {
+      "version": 1,
+      "id": "fk-material-value",
+      "title": "Evaluate local and convective changes",
+      "type": "blank",
+      "concepts": [
+        "Kinematics 3.2",
+        "Evaluate local and convective changes"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "answers": [
+        {
+          "id": "a0",
+          "accepted": [
+            "1"
+          ]
+        },
+        {
+          "id": "a1",
+          "accepted": [
+            "12"
+          ]
+        },
+        {
+          "id": "a2",
+          "accepted": [
+            "13"
+          ]
+        }
+      ]
+    },
+    "prompt": "In nondimensional variables $f=x^2+t$ and $u=3$. At $x=2$, $\\partial_t f=$ {{blank:a0}}, $u\\partial_x f=$ {{blank:a1}}, and $Df/Dt=$ {{blank:a2}}. Enter numbers.",
+    "explanation": "The local rate is 1; advection gives $3(2x)=12$; their sum is 13."
+  },
+  {
+    "section": "3.2",
+    "definition": {
+      "version": 1,
+      "id": "fk-vector",
+      "title": "Convective acceleration is a vector",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 3.2",
+        "Convective acceleration is a vector"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "$\\partial_t\\mathbf V=0$ and $(\\mathbf V\\cdot\\nabla)\\mathbf V=(-\\Omega^2x,-\\Omega^2y,0)$. Speed stays constant along a circular path while direction changes.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Computes zero local acceleration."
+          },
+          {
+            "id": "r1",
+            "text": "Computes both centripetal components with negative signs."
+          },
+          {
+            "id": "r2",
+            "text": "Distinguishes constant speed from constant velocity."
+          }
+        ]
+      }
+    },
+    "prompt": "For $\\mathbf V=(-\\Omega y,\\Omega x,0)$ with constant $\\Omega$, compute the local and convective accelerations. Does constant particle speed imply zero acceleration?",
+    "explanation": ""
+  },
+  {
+    "section": "3.3",
+    "definition": {
+      "version": 1,
+      "id": "fk-nozzle",
+      "title": "Steady accelerating nozzle flow",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 3.3",
+        "Steady accelerating nozzle flow"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "Its velocity changes as it moves through spatially varying flow."
+        },
+        {
+          "id": "o1",
+          "text": "Steady flow always has nonzero local acceleration."
+        },
+        {
+          "id": "o2",
+          "text": "The particle label changes with position."
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "In steady incompressible flow through a narrowing tube, why can a particle accelerate?",
+    "explanation": ""
+  },
+  {
+    "section": "3.3",
+    "definition": {
+      "version": 1,
+      "id": "fk-flow-rate",
+      "title": "Area and mean speed",
+      "type": "blank",
+      "concepts": [
+        "Kinematics 3.3",
+        "Area and mean speed"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "answers": [
+        {
+          "id": "a0",
+          "accepted": [
+            "4"
+          ]
+        }
+      ]
+    },
+    "prompt": "A stationary section carries $Q=0.12\\ \\mathrm{m^3/s}$ through area $A=0.03\\ \\mathrm{m^2}$. The mean normal speed is {{blank:a0}} $\\mathrm{m/s}$.",
+    "explanation": "$\\bar u=Q/A=4\\ \\mathrm{m/s}$."
+  },
+  {
+    "section": "3.3",
+    "definition": {
+      "version": 1,
+      "id": "fk-normal-flux",
+      "title": "Which velocity transports volume?",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 3.3",
+        "Which velocity transports volume?"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "Only velocity through the surface transports volume across it. Tangential motion remains along it. A negative integral means net transport opposite the chosen normal.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Explains why tangential velocity contributes no through-surface flux."
+          },
+          {
+            "id": "r1",
+            "text": "Relates the sign to the selected normal."
+          }
+        ]
+      }
+    },
+    "prompt": "Explain why $\\int_A\\mathbf V\\cdot\\mathbf n\\,dA$ uses the normal component. What does a negative result mean?",
+    "explanation": ""
+  },
+  {
+    "section": "4",
+    "definition": {
+      "version": 1,
+      "id": "fk-material",
+      "title": "What makes an element material?",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 4",
+        "What makes an element material?"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "It follows the same particles."
+        },
+        {
+          "id": "o1",
+          "text": "It always retains its original shape."
+        },
+        {
+          "id": "o2",
+          "text": "It is fixed in laboratory coordinates."
+        },
+        {
+          "id": "o3",
+          "text": "It always has zero vorticity."
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "Which feature defines a material line or volume?",
+    "explanation": ""
+  },
+  {
+    "section": "4",
+    "definition": {
+      "version": 1,
+      "id": "fk-motions",
+      "title": "Distinguish the four local motions",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 4",
+        "Distinguish the four local motions"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "Translation changes position only; rigid rotation changes orientation while preserving lengths and angles; linear deformation changes material-line lengths; angular deformation changes included angles.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Correct translation and rigid-rotation distinction."
+          },
+          {
+            "id": "r1",
+            "text": "Correct length versus angle deformation distinction."
+          }
+        ]
+      }
+    },
+    "prompt": "Describe what changes and what is preserved in translation, rigid rotation, linear deformation, and angular deformation.",
+    "explanation": ""
+  },
+  {
+    "section": "4.1.1",
+    "definition": {
+      "version": 1,
+      "id": "fk-length",
+      "title": "Stretching from unequal face velocities",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 4.1.1",
+        "Stretching from unequal face velocities"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "$D\\ell/Dt=u(x+\\Delta x)-u(x)$. Dividing by $\\Delta x$ and taking its local limit gives $\\partial u/\\partial x$. Equal added velocities cancel.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Uses the difference of face velocities."
+          },
+          {
+            "id": "r1",
+            "text": "Normalizes by length and takes the local limit."
+          },
+          {
+            "id": "r2",
+            "text": "Explains translation cancellation."
+          }
+        ]
+      }
+    },
+    "prompt": "Faces separated by $\\Delta x$ move with $u(x)$ and $u(x+\\Delta x)$. Derive the local fractional length rate and explain cancellation of common translation.",
+    "explanation": ""
+  },
+  {
+    "section": "4.1.1",
+    "definition": {
+      "version": 1,
+      "id": "fk-normal",
+      "title": "Sign and units of normal strain",
+      "type": "blank",
+      "concepts": [
+        "Kinematics 4.1.1",
+        "Sign and units of normal strain"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "answers": [
+        {
+          "id": "a0",
+          "accepted": [
+            "-3"
+          ]
+        },
+        {
+          "id": "a1",
+          "accepted": [
+            "contraction",
+            "compression",
+            "shortening"
+          ]
+        }
+      ]
+    },
+    "prompt": "Let $u=-3x$ with $x$ in metres and $u$ in metres per second. The normal strain rate is {{blank:a0}} $\\mathrm{s^{-1}}$. The material line undergoes {{blank:a1}}.",
+    "explanation": "$\\partial_xu=-3\\ \\mathrm{s^{-1}}$, so lines along $x$ shorten."
+  },
+  {
+    "section": "4.1.2",
+    "definition": {
+      "version": 1,
+      "id": "fk-divergence",
+      "title": "Compute volume change",
+      "type": "blank",
+      "concepts": [
+        "Kinematics 4.1.2",
+        "Compute volume change"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "answers": [
+        {
+          "id": "a0",
+          "accepted": [
+            "4"
+          ]
+        },
+        {
+          "id": "a1",
+          "accepted": [
+            "2"
+          ]
+        }
+      ]
+    },
+    "prompt": "For $u=2x,\\ v=-y,\\ w=3z$ in SI units, $\\nabla\\cdot\\mathbf V=$ {{blank:a0}} $\\mathrm{s^{-1}}$. A tiny element of current volume $0.5\\ \\mathrm{m^3}$ has $D\\mathcal V/Dt=$ {{blank:a1}} $\\mathrm{m^3/s}$.",
+    "explanation": "The trace is $2-1+3=4$; multiply by current volume to obtain 2."
+  },
+  {
+    "section": "4.1.2",
+    "definition": {
+      "version": 1,
+      "id": "fk-incompressible",
+      "title": "Volume-preserving does not mean rigid",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 4.1.2",
+        "Volume-preserving does not mean rigid"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "Volume preserving but deforming."
+        },
+        {
+          "id": "o1",
+          "text": "Rigid rotation with no deformation."
+        },
+        {
+          "id": "o2",
+          "text": "Volume expanding at rate $2a$."
+        },
+        {
+          "id": "o3",
+          "text": "Stationary fluid."
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "For $u=ax,\\ v=-ay,\\ w=0$ with $a\\ne0$, which description applies?",
+    "explanation": "The divergence is $a-a=0$, but the normal strain rates are nonzero."
+  },
+  {
+    "section": "4.1.2",
+    "definition": {
+      "version": 1,
+      "id": "fk-determinant",
+      "title": "Why the trace controls volume",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 4.1.2",
+        "Why the trace controls volume"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "The local map multiplies volume by $\\det(I+L\\Delta t)=1+\\operatorname{tr}(L)\\Delta t+O(\\Delta t^2)$. Subtract 1, divide by $\\Delta t$, and take the limit to obtain $\\operatorname{tr}(L)=\\nabla\\cdot\\mathbf V$.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Identifies the determinant as volume multiplier."
+          },
+          {
+            "id": "r1",
+            "text": "Uses its first-order trace expansion."
+          },
+          {
+            "id": "r2",
+            "text": "Takes the fractional-rate limit."
+          }
+        ]
+      }
+    },
+    "prompt": "Explain how $d\\mathbf r(t+\\Delta t)=(I+L\\Delta t)d\\mathbf r(t)+O(\\Delta t^2)$ leads to the fractional volume rate.",
+    "explanation": ""
+  },
+  {
+    "section": "4.2.1",
+    "definition": {
+      "version": 1,
+      "id": "fk-turns",
+      "title": "Signed material-line turns",
+      "type": "blank",
+      "concepts": [
+        "Kinematics 4.2.1",
+        "Signed material-line turns"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "answers": [
+        {
+          "id": "a0",
+          "accepted": [
+            "4"
+          ]
+        },
+        {
+          "id": "a1",
+          "accepted": [
+            "-2"
+          ]
+        }
+      ]
+    },
+    "prompt": "At a point $\\partial v/\\partial x=4$ and $\\partial u/\\partial y=2$, both in $\\mathrm{s^{-1}}$. Using counterclockwise-positive rates for both lines, $r_x=$ {{blank:a0}} and $r_y=$ {{blank:a1}} $\\mathrm{s^{-1}}$.",
+    "explanation": "The +x line turns at $\\partial_xv$, while the +y line has counterclockwise rate $-\\partial_yu$."
+  },
+  {
+    "section": "4.2.2",
+    "definition": {
+      "version": 1,
+      "id": "fk-spin",
+      "title": "Mean spin and vorticity",
+      "type": "blank",
+      "concepts": [
+        "Kinematics 4.2.2",
+        "Mean spin and vorticity"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "answers": [
+        {
+          "id": "a0",
+          "accepted": [
+            "1"
+          ]
+        },
+        {
+          "id": "a1",
+          "accepted": [
+            "2"
+          ]
+        }
+      ]
+    },
+    "prompt": "Using $\\partial v/\\partial x=4$ and $\\partial u/\\partial y=2$ in $\\mathrm{s^{-1}}$, the spin about +z is {{blank:a0}} $\\mathrm{s^{-1}}$ and the z-vorticity is {{blank:a1}} $\\mathrm{s^{-1}}$.",
+    "explanation": "Spin is $(4-2)/2=1$; vorticity is twice spin."
+  },
+  {
+    "section": "4.2.2",
+    "definition": {
+      "version": 1,
+      "id": "fk-zero-spin",
+      "title": "Zero spin with deforming lines",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 4.2.2",
+        "Zero spin with deforming lines"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "Pure shear with zero local spin."
+        },
+        {
+          "id": "o1",
+          "text": "Rigid rotation with zero shear."
+        },
+        {
+          "id": "o2",
+          "text": "Uniform translation."
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "If $\\partial v/\\partial x=\\partial u/\\partial y=b\\ne0$ and all other gradients vanish, what occurs?",
+    "explanation": "Their difference vanishes, while their sum is $2b$."
+  },
+  {
+    "section": "4.2.3",
+    "definition": {
+      "version": 1,
+      "id": "fk-convention",
+      "title": "Rotation tensor sign convention",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 4.2.3",
+        "Rotation tensor sign convention"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "$L=\\dot\\varepsilon-\\omega$."
+        },
+        {
+          "id": "o1",
+          "text": "$L=\\dot\\varepsilon+\\omega$."
+        },
+        {
+          "id": "o2",
+          "text": "$L=2\\dot\\varepsilon+\\omega$."
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "This chapter defines $\\omega_{ij}=(L_{ji}-L_{ij})/2$. Which decomposition is consistent?",
+    "explanation": "Adding $(L+L^T)/2$ to $(L-L^T)/2$ reconstructs $L$; the latter is $-\\omega$ here."
+  },
+  {
+    "section": "4.2.3",
+    "definition": {
+      "version": 1,
+      "id": "fk-antisymmetric",
+      "title": "Independent rotation components",
+      "type": "blank",
+      "concepts": [
+        "Kinematics 4.2.3",
+        "Independent rotation components"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "answers": [
+        {
+          "id": "a0",
+          "accepted": [
+            "3"
+          ]
+        },
+        {
+          "id": "a1",
+          "accepted": [
+            "0",
+            "zero"
+          ]
+        }
+      ]
+    },
+    "prompt": "An antisymmetric $3\\times3$ angular-velocity tensor has {{blank:a0}} independent components, and each diagonal entry is {{blank:a1}}.",
+    "explanation": "$\\omega_{ji}=-\\omega_{ij}$ pairs the off-diagonal entries and forces $\\omega_{ii}=0$."
+  },
+  {
+    "section": "4.2.4",
+    "definition": {
+      "version": 1,
+      "id": "fk-shear",
+      "title": "Engineering versus tensor shear",
+      "type": "blank",
+      "concepts": [
+        "Kinematics 4.2.4",
+        "Engineering versus tensor shear"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "answers": [
+        {
+          "id": "a0",
+          "accepted": [
+            "6"
+          ]
+        },
+        {
+          "id": "a1",
+          "accepted": [
+            "3"
+          ]
+        },
+        {
+          "id": "a2",
+          "accepted": [
+            "-6"
+          ]
+        }
+      ]
+    },
+    "prompt": "For $\\partial v/\\partial x=4$ and $\\partial u/\\partial y=2$ in $\\mathrm{s^{-1}}$, $\\dot\\gamma_{xy}=$ {{blank:a0}}, $\\dot\\varepsilon_{xy}=$ {{blank:a1}}, and $\\dot\\theta=$ {{blank:a2}} $\\mathrm{s^{-1}}$.",
+    "explanation": "Engineering shear is the sum 6; tensor shear is half, 3; the included angle decreases at rate 6."
+  },
+  {
+    "section": "4.2.4",
+    "definition": {
+      "version": 1,
+      "id": "fk-angle",
+      "title": "Why rigid spin contributes no shear",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 4.2.4",
+        "Why rigid spin contributes no shear"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "Both material lines rotate by the same signed amount in a common convention. Their relative angle is unchanged; its rate of decrease is zero.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Uses a common angular sign convention."
+          },
+          {
+            "id": "r1",
+            "text": "Explains cancellation in the angle difference."
+          }
+        ]
+      }
+    },
+    "prompt": "Explain geometrically why rigid rotation changes neither the included angle nor the engineering shear rate.",
+    "explanation": ""
+  },
+  {
+    "section": "4.2.5",
+    "definition": {
+      "version": 1,
+      "id": "fk-tensor-table",
+      "title": "Read the deformation and rotation tensors",
+      "type": "table",
+      "concepts": [
+        "Kinematics 4.2.5",
+        "Read the deformation and rotation tensors"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "table": {
+        "columns": [
+          "Quantity",
+          "Value ($\\mathrm{s^{-1}}$)"
+        ],
+        "rows": [
+          [
+            {
+              "text": "$\\dot\\varepsilon_{xx}$"
+            },
+            {
+              "text": "2"
+            }
+          ],
+          [
+            {
+              "text": "$\\dot\\varepsilon_{xy}$"
+            },
+            {
+              "blank": "a0"
+            }
+          ],
+          [
+            {
+              "text": "$\\omega_{xy}$"
+            },
+            {
+              "blank": "a1"
+            }
+          ],
+          [
+            {
+              "text": "$\\nabla\\cdot\\mathbf V$"
+            },
+            {
+              "blank": "a2"
+            }
+          ]
+        ]
+      },
+      "answers": [
+        {
+          "id": "a0",
+          "accepted": [
+            "2"
+          ]
+        },
+        {
+          "id": "a1",
+          "accepted": [
+            "-4"
+          ]
+        },
+        {
+          "id": "a2",
+          "accepted": [
+            "0"
+          ]
+        }
+      ]
+    },
+    "prompt": "Let $L=\\begin{bmatrix}2&6&0\\\\-2&-2&0\\\\0&0&0\\end{bmatrix}\\ \\mathrm{s^{-1}}$. Complete the numeric entries using this chapter's $\\omega=(L^T-L)/2$ convention.",
+    "explanation": "$\\dot\\varepsilon_{xy}=(6-2)/2=2$, $\\omega_{xy}=(-2-6)/2=-4$, trace $2-2=0$."
+  },
+  {
+    "section": "4.2.5",
+    "definition": {
+      "version": 1,
+      "id": "fk-gradient",
+      "title": "Rows and columns of the velocity gradient",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 4.2.5",
+        "Rows and columns of the velocity gradient"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "$L=\\begin{bmatrix}2&3\\\\5&-1\\end{bmatrix}$, $\\dot\\varepsilon=\\begin{bmatrix}2&4\\\\4&-1\\end{bmatrix}$, $\\omega=\\begin{bmatrix}0&1\\\\-1&0\\end{bmatrix}$. Their difference recovers $L$.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Rows identify velocity components and columns differentiation directions."
+          },
+          {
+            "id": "r1",
+            "text": "Correct symmetric part."
+          },
+          {
+            "id": "r2",
+            "text": "Correct antisymmetric part with chapter sign."
+          },
+          {
+            "id": "r3",
+            "text": "Verifies reconstruction."
+          }
+        ]
+      }
+    },
+    "prompt": "For $u=2x+3y,\\ v=5x-y,\\ w=0$, write the planar $L$, $\\dot\\varepsilon$, and chapter-convention $\\omega$. Check $L=\\dot\\varepsilon-\\omega$.",
+    "explanation": ""
+  },
+  {
+    "section": "4.2.5",
+    "definition": {
+      "version": 1,
+      "id": "fk-instant",
+      "title": "Instantaneously rigid versus rigid over time",
+      "type": "choice",
+      "concepts": [
+        "Kinematics 4.2.5",
+        "Instantaneously rigid versus rigid over time"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "choices": [
+        {
+          "id": "o0",
+          "text": "The local instantaneous motion there has no stretching or angular deformation."
+        },
+        {
+          "id": "o1",
+          "text": "The whole fluid remains rigid for all future time."
+        },
+        {
+          "id": "o2",
+          "text": "The local velocity and acceleration both vanish."
+        }
+      ],
+      "correct": [
+        "o0"
+      ],
+      "shuffle": true
+    },
+    "prompt": "If the strain-rate tensor vanishes at one point at one instant, what follows?",
+    "explanation": "A finite-time rigid motion needs the condition throughout the relevant region and interval."
+  },
+  {
+    "section": "4.2.6",
+    "definition": {
+      "version": 1,
+      "id": "fk-rigid",
+      "title": "Rigid rotation diagnostic",
+      "type": "blank",
+      "concepts": [
+        "Kinematics 4.2.6",
+        "Rigid rotation diagnostic"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "answers": [
+        {
+          "id": "a0",
+          "accepted": [
+            "3"
+          ]
+        },
+        {
+          "id": "a1",
+          "accepted": [
+            "0"
+          ]
+        },
+        {
+          "id": "a2",
+          "accepted": [
+            "6"
+          ]
+        }
+      ]
+    },
+    "prompt": "For $u=-3y,\\ v=3x,\\ w=0$ in SI units, spin about z is {{blank:a0}}, engineering shear is {{blank:a1}}, and z-vorticity is {{blank:a2}}, all in $\\mathrm{s^{-1}}$.",
+    "explanation": "Difference of cross gradients is 6, sum is zero; spin is half the difference."
+  },
+  {
+    "section": "4.2.6",
+    "definition": {
+      "version": 1,
+      "id": "fk-simple-shear",
+      "title": "Simple shear contains both spin and deformation",
+      "type": "short-answer",
+      "concepts": [
+        "Kinematics 4.2.6",
+        "Simple shear contains both spin and deformation"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "$\\Omega_z=-k/2$, $\\dot\\gamma_{xy}=k$, $\\dot\\varepsilon_{xy}=k/2$. The nonzero symmetric part changes material angles, so the motion deforms as well as rotates.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Correct clockwise spin sign."
+          },
+          {
+            "id": "r1",
+            "text": "Distinguishes engineering from tensor shear by a factor of two."
+          },
+          {
+            "id": "r2",
+            "text": "Uses nonzero deformation to rule out rigid rotation."
+          }
+        ]
+      }
+    },
+    "prompt": "For $u=ky,\\ v=0$ with $k>0$, find the local spin, engineering shear, and tensor shear. Why is this not pure rigid rotation?",
+    "explanation": ""
+  },
+  {
+    "section": "4.2.6",
+    "definition": {
+      "version": 1,
+      "id": "fk-draw",
+      "title": "Draw rotation and pure shear",
+      "type": "drawing",
+      "concepts": [
+        "Kinematics 4.2.6",
+        "Draw rotation and pure shear"
+      ],
+      "courseIds": [
+        "lab-fluid-dynamics"
+      ],
+      "chapters": [
+        {
+          "courseId": "lab-fluid-dynamics",
+          "chapterId": "02-kinematics",
+          "title": "02 · Fluid Kinematics"
+        }
+      ],
+      "written": {
+        "reference": "(a) is counterclockwise rigid rotation, preserving lengths and angles. (b) has zero spin and engineering shear $2b$; initially perpendicular material lines turn toward one another.",
+        "rubric": [
+          {
+            "id": "r0",
+            "text": "Shows an initial square and labeled cases."
+          },
+          {
+            "id": "r1",
+            "text": "Correct corner-velocity directions for rigid rotation."
+          },
+          {
+            "id": "r2",
+            "text": "Correct corner-velocity directions for pure shear."
+          },
+          {
+            "id": "r3",
+            "text": "Identifies angle preservation only for rigid rotation."
+          }
+        ]
+      }
+    },
+    "prompt": "Sketch an initially square material element and its short-time motion in (a) $u=-by,v=bx$ and (b) $u=by,v=bx$, with $b>0$. Show corner arrows and label which case preserves right angles.",
+    "explanation": ""
+  }
+]

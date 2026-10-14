@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {practiceCompletion} from '../src/practice-completion';import {Attempt} from '../src/model';
+const record=(earned:number,possible:number,extra:Partial<Attempt>={})=>({id:String(earned),mode:'attempt',grade:{earned,possible,details:[]},...extra} as Attempt);
+test('final practice grade requires every question checked, not reveals or pending work',()=>{assert.equal(practiceCompletion([]).ready,false);assert.equal(practiceCompletion([record(1,1),undefined]).ready,false);assert.equal(practiceCompletion([record(1,1,{mode:'reveal'})]).ready,false);assert.equal(practiceCompletion([record(0,1,{grade:{earned:0,possible:1,details:[],pending:true}})]).ready,false);});
+test('final practice grade uses scored points including multi-blanks and preserves failed completion',()=>{const r=practiceCompletion([record(1,2),record(0,1)]);assert.equal(r.ready,true);assert.equal(r.earned,1);assert.equal(r.possible,3);assert.equal(practiceCompletion([record(0,1)]).ready,true);});

@@ -1,0 +1,10 @@
+/* Match heading levels to the active vault theme, preserving inline colors. */
+.quiet-outline .n-tree-node.level-1 .n-tree-node-content__text { color: var(--h1-color, var(--text-normal)); }
+.quiet-outline .n-tree-node.level-2 .n-tree-node-content__text { color: var(--h2-color, var(--text-normal)); }
+.quiet-outline .n-tree-node.level-3 .n-tree-node-content__text { color: var(--h3-color, var(--text-normal)); }
+.quiet-outline .n-tree-node.level-4 .n-tree-node-content__text { color: var(--h4-color, var(--text-normal)); }
+.quiet-outline .n-tree-node.level-5 .n-tree-node-content__text { color: var(--h5-color, var(--text-normal)); }
+.quiet-outline .n-tree-node.level-6 .n-tree-node-content__text { color: var(--h6-color, var(--text-normal)); }
+/* Keep position visible without replacing the heading color. */
+.quiet-outline .n-tree-node.located { box-shadow: inset 3px 0 var(--interactive-accent); background: var(--nav-item-background-active); }
+.quiet-outline .n-tree-node .n-tree-node-content__text p { color: inherit !important; }

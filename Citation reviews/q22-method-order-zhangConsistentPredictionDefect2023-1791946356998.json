@@ -1,0 +1,55 @@
+{
+  "schema": "citation-source-review/v1",
+  "generatedAt": "2026-10-14T02:52:36.996Z",
+  "coverage": "current source paper only",
+  "identity": {
+    "recordPath": "Evidence/22T.yaml",
+    "claimId": "q22-method-order",
+    "citekey": "zhangConsistentPredictionDefect2023",
+    "sourcePath": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2.md"
+  },
+  "recordSha256": "fe4e9fc19dcc16e8c741429f65b8d44bec001ac7fdfbde97953c0bf834b6605c",
+  "sourceSha256": "d91d83754352b0de73bd33c558769cdbe23e36a7937c61978a3c307dcc044e1e",
+  "recordChangedSinceOpen": false,
+  "totalSelections": 4,
+  "tableInventory": [
+    {
+      "tableNumber": 1,
+      "fromLine": 248,
+      "toLine": 267,
+      "sha256": "a93df3f0c56d86e4234b74e83e4d340defed00e684ac28b166db904a249bc824"
+    },
+    {
+      "tableNumber": 2,
+      "fromLine": 320,
+      "toLine": 324,
+      "sha256": "4cd61f6d0bd4c35a446439a78da420c2577162ec7087a706aca62e633509067e"
+    },
+    {
+      "tableNumber": 3,
+      "fromLine": 335,
+      "toLine": 352,
+      "sha256": "fc9898e255614f72d8af71962afce382b0412ff61ed863d7b6bf28ca3abc3f78"
+    },
+    {
+      "tableNumber": 4,
+      "fromLine": 397,
+      "toLine": 407,
+      "sha256": "d78abe3dc2179f33ad509632a7318ac0e2316dbc5951f9a62dcfc2fd10fdccbd"
+    },
+    {
+      "tableNumber": 5,
+      "fromLine": 441,
+      "toLine": 451,
+      "sha256": "1aad75cf5bdf2840d0ec9a73d0bc69d58237942700489ad41c5189cfaf5e70f1"
+    },
+    {
+      "tableNumber": 6,
+      "fromLine": 457,
+      "toLine": 478,
+      "sha256": "feaba976a6a6697b00eb7c00500679187aebd97a17f21ffa867ff49c04dcbe7d"
+    }
+  ],
+  "figureInventory": [],
+  "issues": []
+}

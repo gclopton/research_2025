@@ -1,0 +1,31 @@
+{
+  "schema": "citation-source-review/v1",
+  "generatedAt": "2026-10-14T02:49:19.132Z",
+  "coverage": "current source paper only",
+  "identity": {
+    "recordPath": "Evidence/22T.yaml",
+    "claimId": "q11-oxygen-displacements",
+    "citekey": "huangDFT+UStudyCeO22014",
+    "sourcePath": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Huang et al 2014 - DFT+U Study of CeO2 and Its Native Defects/Huang et al 2014 - DFT+U Study of CeO2 and Its Native Defects.md"
+  },
+  "recordSha256": "80152e7c7661aec66982cf759e947c67ccf2f78d53f6d847b0514a875b73b6d3",
+  "sourceSha256": "4370a3bbd9b97fedd2816ee949674e6afcd1bba04025286c71309f803c44df76",
+  "recordChangedSinceOpen": false,
+  "totalSelections": 2,
+  "tableInventory": [
+    {
+      "tableNumber": 1,
+      "fromLine": 212,
+      "toLine": 219,
+      "sha256": "aafffad3637654ffcea3a5fa0ab7860f0d87bcdf5bf9717f526c96a8e13c0a4d"
+    },
+    {
+      "tableNumber": 2,
+      "fromLine": 223,
+      "toLine": 228,
+      "sha256": "39b4f91c85158c42b53a92f405b1f75e53d0454fab933326de9d8718b56cf0ee"
+    }
+  ],
+  "figureInventory": [],
+  "issues": []
+}

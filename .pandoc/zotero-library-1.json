@@ -8960,6 +8960,985 @@
     }
   },
   {
+    "id": "grieshammerAssociationDefectsDoped2016",
+    "author": [
+      {
+        "family": "Grieshammer",
+        "given": "Steffen"
+      },
+      {
+        "family": "Nakayama",
+        "given": "Masanobu"
+      },
+      {
+        "family": "Martin",
+        "given": "Manfred"
+      }
+    ],
+    "citation-key": "grieshammerAssociationDefectsDoped2016",
+    "container-title": "Physical Chemistry Chemical Physics",
+    "container-title-short": "Phys. Chem. Chem. Phys.",
+    "DOI": "10.1039/C5CP07537H",
+    "issue": "5",
+    "issued": {
+      "date-parts": [
+        [
+          "2016"
+        ]
+      ]
+    },
+    "page": "3804–3811",
+    "title": "Association of defects in doped non-stoichiometric ceria from first principles",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.1039/C5CP07537H",
+    "volume": "18"
+  },
+  {
+    "id": "zhangOxygenVacancyDynamicsEntanglement2019",
+    "author": [
+      {
+        "family": "Zhang",
+        "given": "Dawei"
+      },
+      {
+        "family": "Han",
+        "given": "Zhong-Kang"
+      },
+      {
+        "family": "Murgida",
+        "given": "Gustavo E."
+      },
+      {
+        "family": "Ganduglia-Pirovano",
+        "given": "M. Verónica"
+      },
+      {
+        "family": "Gao",
+        "given": "Yi"
+      }
+    ],
+    "citation-key": "zhangOxygenVacancyDynamicsEntanglement2019",
+    "container-title": "Physical Review Letters",
+    "DOI": "10.1103/PhysRevLett.122.096101",
+    "issue": "9",
+    "issued": {
+      "date-parts": [
+        [
+          "2019",
+          3,
+          8
+        ]
+      ]
+    },
+    "page": "096101",
+    "title": "Oxygen-Vacancy Dynamics and Entanglement with Polaron Hopping at the Reduced CeO2(111) Surface",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.1103/PhysRevLett.122.096101",
+    "volume": "122"
+  },
+  {
+    "id": "grossfieldBestPracticesQuantification2018",
+    "author": [
+      {
+        "family": "Grossfield",
+        "given": "Alan"
+      },
+      {
+        "family": "Patrone",
+        "given": "Paul N."
+      },
+      {
+        "family": "Roe",
+        "given": "Daniel R."
+      },
+      {
+        "family": "Schultz",
+        "given": "Andrew J."
+      },
+      {
+        "family": "Siderius",
+        "given": "Daniel W."
+      },
+      {
+        "family": "Zuckerman",
+        "given": "Daniel M."
+      }
+    ],
+    "citation-key": "grossfieldBestPracticesQuantification2018",
+    "container-title": "Living Journal of Computational Molecular Science",
+    "DOI": "10.33011/livecoms.1.1.5067",
+    "issue": "1",
+    "issued": {
+      "date-parts": [
+        [
+          "2018",
+          10,
+          27
+        ]
+      ]
+    },
+    "page": "5067",
+    "title": "Best Practices for Quantification of Uncertainty and Sampling Quality in Molecular Simulations [Article v1.0]",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.33011/livecoms.1.1.5067",
+    "volume": "1"
+  },
+  {
+    "id": "yashimaHightemperatureNeutronPowder2003",
+    "author": [
+      {
+        "family": "Yashima",
+        "given": "Masatomo"
+      },
+      {
+        "family": "Ishimura",
+        "given": "Daiju"
+      },
+      {
+        "family": "Yamaguchi",
+        "given": "Yasuo"
+      },
+      {
+        "family": "Ohoyama",
+        "given": "Kenji"
+      },
+      {
+        "family": "Kawachi",
+        "given": "Katsuhiro"
+      }
+    ],
+    "citation-key": "yashimaHightemperatureNeutronPowder2003",
+    "container-title": "Chemical Physics Letters",
+    "DOI": "10.1016/S0009-2614(03)00507-4",
+    "issue": "5–6",
+    "issued": {
+      "date-parts": [
+        [
+          "2003"
+        ]
+      ]
+    },
+    "page": "784–787",
+    "title": "High-temperature neutron powder diffraction study of cerium dioxide CeO2 up to 1770 K",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.1016/S0009-2614(03)00507-4",
+    "volume": "372"
+  },
+  {
+    "id": "castletonDescriptionPolaronsCeria2014",
+    "author": [
+      {
+        "family": "Castleton",
+        "given": "Christopher W M"
+      },
+      {
+        "family": "Lee",
+        "given": "Amy L"
+      },
+      {
+        "family": "Kullgren",
+        "given": "Jolla"
+      },
+      {
+        "family": "Hermansson",
+        "given": "Kersti"
+      }
+    ],
+    "citation-key": "castletonDescriptionPolaronsCeria2014",
+    "container-title": "Journal of Physics: Conference Series",
+    "DOI": "10.1088/1742-6596/526/1/012002",
+    "issue": "1",
+    "issued": {
+      "date-parts": [
+        [
+          "2014"
+        ]
+      ]
+    },
+    "page": "012002",
+    "title": "Description of polarons in ceria using Density Functional Theory",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.1088/1742-6596/526/1/012002",
+    "volume": "526"
+  },
+  {
+    "id": "muhichReEvaluatingCeO2Expansion2017",
+    "author": [
+      {
+        "family": "Muhich",
+        "given": "Christopher L."
+      }
+    ],
+    "citation-key": "muhichReEvaluatingCeO2Expansion2017",
+    "container-title": "The Journal of Physical Chemistry C",
+    "DOI": "10.1021/acs.jpcc.6b12373",
+    "issue": "14",
+    "issued": {
+      "date-parts": [
+        [
+          "2017",
+          3,
+          22
+        ]
+      ]
+    },
+    "page": "8052–8059",
+    "title": "Re-Evaluating CeO2 Expansion Upon Reduction: Noncounterpoised Forces, Not Ionic Radius Effects, Are the Cause",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.1021/acs.jpcc.6b12373",
+    "volume": "121"
+  },
+  {
+    "id": "wangChemicalStrainPoint2014",
+    "author": [
+      {
+        "family": "Wang",
+        "given": "Bu"
+      },
+      {
+        "family": "Xi",
+        "given": "Xiaoning"
+      },
+      {
+        "family": "Cormack",
+        "given": "Alastair N."
+      }
+    ],
+    "citation-key": "wangChemicalStrainPoint2014",
+    "container-title": "Chemistry of Materials",
+    "DOI": "10.1021/cm500946s",
+    "issue": "12",
+    "issued": {
+      "date-parts": [
+        [
+          "2014"
+        ]
+      ]
+    },
+    "page": "3687–3692",
+    "title": "Chemical Strain and Point Defect Configurations in Reduced Ceria",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.1021/cm500946s",
+    "volume": "26"
+  },
+  {
+    "id": "kullgrenOxygenVacancyChemistry2012",
+    "author": [
+      {
+        "family": "Kullgren",
+        "given": "Jolla"
+      }
+    ],
+    "citation-key": "kullgrenOxygenVacancyChemistry2012",
+    "genre": "PhD thesis",
+    "ISBN": "978-91-554-8271-8",
+    "issued": {
+      "date-parts": [
+        [
+          "2012"
+        ]
+      ]
+    },
+    "number-of-pages": "59",
+    "publisher": "Uppsala University",
+    "title": "Oxygen Vacancy Chemistry in Ceria",
+    "type": "thesis",
+    "URL": "https://urn.kb.se/resolve?urn=urn:nbn:se:uu:diva-167521"
+  },
+  {
+    "id": "morrowHowValidateMachinelearned2023",
+    "author": [
+      {
+        "family": "Morrow",
+        "given": "Joe D."
+      },
+      {
+        "family": "Gardner",
+        "given": "John L. A."
+      },
+      {
+        "family": "Deringer",
+        "given": "Volker L."
+      }
+    ],
+    "citation-key": "morrowHowValidateMachinelearned2023",
+    "container-title": "The Journal of Chemical Physics",
+    "DOI": "10.1063/5.0139611",
+    "issue": "12",
+    "issued": {
+      "date-parts": [
+        [
+          "2023",
+          3,
+          24
+        ]
+      ]
+    },
+    "page": "121501",
+    "title": "How to validate machine-learned interatomic potentials",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.1063/5.0139611",
+    "volume": "158"
+  },
+  {
+    "id": "plataramosCeriaAllSeasons2013",
+    "author": [
+      {
+        "family": "Plata Ramos",
+        "given": "José Javier"
+      }
+    ],
+    "citation-key": "plataramosCeriaAllSeasons2013",
+    "genre": "Doctoral thesis",
+    "issued": {
+      "date-parts": [
+        [
+          "2013"
+        ]
+      ]
+    },
+    "publisher": "Universidad de Sevilla",
+    "title": "Ceria for all seasons",
+    "type": "thesis",
+    "URL": "https://idus.us.es/handle/11441/15522"
+  },
+  {
+    "id": "shokoMixedValencyCerium2009",
+    "author": [
+      {
+        "family": "Shoko",
+        "given": "E."
+      },
+      {
+        "family": "Smith",
+        "given": "M. F."
+      },
+      {
+        "family": "McKenzie",
+        "given": "Ross H."
+      }
+    ],
+    "citation-key": "shokoMixedValencyCerium2009",
+    "container-title": "Physical Review B",
+    "DOI": "10.1103/PhysRevB.79.134108",
+    "issue": "13",
+    "issued": {
+      "date-parts": [
+        [
+          "2009",
+          4,
+          16
+        ]
+      ]
+    },
+    "page": "134108",
+    "title": "Mixed valency in cerium oxide crystallographic phases: Valence of different cerium sites by the bond valence method",
+    "type": "article-journal",
+    "URL": "https://arxiv.org/abs/0811.4634",
+    "volume": "79"
+  },
+  {
+    "id": "birschitzkyMachineLearningSmall2025",
+    "author": [
+      {
+        "family": "Birschitzky",
+        "given": "Viktor C."
+      },
+      {
+        "family": "Leoni",
+        "given": "Luca"
+      },
+      {
+        "family": "Reticcioli",
+        "given": "Michele"
+      },
+      {
+        "family": "Franchini",
+        "given": "Cesare"
+      }
+    ],
+    "citation-key": "birschitzkyMachineLearningSmall2025",
+    "container-title": "Physical Review Letters",
+    "DOI": "10.1103/PhysRevLett.134.216301",
+    "issue": "21",
+    "issued": {
+      "date-parts": [
+        [
+          "2025",
+          5,
+          27
+        ]
+      ]
+    },
+    "page": "216301",
+    "title": "Machine Learning Small Polaron Dynamics",
+    "type": "article-journal",
+    "URL": "https://arxiv.org/abs/2409.16179",
+    "volume": "134"
+  },
+  {
+    "id": "leoniMachineLearnedDynamicsSurface2026",
+    "author": [
+      {
+        "family": "Leoni",
+        "given": "Luca"
+      },
+      {
+        "family": "Franchini",
+        "given": "Cesare"
+      }
+    ],
+    "citation-key": "leoniMachineLearnedDynamicsSurface2026",
+    "container-title": "The Journal of Physical Chemistry Letters",
+    "DOI": "10.1021/acs.jpclett.6c02034",
+    "issue": "32",
+    "issued": {
+      "date-parts": [
+        [
+          "2026",
+          7,
+          29
+        ]
+      ]
+    },
+    "page": "9237–9245",
+    "title": "Machine-Learned Dynamics of Surface Polarons at Reduced Oxide Surfaces",
+    "type": "article-journal",
+    "URL": "https://arxiv.org/abs/2606.13833",
+    "volume": "17"
+  },
+  {
+    "id": "dengCHGNetPretrainedUniversal2023",
+    "author": [
+      {
+        "family": "Deng",
+        "given": "Bowen"
+      },
+      {
+        "family": "Zhong",
+        "given": "Peichen"
+      },
+      {
+        "family": "Jun",
+        "given": "KyuJung"
+      },
+      {
+        "family": "Riebesell",
+        "given": "Janosh"
+      },
+      {
+        "family": "Han",
+        "given": "Kevin"
+      },
+      {
+        "family": "Bartel",
+        "given": "Christopher J."
+      },
+      {
+        "family": "Ceder",
+        "given": "Gerbrand"
+      }
+    ],
+    "citation-key": "dengCHGNetPretrainedUniversal2023",
+    "container-title": "Nature Machine Intelligence",
+    "DOI": "10.1038/s42256-023-00716-3",
+    "issue": "9",
+    "issued": {
+      "date-parts": [
+        [
+          "2023",
+          9,
+          14
+        ]
+      ]
+    },
+    "page": "1031–1041",
+    "title": "CHGNet as a pretrained universal neural network potential for charge-informed atomistic modelling",
+    "type": "article-journal",
+    "URL": "https://arxiv.org/abs/2302.14231",
+    "volume": "5"
+  },
+  {
+    "id": "shokoChargeDistributionBulk2010",
+    "author": [
+      {
+        "family": "Shoko",
+        "given": "E"
+      },
+      {
+        "family": "Smith",
+        "given": "M F"
+      },
+      {
+        "family": "McKenzie",
+        "given": "Ross H"
+      }
+    ],
+    "citation-key": "shokoChargeDistributionBulk2010",
+    "container-title": "Journal of Physics: Condensed Matter",
+    "DOI": "10.1088/0953-8984/22/22/223201",
+    "issue": "22",
+    "issued": {
+      "date-parts": [
+        [
+          "2010",
+          5,
+          21
+        ]
+      ]
+    },
+    "page": "223201",
+    "title": "Charge distribution near bulk oxygen vacancies in cerium oxides",
+    "type": "article-journal",
+    "URL": "https://arxiv.org/abs/0907.1320",
+    "volume": "22"
+  },
+  {
+    "id": "malicaTeachingOxidationStates2025",
+    "author": [
+      {
+        "family": "Malica",
+        "given": "Cristiano"
+      },
+      {
+        "family": "Marzari",
+        "given": "Nicola"
+      }
+    ],
+    "citation-key": "malicaTeachingOxidationStates2025",
+    "container-title": "npj Computational Materials",
+    "DOI": "10.1038/s41524-025-01709-z",
+    "issue": "1",
+    "issued": {
+      "date-parts": [
+        [
+          "2025",
+          7,
+          4
+        ]
+      ]
+    },
+    "page": "212",
+    "title": "Teaching oxidation states to neural networks",
+    "type": "article-journal",
+    "URL": "https://www.nature.com/articles/s41524-025-01709-z",
+    "volume": "11"
+  },
+  {
+    "id": "eckhoffPredictingOxidationSpin2020",
+    "author": [
+      {
+        "family": "Eckhoff",
+        "given": "Marco"
+      },
+      {
+        "family": "Lausch",
+        "given": "Knut Nikolas"
+      },
+      {
+        "family": "Blöchl",
+        "given": "Peter E."
+      },
+      {
+        "family": "Behler",
+        "given": "Jörg"
+      }
+    ],
+    "citation-key": "eckhoffPredictingOxidationSpin2020",
+    "container-title": "The Journal of Chemical Physics",
+    "DOI": "10.1063/5.0021452",
+    "issue": "16",
+    "issued": {
+      "date-parts": [
+        [
+          "2020",
+          10,
+          23
+        ]
+      ]
+    },
+    "page": "164107",
+    "title": "Predicting oxidation and spin states by high-dimensional neural networks: Applications to lithium manganese oxide spinels",
+    "type": "article-journal",
+    "URL": "https://arxiv.org/abs/2007.00335",
+    "volume": "153"
+  },
+  {
+    "id": "fronziInitioInvestigationDefect2012",
+    "author": [
+      {
+        "family": "Fronzi",
+        "given": "Marco"
+      },
+      {
+        "family": "Cereda",
+        "given": "Silvia"
+      },
+      {
+        "family": "Tateyama",
+        "given": "Yoshitaka"
+      },
+      {
+        "family": "De Vita",
+        "given": "Alessandro"
+      },
+      {
+        "family": "Traversa",
+        "given": "Enrico"
+      }
+    ],
+    "citation-key": "fronziInitioInvestigationDefect2012",
+    "container-title": "Physical Review B",
+    "DOI": "10.1103/PhysRevB.86.085407",
+    "issue": "8",
+    "issued": {
+      "date-parts": [
+        [
+          "2012",
+          8,
+          3
+        ]
+      ]
+    },
+    "page": "085407",
+    "title": "Ab initio investigation of defect formation at ZrO2-CeO2 interfaces",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.1103/PhysRevB.86.085407",
+    "volume": "86"
+  },
+  {
+    "id": "hanOxygenVacancyOrdering2016",
+    "author": [
+      {
+        "family": "Han",
+        "given": "Xiaoping"
+      },
+      {
+        "family": "Amrane",
+        "given": "Noureddine"
+      },
+      {
+        "family": "Zhang",
+        "given": "Zongsheng"
+      },
+      {
+        "family": "Benkraouda",
+        "given": "Maamar"
+      }
+    ],
+    "citation-key": "hanOxygenVacancyOrdering2016",
+    "container-title": "The Journal of Physical Chemistry C",
+    "DOI": "10.1021/acs.jpcc.6b00865",
+    "issue": "25",
+    "issued": {
+      "date-parts": [
+        [
+          "2016",
+          6,
+          6
+        ]
+      ]
+    },
+    "page": "13325–13331",
+    "title": "Oxygen Vacancy Ordering and Electron Localization in CeO2: Hybrid Functional Study",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.1021/acs.jpcc.6b00865",
+    "volume": "120"
+  },
+  {
+    "id": "nakayamaConcertedMigrationMechanism2012",
+    "author": [
+      {
+        "family": "Nakayama",
+        "given": "Masanobu"
+      },
+      {
+        "family": "Ohshima",
+        "given": "Hiromi"
+      },
+      {
+        "family": "Nogami",
+        "given": "Masayuki"
+      },
+      {
+        "family": "Martin",
+        "given": "Manfred"
+      }
+    ],
+    "citation-key": "nakayamaConcertedMigrationMechanism2012",
+    "container-title": "Physical Chemistry Chemical Physics",
+    "DOI": "10.1039/c2cp00020b",
+    "issue": "17",
+    "issued": {
+      "date-parts": [
+        [
+          "2012"
+        ]
+      ]
+    },
+    "page": "6079–6084",
+    "title": "A concerted migration mechanism of mixed oxide ion and electron conduction in reduced ceria studied by first-principles density functional theory",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.1039/c2cp00020b",
+    "volume": "14"
+  },
+  {
+    "id": "palomares2015annealing",
+    "type": "article-journal",
+    "citation-key": "palomares2015annealing",
+    "container-title": "Journal of Applied Crystallography",
+    "page": "711–717",
+    "title": "In situ defect annealing of swift heavy ion irradiated CeO2 and ThO2 using synchrotron X-ray diffraction and a hydrothermal diamond anvil cell",
+    "volume": "48",
+    "author": [
+      {
+        "family": "Palomares",
+        "given": "R. I."
+      },
+      {
+        "family": "Tracy",
+        "given": "C. L."
+      },
+      {
+        "family": "Zhang",
+        "given": "F."
+      },
+      {
+        "family": "Park",
+        "given": "C."
+      },
+      {
+        "family": "Popov",
+        "given": "D."
+      },
+      {
+        "family": "Trautmann",
+        "given": "C."
+      },
+      {
+        "family": "Ewing",
+        "given": "R. C."
+      },
+      {
+        "family": "Lang",
+        "given": "M."
+      }
+    ],
+    "issued": {
+      "date-parts": [
+        [
+          "2015"
+        ]
+      ]
+    }
+  },
+  {
+    "id": "ackermannDiffusionOxygenCeria2014",
+    "type": "article-journal",
+    "citation-key": "ackermannDiffusionOxygenCeria2014",
+    "container-title": "The Journal of Physical Chemistry C",
+    "DOI": "10.1021/jp500755t",
+    "issue": "10",
+    "page": "5216–5225",
+    "title": "Diffusion of Oxygen in Ceria at Elevated Temperatures and Its Application to H2O/CO2 Splitting Thermochemical Redox Cycles",
+    "URL": "https://doi.org/10.1021/jp500755t",
+    "volume": "118",
+    "author": [
+      {
+        "family": "Ackermann",
+        "given": "Simon"
+      },
+      {
+        "family": "Scheffe",
+        "given": "Jonathan R."
+      },
+      {
+        "family": "Steinfeld",
+        "given": "Aldo"
+      }
+    ],
+    "issued": {
+      "date-parts": [
+        [
+          "2014"
+        ]
+      ]
+    }
+  },
+  {
+    "id": "rymzhanov2025ceria",
+    "type": "article-journal",
+    "citation-key": "rymzhanov2025ceria",
+    "container-title": "Journal of Nuclear Materials",
+    "DOI": "10.1016/j.jnucmat.2024.155480",
+    "page": "155480",
+    "title": "Bulk, overlap and surface effects of swift heavy ions in CeO2",
+    "volume": "604",
+    "author": [
+      {
+        "family": "Rymzhanov",
+        "given": "R. A."
+      },
+      {
+        "family": "Volkov",
+        "given": "A. E."
+      },
+      {
+        "family": "Skuratov",
+        "given": "V. A."
+      }
+    ],
+    "issued": {
+      "date-parts": [
+        [
+          "2025"
+        ]
+      ]
+    }
+  },
+  {
+    "id": "murgidaOrderingOxygenVacancies2014",
+    "author": [
+      {
+        "family": "Murgida",
+        "given": "G. E."
+      },
+      {
+        "family": "Ferrari",
+        "given": "V."
+      },
+      {
+        "family": "Ganduglia-Pirovano",
+        "given": "M. Verónica"
+      },
+      {
+        "family": "Llois",
+        "given": "A. M."
+      }
+    ],
+    "citation-key": "murgidaOrderingOxygenVacancies2014",
+    "container-title": "Physical Review B",
+    "container-title-short": "Phys. Rev. B",
+    "DOI": "10.1103/PhysRevB.90.115120",
+    "ISSN": "1098-0121",
+    "issue": "11",
+    "issued": {
+      "date-parts": [
+        [
+          "2014",
+          9,
+          9
+        ]
+      ]
+    },
+    "page": "115120",
+    "source": "Crossref",
+    "title": "Ordering of oxygen vacancies and excess charge localization in bulk ceria: A DFT+U study",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.1103/PhysRevB.90.115120",
+    "volume": "90"
+  },
+  {
+    "id": "hullOxygenVacancyOrdering2009",
+    "author": [
+      {
+        "family": "Hull",
+        "given": "S."
+      },
+      {
+        "family": "Norberg",
+        "given": "S.T."
+      },
+      {
+        "family": "Ahmed",
+        "given": "I."
+      },
+      {
+        "family": "Eriksson",
+        "given": "S.G."
+      },
+      {
+        "family": "Marrocchelli",
+        "given": "D."
+      },
+      {
+        "family": "Madden",
+        "given": "P.A."
+      }
+    ],
+    "citation-key": "hullOxygenVacancyOrdering2009",
+    "container-title": "Journal of Solid State Chemistry",
+    "container-title-short": "J. Solid State Chem.",
+    "DOI": "10.1016/j.jssc.2009.07.044",
+    "ISSN": "0022-4596",
+    "issue": "10",
+    "issued": {
+      "date-parts": [
+        [
+          "2009",
+          10
+        ]
+      ]
+    },
+    "page": "2815–2821",
+    "source": "Crossref",
+    "title": "Oxygen vacancy ordering within anion-deficient Ceria",
+    "type": "article-journal",
+    "URL": "https://doi.org/10.1016/j.jssc.2009.07.044",
+    "volume": "182"
+  },
+  {
+    "id": "iwaseStudyBehaviorOxygen2009",
+    "type": "article-journal",
+    "citation-key": "iwaseStudyBehaviorOxygen2009",
+    "container-title": "Nuclear Instruments and Methods in Physics Research Section B: Beam Interactions with Materials and Atoms",
+    "DOI": "10.1016/j.nimb.2009.02.035",
+    "issue": "6",
+    "note": "citation-key: iwaseStudyBehaviorOxygen2009",
+    "page": "969-972",
+    "title": "Study on the behavior of oxygen atoms in swift heavy ion irradiated CeO2 by means of synchrotron radiation X-ray photoelectron spectroscopy",
+    "URL": "https://doi.org/10.1016/j.nimb.2009.02.035",
+    "volume": "267",
+    "author": [
+      {
+        "family": "Iwase",
+        "given": "A."
+      },
+      {
+        "family": "Ohno",
+        "given": "H."
+      },
+      {
+        "family": "Ishikawa",
+        "given": "N."
+      },
+      {
+        "family": "Baba",
+        "given": "Y."
+      },
+      {
+        "family": "Hirao",
+        "given": "N."
+      },
+      {
+        "family": "Sonoda",
+        "given": "T."
+      },
+      {
+        "family": "Kinoshita",
+        "given": "M."
+      }
+    ],
+    "issued": {
+      "date-parts": [
+        [
+          "2009",
+          3
+        ]
+      ]
+    }
+  },
+  {
     "id": "huangDFT+UStudyCeO22014",
     "type": "article-journal",
     "citation-key": "huangDFT+UStudyCeO22014",

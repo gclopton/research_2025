@@ -1,9 +1,44 @@
 {
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/pdfs/Birschitzky et al 2025 - Machine Learning Small Polaron Dynamics.pdf": {
+    "completed_at": "2026-10-05T07:42:13.295846",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/markdown_originals/Birschitzky et al 2025 - Machine Learning Small Polaron Dynamics",
+    "pdf_id": "014e8f47-bf45-4f6d-b0ff-b1fa24871461",
+    "submitted_at": "2026-10-05T07:41:59.614973",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/pdfs/Deng et al 2023 - CHGNet pretrained universal neural network potential.pdf": {
+    "completed_at": "2026-10-05T07:42:25.491176",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/markdown_originals/Deng et al 2023 - CHGNet pretrained universal neural network potential",
+    "pdf_id": "f5501c6d-ac8c-4750-93f1-0a62f422082e",
+    "submitted_at": "2026-10-05T07:42:13.649606",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/pdfs/Eckhoff et al 2020 - Predicting oxidation and spin states using high-dimensional neural networks.pdf": {
+    "completed_at": "2026-10-05T07:46:58.445829",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/markdown_originals/Eckhoff et al 2020 - Predicting oxidation and spin states using high-dimensional neural networks",
+    "pdf_id": "4b4e6c0b-deb9-4507-9fc8-78b203ed3b08",
+    "submitted_at": "2026-10-05T07:46:44.005909",
+    "zip_kind": "md.zip"
+  },
   "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/pdfs/Ko et al 2021 - A fourth-generation high-dimensional neural network potential with accurate electrostatics including non-local charge transfer.pdf": {
     "completed_at": "2026-03-19T07:16:21.910723",
     "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/markdown_originals/Ko et al 2021 - A fourth-generation high-dimensional neural network potential with accurate electrostatics including non-local charge transfer",
     "pdf_id": "2edc8b0a-560c-4ef7-902a-d7497bc8b261",
     "submitted_at": "2026-03-19T07:16:11.761092",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/pdfs/Leoni and Franchini 2026 - Machine-learned dynamics of surface polarons.pdf": {
+    "completed_at": "2026-10-05T07:42:35.244833",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/markdown_originals/Acknowledgments",
+    "pdf_id": "0e8ed6b3-aed3-4a03-820d-f89f4cf99bdb",
+    "submitted_at": "2026-10-05T07:42:25.786147",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/pdfs/Malica and Marzari 2025 - Teaching oxidation states - Supplementary Information.pdf": {
+    "completed_at": "2026-10-05T08:24:33.287438",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/markdown_originals/Malica and Marzari 2025 - Teaching oxidation states - Supplementary Information",
+    "pdf_id": "666b30c6-bc6b-430a-8201-39427f71751b",
+    "submitted_at": "2026-10-05T08:24:23.903497",
     "zip_kind": "md.zip"
   },
   "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive Oxides/pdfs/Malica and Marzari 2025 - Teaching oxidation states to neural networks.pdf": {

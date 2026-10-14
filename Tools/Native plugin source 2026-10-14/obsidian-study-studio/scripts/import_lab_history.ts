@@ -1,0 +1,8 @@
+/** One-time additive import authorized for the entirely disposable development vault. */
+import {readFileSync,writeFileSync,existsSync,mkdirSync} from 'node:fs';import {normalizeHistory,HistoryFile} from '../src/history-model';import {parsePlan,PlanEvent} from '../src/learning-model';
+const root=process.argv[2];if(root!=='/Users/gradyclopton/ObsidianVaults/study_studio_lab')throw Error('This importer is scoped to study_studio_lab.');
+const inputs:HistoryFile[]=[];let plans:PlanEvent[]=[];
+for(const name of ['home-history.json','french-i-history.json']){const x=JSON.parse(readFileSync(`${root}/Study Studio/Demo/${name}`,'utf8'));inputs.push(...(Array.isArray(x)?x:x.files));if(x.events)plans.push(...x.events.map((e:PlanEvent)=>({...e,note:e.id==='demo-future'?'Review vocabulary and revisit missed questions.':'Read the chapter and complete its checkpoint.'})));}
+const report=normalizeHistory(inputs);if(report.errors.length)throw Error(report.errors.join('\n'));let imported=0;
+for(const f of inputs){const r=JSON.parse(f.raw);if(!/^[\w-]+$/.test(r.id))throw Error('Unsafe record ID');const dir=`${root}/Study Studio/${f.kind==='exam'?'Exam sessions':'Attempts'}`;mkdirSync(dir,{recursive:true});const path=`${dir}/${r.id}.json`;if(existsSync(path)){if(readFileSync(path,'utf8')!==f.raw)throw Error(`Existing differing record preserved: ${path}`);}else{writeFileSync(path,f.raw);imported++;}}
+const calendar=`${root}/.obsidian/study-studio-calendar.json`,current=existsSync(calendar)?parsePlan(readFileSync(calendar,'utf8')):[];plans=plans.filter(e=>!current.some(c=>c.id===e.id));writeFileSync(calendar,JSON.stringify([...current,...plans],null,2));console.log(JSON.stringify({imported,rows:report.rows.length,plansAdded:plans.length}));

@@ -1,0 +1,120 @@
+[
+  {
+    "id": "code-python-comprehension",
+    "language": "python",
+    "source": "values = [1, 2, 3, 4]\nsquares = [x**2 for x in values if x % 2 == 0]\nassert squares == [4, 16]",
+    "alternatives": []
+  },
+  {
+    "id": "code-python-numpy",
+    "language": "python",
+    "source": "import numpy as np\na = np.array([[1., 2.], [3., 4.]])\nmeans = a.mean(axis=0)\nweights = np.array([10., 100.])\nscaled = a * weights[:, None]\nassert np.allclose(means, [2., 3.])\nassert np.allclose(scaled, [[10., 20.], [300., 400.]])",
+    "alternatives": [
+      "import numpy as np\na = np.array([[1., 2.], [3., 4.]])\nmeans = a.mean(axis = 0)\nweights = np.array([10., 100.])\nscaled = a * weights[:, None]\nassert np.allclose(means, [2., 3.])\nassert np.allclose(scaled, [[10., 20.], [300., 400.]])",
+      "import numpy as np\na = np.array([[1., 2.], [3., 4.]])\nmeans = a.mean(axis=0)\nweights = np.array([10., 100.])\nscaled = a * weights[:, np.newaxis]\nassert np.allclose(means, [2., 3.])\nassert np.allclose(scaled, [[10., 20.], [300., 400.]])"
+    ]
+  },
+  {
+    "id": "code-python-regex",
+    "language": "python",
+    "source": "import re\npattern = r\"[A-Z]{2}-[0-9]{3}\"\nassert re.fullmatch(pattern, \"AB-123\") is not None\nassert re.fullmatch(pattern, \"AB-1234\") is None",
+    "alternatives": [
+      "import re\npattern = r\"[A-Z]{2}-\\d{3}\"\nassert re.fullmatch(pattern, \"AB-123\") is not None\nassert re.fullmatch(pattern, \"AB-1234\") is None"
+    ]
+  },
+  {
+    "id": "code-python-block",
+    "language": "python",
+    "source": "def positive_square_sum(values):\n    total = 0\n    for value in values:\n        total += value**2 if value > 0 else 0\n    return total\n\nassert positive_square_sum([-2, 0, 3, 4]) == 25",
+    "alternatives": []
+  },
+  {
+    "id": "code-shell-quoting",
+    "language": "bash",
+    "source": "filename=\"lecture notes.txt\"\nprintf '%s\\n' \"$filename\"",
+    "alternatives": [
+      "filename=\"lecture notes.txt\"\nprintf '%s\\n' \"${filename}\""
+    ]
+  },
+  {
+    "id": "code-shell-loop",
+    "language": "bash",
+    "source": "for name in alpha beta; do\n    printf '%s\\n' \"$name\"\ndone",
+    "alternatives": []
+  },
+  {
+    "id": "code-shell-pipeline",
+    "language": "bash",
+    "source": "printf '%s\\n' run-12 skip run-3 | grep -E '^run-[0-9]+$'",
+    "alternatives": []
+  },
+  {
+    "id": "code-shell-status",
+    "language": "bash",
+    "source": "true\nif [ \"$?\" -eq 0 ]; then\n    printf 'ok\\n'\nfi",
+    "alternatives": [
+      "true\nif [ $? -eq 0 ]; then\n    printf 'ok\\n'\nfi"
+    ]
+  },
+  {
+    "id": "code-wolfram-pattern",
+    "language": "mathematica",
+    "source": "Clear[square];\nsquare[x_] := x^2;\nPrint[square[5]];",
+    "alternatives": []
+  },
+  {
+    "id": "code-wolfram-map",
+    "language": "mathematica",
+    "source": "result = (#^2 &) /@ {1, 2, 3};\nPrint[result];",
+    "alternatives": [
+      "result = (#1^2 &) /@ {1, 2, 3};\nPrint[result];"
+    ]
+  },
+  {
+    "id": "code-wolfram-table",
+    "language": "mathematica",
+    "source": "result = Table[i + j, {i, 1, 2}, {j, 1, 3}];\nPrint[result];",
+    "alternatives": [
+      "result = Table[i + j, {i, 2}, {j, 3}];\nPrint[result];"
+    ]
+  },
+  {
+    "id": "code-wolfram-replace",
+    "language": "mathematica",
+    "source": "Clear[x];\nresult = (x^2 + 1) /. x -> 3;\nPrint[result];",
+    "alternatives": []
+  },
+  {
+    "id": "code-cpp-reference",
+    "language": "cpp",
+    "source": "#include <vector>\n#include <cassert>\nint main() {\n    std::vector<int> values{1, 2, 3};\n    for (int& value : values) {\n        value *= 2;\n    }\n    assert((values == std::vector<int>{2, 4, 6}));\n}",
+    "alternatives": [
+      "#include <vector>\n#include <cassert>\nint main() {\n    std::vector<int> values{1, 2, 3};\n    for (int &value : values) {\n        value *= 2;\n    }\n    assert((values == std::vector<int>{2, 4, 6}));\n}",
+      "#include <vector>\n#include <cassert>\nint main() {\n    std::vector<int> values{1, 2, 3};\n    for (auto& value : values) {\n        value *= 2;\n    }\n    assert((values == std::vector<int>{2, 4, 6}));\n}",
+      "#include <vector>\n#include <cassert>\nint main() {\n    std::vector<int> values{1, 2, 3};\n    for (auto &value : values) {\n        value *= 2;\n    }\n    assert((values == std::vector<int>{2, 4, 6}));\n}"
+    ]
+  },
+  {
+    "id": "code-cpp-lambda",
+    "language": "cpp",
+    "source": "#include <algorithm>\n#include <vector>\n#include <cassert>\nint main() {\n    int limit = 2;\n    std::vector<int> values{1, 2, 3, 4};\n    auto count = std::count_if(values.begin(), values.end(),\n        [limit](int x) { return x > limit; });\n    assert(count == 2);\n}",
+    "alternatives": [
+      "#include <algorithm>\n#include <vector>\n#include <cassert>\nint main() {\n    int limit = 2;\n    std::vector<int> values{1, 2, 3, 4};\n    auto count = std::count_if(values.begin(), values.end(),\n        [&limit](int x) { return x > limit; });\n    assert(count == 2);\n}",
+      "#include <algorithm>\n#include <vector>\n#include <cassert>\nint main() {\n    int limit = 2;\n    std::vector<int> values{1, 2, 3, 4};\n    auto count = std::count_if(values.begin(), values.end(),\n        [limit](int x) { return limit < x; });\n    assert(count == 2);\n}"
+    ]
+  },
+  {
+    "id": "code-cpp-block",
+    "language": "cpp",
+    "source": "#include <vector>\n#include <cassert>\nint main() {\n    std::vector<int> values{1, 2, 3};\n    int total = 0;\n    for (int value : values) {\n        total += value;\n    }\n    assert(total == 6);\n}",
+    "alternatives": []
+  },
+  {
+    "id": "code-cpp-template",
+    "language": "cpp",
+    "source": "#include <cassert>\ntemplate <typename T>\nT twice(T value) { return value + value; }\nint main() {\n    assert(twice(3) == 6);\n    assert(twice(1.5) == 3.0);\n}",
+    "alternatives": [
+      "#include <cassert>\ntemplate <class T>\nT twice(T value) { return value + value; }\nint main() {\n    assert(twice(3) == 6);\n    assert(twice(1.5) == 3.0);\n}"
+    ]
+  }
+]

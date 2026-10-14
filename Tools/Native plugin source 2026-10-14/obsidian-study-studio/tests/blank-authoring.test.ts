@@ -1,0 +1,10 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {blankSelection,blankTokens,answerText} from '../src/blank-authoring';
+import {parseQuestion,template,grade} from '../src/model';
+test('text blanks retain selected text and have one atomic marker range',()=>{const s='Say Bye Felicia! today',b=blankSelection(s,4,16,'bye');assert.equal(b.answer.accepted[0],'Bye Felicia!');assert.equal(b.prompt,'Say {{blank:bye}} today');assert.deepEqual(blankTokens(b.prompt),[{from:4,to:17,id:'bye'}]);});
+test('full math and body selections remove both delimiters and grade Math Studio latex',()=>{
+ for(const s of ['$x^2$','$$x^2$$']){const n=s.startsWith('$$')?2:1;for(const [from,to]of [[0,s.length],[n,s.length-n]]){const b=blankSelection(s,from,to,'a');assert.equal(b.prompt,'{{blank:a}}');assert.equal(b.answer.accepted[0],'x^2');assert.equal(answerText(b.answer),s);const q=parseQuestion(template('blank','q','Math'),'Question.md');q.definition.answers=[b.answer];q.prompt=b.prompt;assert.equal(grade(q,{choices:[],blanks:{a:'x^2'}}).earned,1);assert.equal(grade(q,{choices:[],blanks:{a:s}}).earned,1);}}
+});
+test('partial equation selection refuses to strand delimiters and existing blanks cannot nest',()=>{assert.throws(()=>blankSelection('$x+y$',1,2,'a'),/whole equation/);assert.throws(()=>blankSelection('{{blank:a}}',0,11,'b'),/already contains/);assert.throws(()=>blankSelection('   ',0,3,'a'),/Select/);});
+test('whole math selected with surrounding whitespace preserves spacing and stores delimiter-free answer',()=>{const source='Say bye and $x^2$ ';const b=blankSelection(source,11,source.length,'a');assert.equal(b.prompt,'Say bye and {{blank:a}} ');assert.deepEqual(b.answer,{id:'a',accepted:['x^2'],math:'inline'});});
+test('legacy dollar-wrapped accepted math also matches a Math Studio response',()=>{const q=parseQuestion(template('blank','legacy','Legacy'),'Question.md');q.definition.answers=[{id:'a',accepted:[' $x^2$']}];assert.equal(grade(q,{choices:[],blanks:{a:'x^2'}}).earned,1);});

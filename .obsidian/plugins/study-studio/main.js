@@ -47,492 +47,6 @@ function menuGroup(menu, key, title, icon, section = key === "insert" ? "insert"
   return child;
 }
 
-// src/math-model.ts
-var escaped = (s, i) => {
-  let n = 0;
-  while (i > 0 && s[--i] === "\\") n++;
-  return n % 2 === 1;
-};
-function equations(s) {
-  const out = [];
-  let i = 0;
-  let fence = "";
-  let fenceLength = 0;
-  if (s.startsWith("---\n") || s.startsWith("---\r\n")) {
-    const m = /\r?\n(?:---|\.\.\.)\s*(?:\r?\n|$)/g;
-    m.lastIndex = 3;
-    const end = m.exec(s);
-    if (end) i = end.index + end[0].length;
-  }
-  while (i < s.length) {
-    if (i === 0 || s[i - 1] === "\n") {
-      const line = s.slice(i, s.indexOf("\n", i) < 0 ? s.length : s.indexOf("\n", i));
-      const f = /^ {0,3}(`{3,}|~{3,})/.exec(line);
-      if (f) {
-        if (!fence) {
-          fence = f[1][0];
-          fenceLength = f[1].length;
-        } else if (f[1][0] === fence && f[1].length >= fenceLength) fence = "";
-        i += line.length + 1;
-        continue;
-      }
-      if (fence || /^ {4}|^\t/.test(line)) {
-        i += line.length + 1;
-        continue;
-      }
-    }
-    if (s[i] === "`" && !escaped(s, i)) {
-      let n = 1;
-      while (s[i + n] === "`") n++;
-      const end2 = s.indexOf("`".repeat(n), i + n);
-      i = end2 < 0 ? i + n : end2 + n;
-      continue;
-    }
-    if (s[i] !== "$" || escaped(s, i)) {
-      i++;
-      continue;
-    }
-    const display = s[i + 1] === "$";
-    const size = display ? 2 : 1;
-    const start = i;
-    let j = i + size;
-    if (!display && /\s/.test(s[j] ?? "")) {
-      i++;
-      continue;
-    }
-    let end = -1;
-    while (j < s.length) {
-      if (!display && s[j] === "\n") break;
-      if (display && s[j] === "\n" && /^[ \t]*\r?\n/.test(s.slice(j + 1))) break;
-      if (display && s[j] === "\n" && /^ {0,3}(?:`{3,}|~{3,})/.test(s.slice(j + 1))) break;
-      if (s[j] === "$" && !escaped(s, j)) {
-        if (!display && s[j + 1] === "$") break;
-        if (display && s[j + 1] !== "$") break;
-        end = j;
-        break;
-      }
-      j++;
-    }
-    if (end < 0) {
-      i += size;
-      continue;
-    }
-    if (!display && (/\s/.test(s[end - 1] ?? "") || /\d/.test(s[end + 1] ?? ""))) {
-      i = end + size;
-      continue;
-    }
-    const to = end + size;
-    out.push({ from: start, to, bodyFrom: start + size, bodyTo: end, body: s.slice(start + size, end), display, raw: s.slice(start, to) });
-    i = to;
-  }
-  return out;
-}
-function splitTag(body) {
-  const auto = /% math-studio:auto:([a-zA-Z0-9-]+)/.exec(body);
-  const tags3 = [...body.matchAll(/\\tag\{([^{}]*)\}/g)];
-  const tag = tags3.length === 1 ? tags3[0] : void 0;
-  return { latex: body.replace(/% math-studio:auto:[a-zA-Z0-9-]+\s*/g, "").replace(/\\tag\{[^{}]*\}/g, "").trim(), tag: auto ? { kind: "auto", label: tag?.[1] ?? "", id: auto[1] } : tag ? { kind: "manual", label: tag[1] } : { kind: "none", label: "" } };
-}
-function unsupported(body) {
-  if (/\\(?:newcommand|renewcommand|def|gdef|require|html\w*|href|includegraphics|class|style)\b/.test(body)) return "This equation uses a macro definition or an external/HTML command. Keep editing it in native LaTeX.";
-  const stripped = body.replace(/% math-studio:auto:[a-zA-Z0-9-]+/g, "");
-  if (/(^|[^\\])%/.test(stripped)) return "This equation contains LaTeX comments. Native editing preserves them exactly.";
-  if ((body.match(/\\tag\b/g) || []).length > 1 || /\\tag\*/.test(body) || /\\label\b|\\ref\b|\\eqref\b/.test(body)) return "This equation uses labels, references or multiple tags. Use native editing to preserve them.";
-  if (/\\tag\{[^}]*\{/.test(body)) return "Nested equation tags are supported in native editing only.";
-  return null;
-}
-function compose(original, latex, tag) {
-  const label = tag.label.trim();
-  if (/[{}\\\n\r]/.test(label)) throw Error("Use a plain equation label without braces, backslashes or line breaks.");
-  let body = latex.trim();
-  if (tag.kind !== "none" && original.display) body += `\\tag{${label || "1"}}`;
-  if (tag.kind === "auto" && original.display) body += `
-% math-studio:auto:${tag.id || crypto.randomUUID()}`;
-  if (original.display) return `$$
-${body}
-$$`;
-  return `$${body}$`;
-}
-function safeReplacement(doc2, q, replacement) {
-  if (doc2.slice(q.from, q.to) !== q.raw) throw Error("The equation changed outside this visual editor. Your draft is kept open; cancel and reopen the current equation.");
-  return { from: q.from, to: q.to, insert: replacement };
-}
-function fieldEquations(value, answers) {
-  if (!answers) return equations(value);
-  const result = [];
-  let offset = 0;
-  for (const line of value.split("\n")) {
-    const start = line.search(/\S/);
-    if (start >= 0) {
-      const body = line.trim(), from = offset + start;
-      const parsed = equations(body);
-      result.push(parsed.length === 1 && parsed[0].raw === body ? { ...parsed[0], from, to: from + body.length, bodyFrom: from + (parsed[0].display ? 2 : 1), bodyTo: from + body.length - (parsed[0].display ? 2 : 1) } : { from, to: from + body.length, bodyFrom: from, bodyTo: from + body.length, raw: body, body, display: false });
-    }
-    offset += line.length + 1;
-  }
-  return result;
-}
-function replaceFieldMath(source, q, latex, tag) {
-  const replacement = q.bodyFrom === q.from ? latex.trim() : compose(q, latex, tag);
-  if (q.bodyFrom === q.from && /[\r\n]/.test(replacement)) throw Error("Keep each accepted answer on one line.");
-  safeReplacement(source, q, replacement);
-  return source.slice(0, q.from) + replacement + source.slice(q.to);
-}
-
-// src/review-model.ts
-function locateQuote(text2, a2) {
-  if (!a2.quote) return;
-  const hits = [];
-  let at = 0;
-  while ((at = text2.indexOf(a2.quote, at)) >= 0) {
-    hits.push(at);
-    at += Math.max(1, a2.quote.length);
-  }
-  const contextual = hits.filter((i) => (!a2.before || text2.slice(Math.max(0, i - a2.before.length), i) === a2.before) && (!a2.after || text2.slice(i + a2.quote.length, i + a2.quote.length + a2.after.length) === a2.after));
-  const candidates = contextual.length ? contextual : hits;
-  if (candidates.length !== 1) return;
-  return { from: candidates[0], to: candidates[0] + a2.quote.length };
-}
-function safeColor(color) {
-  return /^#[0-9a-f]{6}$/i.test(color) ? color : "#55aa77";
-}
-function anchorRanges(text2) {
-  const ranges = [];
-  let offset = 0, fence = "";
-  for (const line of text2.split("\n")) {
-    const f = /^\s*(`{3,}|~{3,})/.exec(line);
-    if (f) {
-      if (!fence) fence = f[1][0];
-      else if (f[1][0] === fence) fence = "";
-    } else if (!fence) {
-      const m = /(?:^|\s)(\^[A-Za-z0-9-]+)\s*$/.exec(line);
-      if (m) {
-        const from = offset + m.index + m[0].indexOf("^");
-        ranges.push({ from, to: from + m[1].length, id: m[1] });
-      }
-    }
-    offset += line.length + 1;
-  }
-  return ranges;
-}
-var anchorCache = /* @__PURE__ */ new WeakMap();
-function anchorsFor(doc2) {
-  let result = anchorCache.get(doc2);
-  if (!result) {
-    result = anchorRanges(doc2.toString());
-    anchorCache.set(doc2, result);
-  }
-  return result;
-}
-function defaultCommentPalette() {
-  return [
-    { color: "#e2b714", darkColor: "#ffe066", meaning: "Definitions" },
-    { color: "#398c50", darkColor: "#82d99b", meaning: "Examples / worked problems" },
-    { color: "#2675bd", darkColor: "#8bc9ff", meaning: "Important mathematics" },
-    { color: "#757575", darkColor: "#bdbdbd", meaning: "Research discrepancy" },
-    { color: "#c94f86", darkColor: "#f3a1c5", meaning: "Main takeaway" },
-    { color: "#b83b43", darkColor: "#ff6b6b", meaning: "Red" },
-    { color: "#b56720", darkColor: "#ffb86b", meaning: "Orange" },
-    { color: "#5146a3", darkColor: "#8c8cff", meaning: "Indigo" },
-    { color: "#883da8", darkColor: "#d78cf5", meaning: "Violet" }
-  ];
-}
-function commentPalette(value) {
-  if (!Array.isArray(value)) return defaultCommentPalette();
-  return value.filter((v) => !!v && typeof v.color === "string" && /^#[0-9a-f]{6}$/i.test(v.color) && typeof v.meaning === "string").map((v) => ({ ...v, darkColor: darkCommentColor(v) }));
-}
-function darkCommentColor(c) {
-  if (c.darkColor && /^#[0-9a-f]{6}$/i.test(c.darkColor)) return c.darkColor;
-  const hex = safeColor(c.color).slice(1);
-  return "#" + [0, 2, 4].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * 0.6 + 255 * 0.4).toString(16).padStart(2, "0")).join("");
-}
-var annotationStyles = ["highlight", "underline", "text", "sticky"];
-var styleNames = { highlight: "Highlight", underline: "Underline", text: "Text color", sticky: "Post-it" };
-function styleOf(c) {
-  return c.kind === "sticky" ? "sticky" : c.markStyle ?? "highlight";
-}
-function typeKey(style, meaning) {
-  return JSON.stringify([style, meaning]);
-}
-function defaultStylePalette(style) {
-  const colors = defaultCommentPalette().map((p, i) => ({ ...p, ...style === "text" ? { color: ["#806400", "#286c3c", "#285c8d", "#555555", "#a33668", "#a52a34", "#995000", "#5146a3", "#883da8"][i] } : {}, meaning: style === "highlight" ? p.meaning : ["Yellow", "Green", "Blue", "Grey", "Pink", "Red", "Orange", "Indigo", "Violet"][i] }));
-  return style === "highlight" ? colors : [5, 6, 0, 1, 2, 7, 8, 4, 3].map((i) => colors[i]);
-}
-function stylePalettes(raw, legacy) {
-  const p = raw;
-  return Object.fromEntries(annotationStyles.map((style) => [style, Array.isArray(p?.[style]) ? commentPalette(p[style]) : style === "highlight" ? commentPalette(legacy) : defaultStylePalette(style)]));
-}
-
-// src/math-anchor-location.ts
-var equationCache = /* @__PURE__ */ new Map();
-function indexedEquations(text2) {
-  let qs = equationCache.get(text2);
-  if (!qs) {
-    qs = equations(text2);
-    equationCache.set(text2, qs);
-    if (equationCache.size > 2) equationCache.delete(equationCache.keys().next().value);
-  }
-  return qs;
-}
-function locateMarginAnchor(text2, a2) {
-  const exact = locateQuote(text2, a2);
-  if (exact || a2.kind !== "math") return exact;
-  const before = a2.before.trimEnd(), after = a2.after.trimStart();
-  if (!before && !after) return;
-  const candidates = indexedEquations(text2).filter((q) => {
-    const left = text2.slice(0, q.from).trimEnd(), right = text2.slice(q.to).trimStart();
-    return (before ? left.endsWith(before) : left === "") && (after ? right.startsWith(after) : right === "");
-  });
-  if (candidates.length === 1) return { from: candidates[0].from, to: candidates[0].to };
-}
-
-// src/annotation-menu.ts
-function swatchTitle(style, p, label = p.meaning) {
-  const f = document.createDocumentFragment(), s = document.createElement("span");
-  s.className = "study-palette-swatch";
-  s.dataset.style = style;
-  s.setAttribute("aria-hidden", "true");
-  s.style.setProperty("--swatch-light", safeColor(p.color));
-  s.style.setProperty("--swatch-dark", darkCommentColor(p));
-  f.append(s, document.createTextNode(label || p.color));
-  return f;
-}
-function paletteItems(menu, style, palette, pick, current) {
-  menu.setUseNativeMenu(false);
-  if (current && !palette.some((p) => p.meaning === current.intent && p.color === current.color)) menu.addItem((i) => i.setTitle(swatchTitle(style, { ...current, meaning: current.intent }, current.intent + " (saved)")).setChecked(true).onClick(() => {
-  }));
-  for (const p of palette) menu.addItem((i) => i.setTitle(swatchTitle(style, p)).setChecked(!!current && p.meaning === current.intent && p.color === current.color).onClick(() => pick(p)));
-  if (!palette.length) menu.addItem((i) => i.setTitle("Add colors in Study Studio settings").setDisabled(true));
-}
-
-// src/margin-view.ts
-var import_obsidian5 = require("obsidian");
-
-// src/math-semantic.ts
-function signatureItems(node) {
-  const tag = node.tagName.toLowerCase();
-  if (tag === "mjx-break") return [];
-  if (["mjx-math", "mjx-mrow", "mjx-mstyle", "mjx-texatom", "mjx-script"].includes(tag)) return Array.from(node.children).flatMap(signatureItems);
-  if (["mjx-mi", "mjx-mn", "mjx-mo", "mjx-mtext"].includes(tag)) return [[tag, node.textContent]];
-  return [[tag, Array.from(node.children).map(signatureItems)]];
-}
-function mathSignature(node) {
-  return JSON.stringify(signatureItems(node));
-}
-function mathParentSignature(node) {
-  const own = mathSignature(node);
-  let parent = node.parentElement;
-  while (parent && parent.tagName.toLowerCase().startsWith("mjx-")) {
-    const key = mathSignature(parent);
-    if (key !== own) return key;
-    parent = parent.parentElement;
-  }
-  return "";
-}
-function semanticMatches(math, key, parent) {
-  const all = Array.from(math.querySelectorAll("[data-latex]"));
-  return all.filter((n) => mathSignature(n) === key && mathParentSignature(n) === parent).filter((n) => !all.some((p) => p !== n && p.contains(n) && mathSignature(p) === key && mathParentSignature(p) === parent));
-}
-var renderedKeys = /* @__PURE__ */ new Map();
-function latexSignature(latex, doc2) {
-  if (renderedKeys.has(latex)) return renderedKeys.get(latex);
-  const mj = doc2.defaultView?.MathJax;
-  if (!mj?.tex2chtml) return;
-  let key;
-  try {
-    const rendered = mj.tex2chtml(latex, { display: false });
-    const math = rendered.querySelector("mjx-math");
-    if (math && !math.querySelector("mjx-merror")) key = mathSignature(math);
-  } catch {
-  }
-  renderedKeys.set(latex, key);
-  if (renderedKeys.size > 64) renderedKeys.delete(renderedKeys.keys().next().value);
-  return key;
-}
-
-// src/math-parts.ts
-function validSemantic(s) {
-  return s === void 0 || !!s && typeof s.key === "string" && typeof s.parent === "string" && Number.isSafeInteger(s.occurrence) && Number.isSafeInteger(s.count) && s.occurrence >= 0 && s.count > s.occurrence;
-}
-function validMathPart(p) {
-  return !!p && Array.isArray(p.nodes) && p.nodes.length > 0 && p.nodes.length <= 128 && p.nodes.every((n) => n && typeof n.latex === "string" && typeof n.parentLatex === "string" && Number.isSafeInteger(n.occurrence) && n.occurrence >= 0 && validSemantic(n.semantic));
-}
-function semanticNodes(math) {
-  return Array.from(math.querySelectorAll("[data-latex]"));
-}
-function parentLatex(node) {
-  return node.parentElement?.closest("[data-latex]")?.getAttribute("data-latex")?.trim() ?? "";
-}
-function describePart(math, nodes) {
-  const all = semanticNodes(math);
-  return { nodes: nodes.map((n) => {
-    const latex = n.getAttribute("data-latex").trim(), parent = parentLatex(n), key = mathSignature(n), parentKey = mathParentSignature(n), matches = semanticMatches(math, key, parentKey), ordinal = matches.findIndex((x) => x === n || x.contains(n));
-    return { latex, parentLatex: parent, occurrence: all.filter((x) => x.getAttribute("data-latex")?.trim() === latex && parentLatex(x) === parent).indexOf(n), ...ordinal >= 0 ? { semantic: { key, parent: parentKey, occurrence: ordinal, count: matches.length } } : {} };
-  }) };
-}
-function resolvePart(math, part) {
-  const all = semanticNodes(math);
-  const found = part.nodes.map((n) => {
-    const exact = all.filter((x) => x.getAttribute("data-latex")?.trim() === n.latex.trim() && parentLatex(x) === n.parentLatex.trim())[n.occurrence];
-    if (exact) return exact;
-    const key = n.semantic?.key ?? latexSignature(n.latex, math.ownerDocument), parent = n.semantic?.parent ?? latexSignature(n.parentLatex, math.ownerDocument);
-    if (!key || parent === void 0) return;
-    const matches = semanticMatches(math, key, parent);
-    if (n.semantic) return matches.length === n.semantic.count ? matches[n.semantic.occurrence] : void 0;
-    return matches.length === 1 && n.occurrence === 0 ? matches[0] : void 0;
-  });
-  if (!found.every(Boolean)) return [];
-  const nodes = found;
-  return nodes.every((n, i) => !i || !!(nodes[i - 1].compareDocumentPosition(n) & 4)) ? nodes : [];
-}
-function selectedGlyphs(math, range) {
-  return Array.from(math.querySelectorAll("mjx-c")).filter((n) => {
-    const r = n.ownerDocument.createRange();
-    r.selectNodeContents(n);
-    return range.compareBoundaryPoints(Range.END_TO_START, r) < 0 && range.compareBoundaryPoints(Range.START_TO_END, r) > 0;
-  });
-}
-function partFromRange(math, range) {
-  const glyphs = selectedGlyphs(math, range);
-  if (!glyphs.length) return;
-  const selected = new Set(glyphs);
-  const covered = (n) => {
-    const g = [...n.querySelectorAll("mjx-c")];
-    return g.length > 0 && g.every((x) => selected.has(x));
-  };
-  const picked = /* @__PURE__ */ new Set();
-  for (const glyph of glyphs) {
-    let n = glyph.closest("[data-latex]");
-    if (!n || n === math) continue;
-    let p = n.parentElement?.closest("[data-latex]");
-    while (p && p !== math && math.contains(p) && covered(p)) {
-      n = p;
-      p = n.parentElement?.closest("[data-latex]");
-    }
-    picked.add(n);
-  }
-  const nodes = [...picked].filter((n) => ![...picked].some((p) => p !== n && p.contains(n)));
-  if (covered(math)) return;
-  return nodes.length ? describePart(math, nodes) : void 0;
-}
-function partAtTarget(math, target) {
-  const n = target.closest("[data-latex]");
-  return n && n !== math && math.contains(n) ? describePart(math, [n]) : void 0;
-}
-function partFromSource(math, body, from, to) {
-  let failed = false;
-  const ranges = /* @__PURE__ */ new Map();
-  const canon = (s) => {
-    let text2 = "", positions = [];
-    for (let i = 0; i < s.length; i++) if (!/[\s{}]/.test(s[i])) {
-      text2 += s[i];
-      positions.push(i);
-    }
-    return { text: text2, positions };
-  };
-  const visit3 = (parent, start, end) => {
-    const children = semanticNodes(parent).filter((n) => n.parentElement?.closest("[data-latex]") === parent);
-    let cursor = start;
-    for (const n of children) {
-      const value = canon(n.getAttribute("data-latex") ?? "").text, available = canon(body.slice(cursor, end));
-      if (!value) continue;
-      const at = available.text.indexOf(value);
-      if (at < 0) {
-        failed = true;
-        return;
-      }
-      const a2 = cursor + available.positions[at], b = cursor + available.positions[at + value.length - 1] + 1;
-      ranges.set(n, { from: a2, to: b });
-      visit3(n, a2, b);
-      cursor = b;
-    }
-  };
-  visit3(math, 0, body.length);
-  if (failed) return;
-  const chosen = [...ranges].filter(([n, r]) => r.from < to && r.to > from && !semanticNodes(n).some((child) => {
-    const c = ranges.get(child);
-    return c && c.from < to && c.to > from;
-  })).map(([n]) => n);
-  if (!chosen.length) return;
-  const picked = new Set(chosen);
-  for (const n of chosen) {
-    let p = n.parentElement?.closest("[data-latex]");
-    while (p && p !== math) {
-      const r = ranges.get(p);
-      if (!r || r.from < from || r.to > to) break;
-      picked.add(p);
-      p = p.parentElement?.closest("[data-latex]");
-    }
-  }
-  const nodes = [...picked].filter((n) => ![...picked].some((p) => p !== n && p.contains(n)));
-  const selected = canon(body.slice(from, to)).text;
-  const valid = nodes.every((n) => {
-    const v = canon(n.getAttribute("data-latex") ?? "").text;
-    return selected.includes(v) || v.includes(selected);
-  });
-  return nodes.length && valid ? describePart(math, nodes) : void 0;
-}
-
-// src/margin-model.ts
-function excerpts(c) {
-  return c.anchors ?? (c.quote ? [{ id: c.id, path: c.path, quote: c.quote, before: c.before, after: c.after }] : []);
-}
-function withExcerpts(c, anchors) {
-  const first = anchors[0];
-  return { ...c, anchors, ...first ? { path: first.path, quote: first.quote, before: first.before, after: first.after } : { quote: "", before: "", after: "" } };
-}
-function commentPaths(c) {
-  return /* @__PURE__ */ new Set([c.path, ...excerpts(c).map((a2) => a2.path)]);
-}
-function readingCopies(c, path) {
-  return excerpts(c).filter((a2) => a2.path === path).map((a2) => ({ ...c, quote: a2.renderedQuote ?? a2.quote, before: a2.renderedBefore ?? a2.before, after: a2.renderedAfter ?? a2.after, excerpt: a2 }));
-}
-function validComment(c) {
-  return !!c && ["id", "path", "quote", "before", "after", "comment", "color", "intent", "updated"].every((k) => typeof c[k] === "string") && typeof c.resolved === "boolean" && (c.anchors === void 0 || Array.isArray(c.anchors) && c.anchors.every((a2) => a2 && ["id", "path", "quote", "before", "after"].every((k) => typeof a2[k] === "string") && ["renderedRoot", "renderedQuote", "renderedBefore", "renderedAfter", "sectionSource"].every((k) => a2[k] === void 0 || typeof a2[k] === "string") && (a2.kind === void 0 || ["text", "math"].includes(a2.kind)) && (a2.part === void 0 || validMathPart(a2.part)))) && (c.markStyle === void 0 || ["highlight", "underline", "text"].includes(c.markStyle));
-}
-function sanitizedReview(raw) {
-  if (raw?.version !== 1 || !Array.isArray(raw.comments) || !Array.isArray(raw.questions)) throw Error("Review file has an invalid structure. The file was preserved.");
-  return { ...raw, comments: raw.comments.filter(validComment), questions: raw.questions.filter((q) => q && ["questionId", "path", "title", "context", "updated"].every((k) => typeof q[k] === "string") && typeof q.remove === "boolean") };
-}
-function canonical(x) {
-  return Array.isArray(x) ? x.map(canonical) : x && typeof x === "object" ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, canonical(x[k])])) : x;
-}
-var same = (a2, b) => JSON.stringify(canonical(a2)) === JSON.stringify(canonical(b));
-function mergeReview(base2, local, remote) {
-  if (remote?.version !== 1 || !Array.isArray(remote.comments) || !Array.isArray(remote.questions)) throw Error("Review file has an invalid structure. The file was preserved.");
-  const merged = { ...remote };
-  if (local.paletteSpectrumVersion) merged.paletteSpectrumVersion = local.paletteSpectrumVersion;
-  for (const key of ["comments", "questions"]) {
-    const id3 = (x) => key === "comments" ? validComment(x) ? x.id : "invalid:" + JSON.stringify(x) : JSON.stringify([x?.questionId, x?.path, x?.context]);
-    const b = new Map((base2[key] ?? []).map((x) => [id3(x), x])), l = new Map(local[key].map((x) => [id3(x), x])), r = new Map(remote[key].map((x) => [id3(x), x]));
-    for (const k of /* @__PURE__ */ new Set([...b.keys(), ...l.keys()])) {
-      if (same(b.get(k), l.get(k))) continue;
-      if (!same(b.get(k), r.get(k)) && !same(l.get(k), r.get(k))) {
-        if (key === "comments") {
-          const localRecord = l.get(k);
-          if (localRecord) {
-            const copy = { ...localRecord, id: crypto.randomUUID(), conflictOf: k };
-            r.set(copy.id, copy);
-          }
-          continue;
-        }
-        continue;
-      }
-      if (l.has(k)) r.set(k, l.get(k));
-      else r.delete(k);
-    }
-    merged[key] = [...r.values()];
-  }
-  if (!same(base2.palette, local.palette) && same(base2.palette, remote.palette)) merged.palette = local.palette;
-  for (const style of ["highlight", "underline", "text", "sticky"]) {
-    if (!same(base2.palettes?.[style], local.palettes?.[style]) && same(base2.palettes?.[style], remote.palettes?.[style])) merged.palettes = { ...merged.palettes, [style]: local.palettes?.[style] };
-  }
-  return merged;
-}
-
-// src/rich-markdown.ts
-var import_obsidian2 = require("obsidian");
-
 // node_modules/@lezer/common/dist/index.js
 var DefaultBufferLength = 1024;
 var nextPropID = 0;
@@ -586,10 +100,10 @@ NodeProp.contextHash = new NodeProp({ perNode: true });
 NodeProp.lookAhead = new NodeProp({ perNode: true });
 NodeProp.mounted = new NodeProp({ perNode: true });
 var MountedTree = class {
-  constructor(tree, overlay, parser7, bracketed2 = false) {
+  constructor(tree, overlay, parser8, bracketed2 = false) {
     this.tree = tree;
     this.overlay = overlay;
-    this.parser = parser7;
+    this.parser = parser8;
     this.bracketed = bracketed2;
   }
   /**
@@ -2205,8 +1719,8 @@ function parseMixed(nest) {
   return (parse2, input, fragments, ranges) => new MixedParse(parse2, nest, input, fragments, ranges);
 }
 var InnerParse = class {
-  constructor(parser7, parse2, overlay, bracketed2, target, from) {
-    this.parser = parser7;
+  constructor(parser8, parse2, overlay, bracketed2, target, from) {
+    this.parser = parser8;
     this.parse = parse2;
     this.overlay = overlay;
     this.bracketed = bracketed2;
@@ -2219,8 +1733,8 @@ function checkRanges(ranges) {
     throw new RangeError("Invalid inner parse ranges given: " + JSON.stringify(ranges));
 }
 var ActiveOverlay = class {
-  constructor(parser7, predicate, mounts, index2, start, bracketed2, target, prev) {
-    this.parser = parser7;
+  constructor(parser8, predicate, mounts, index2, start, bracketed2, target, prev) {
+    this.parser = parser8;
     this.predicate = predicate;
     this.mounts = mounts;
     this.index = index2;
@@ -2478,14 +1992,14 @@ var FragmentCursor = class {
       this.inner = new StructureCursor(frag.tree, -frag.offset);
     }
   }
-  findMounts(pos, parser7) {
+  findMounts(pos, parser8) {
     var _a2;
     let result = [];
     if (this.inner) {
       this.inner.cursor.moveTo(pos, 1);
       for (let pos2 = this.inner.cursor.node; pos2; pos2 = pos2.parent) {
         let mount = (_a2 = pos2.tree) === null || _a2 === void 0 ? void 0 : _a2.prop(NodeProp.mounted);
-        if (mount && mount.parser == parser7) {
+        if (mount && mount.parser == parser8) {
           for (let i = this.fragI; i < this.fragments.length; i++) {
             let frag = this.fragments[i];
             if (frag.from >= pos2.to)
@@ -3942,8 +3456,8 @@ var BlockContext = class {
   /**
   @internal
   */
-  constructor(parser7, input, fragments, ranges) {
-    this.parser = parser7;
+  constructor(parser8, input, fragments, ranges) {
+    this.parser = parser8;
     this.input = input;
     this.ranges = ranges;
     this.line = new Line();
@@ -4001,9 +3515,9 @@ var BlockContext = class {
     let leaf = new LeafBlock(this.lineStart + line.pos, line.text.slice(line.pos));
     for (let parse2 of this.parser.leafBlockParsers)
       if (parse2) {
-        let parser7 = parse2(this, leaf);
-        if (parser7)
-          leaf.parsers.push(parser7);
+        let parser8 = parse2(this, leaf);
+        if (parser8)
+          leaf.parsers.push(parser8);
       }
     lines: while (this.nextLine()) {
       if (line.pos == line.text.length)
@@ -4013,8 +3527,8 @@ var BlockContext = class {
           if (stop(this, line, leaf))
             break lines;
       }
-      for (let parser7 of leaf.parsers)
-        if (parser7.nextLine(this, line, leaf))
+      for (let parser8 of leaf.parsers)
+        if (parser8.nextLine(this, line, leaf))
           return null;
       leaf.content += "\n" + line.scrub();
       for (let m of line.markers)
@@ -4218,8 +3732,8 @@ var BlockContext = class {
   @internal
   */
   finishLeaf(leaf) {
-    for (let parser7 of leaf.parsers)
-      if (parser7.finish(this, leaf))
+    for (let parser8 of leaf.parsers)
+      if (parser8.finish(this, leaf))
         return;
     let inline = injectMarks(this.parser.parseInline(leaf.content, leaf.start), leaf.marks);
     this.addNode(this.buffer.writeElements(inline, -leaf.start).finish(Type.Paragraph, leaf.content.length), leaf.start);
@@ -4769,8 +4283,8 @@ var InlineContext = class {
   /**
   @internal
   */
-  constructor(parser7, text2, offset) {
-    this.parser = parser7;
+  constructor(parser8, text2, offset) {
+    this.parser = parser8;
     this.text = text2;
     this.offset = offset;
     this.parts = [];
@@ -5098,9 +4612,9 @@ function parseCode(config) {
         if (infoNode)
           info = input.read(infoNode.from, infoNode.to);
       }
-      let parser7 = codeParser(info);
-      if (parser7)
-        return { parser: parser7, overlay: (node2) => node2.type.id == Type.CodeText, bracketed: id3 == Type.FencedCode };
+      let parser8 = codeParser(info);
+      if (parser8)
+        return { parser: parser8, overlay: (node2) => node2.type.id == Type.CodeText, bracketed: id3 == Type.FencedCode };
     } else if (htmlParser && (id3 == Type.HTMLBlock || id3 == Type.HTMLTag || id3 == Type.CommentBlock)) {
       return { parser: htmlParser, overlay: leftOverSpace(node.node, node.from, node.to) };
     }
@@ -5371,6 +4885,509 @@ var Emoji = {
     }
   }]
 };
+
+// src/markdown-context.ts
+var parser2 = parser.configure(Strikethrough);
+var largeCache = /* @__PURE__ */ new Map();
+var smallCache = /* @__PURE__ */ new Map();
+function markdownContext(source) {
+  const cache4 = source.length < 4096 ? smallCache : largeCache;
+  const old = cache4.get(source);
+  if (old) {
+    cache4.delete(source);
+    cache4.set(source, old);
+    return old;
+  }
+  let fragments = [];
+  const previous = source.length < 4096 ? void 0 : [...cache4.entries()].sort((a2, b) => Math.abs(a2[0].length - source.length) - Math.abs(b[0].length - source.length))[0];
+  if (previous) {
+    const [before, context] = previous;
+    let from = 0, toA = before.length, toB = source.length;
+    while (from < toA && from < toB && before[from] === source[from]) from++;
+    while (toA > from && toB > from && before[toA - 1] === source[toB - 1]) {
+      toA--;
+      toB--;
+    }
+    fragments = TreeFragment.applyChanges(TreeFragment.addTree(context.tree), [{ fromA: from, toA, fromB: from, toB }]);
+  }
+  const tree = parser2.parse(source, fragments), excluded = [];
+  tree.iterate({ enter: (n) => {
+    if (["CodeBlock", "FencedCode", "InlineCode"].includes(n.name)) {
+      excluded.push({ from: n.from, to: n.to });
+      return false;
+    }
+  } });
+  const front = /^---\r?\n[\s\S]*?\r?\n(?:---|\.\.\.)(?:\r?\n|$)/.exec(source);
+  if (front) excluded.push({ from: 0, to: front[0].length });
+  excluded.sort((a2, b) => a2.from - b.from);
+  const result = { tree, excluded, reusedFragments: fragments.length };
+  cache4.set(source, result);
+  if (cache4.size > 4) cache4.delete(cache4.keys().next().value);
+  return result;
+}
+
+// src/math-model.ts
+var escaped = (s, i) => {
+  let n = 0;
+  while (i > 0 && s[--i] === "\\") n++;
+  return n % 2 === 1;
+};
+function equations(s) {
+  const out = [];
+  let i = 0, excludedIndex = 0;
+  const { excluded } = markdownContext(s);
+  while (i < s.length) {
+    while (excludedIndex < excluded.length && excluded[excludedIndex].to <= i) excludedIndex++;
+    const blocked = excluded[excludedIndex];
+    if (blocked && i >= blocked.from) {
+      i = blocked.to;
+      continue;
+    }
+    if (s[i] !== "$" || escaped(s, i)) {
+      i++;
+      continue;
+    }
+    const display = s[i + 1] === "$";
+    const size = display ? 2 : 1;
+    const start = i;
+    let j = i + size;
+    if (!display && /\s/.test(s[j] ?? "")) {
+      i++;
+      continue;
+    }
+    let end = -1;
+    while (j < s.length) {
+      if (blocked && j >= blocked.from) break;
+      if (!display && s[j] === "\n") break;
+      if (display && s[j] === "\n" && /^[ \t]*\r?\n/.test(s.slice(j + 1))) break;
+      if (display && s[j] === "\n" && /^ {0,3}(?:`{3,}|~{3,})/.test(s.slice(j + 1))) break;
+      if (s[j] === "$" && !escaped(s, j)) {
+        if (!display && s[j + 1] === "$") break;
+        if (display && s[j + 1] !== "$") break;
+        end = j;
+        break;
+      }
+      j++;
+    }
+    if (end < 0) {
+      i += size;
+      continue;
+    }
+    if (!display && (/\s/.test(s[end - 1] ?? "") || /\d/.test(s[end + 1] ?? ""))) {
+      i = end + size;
+      continue;
+    }
+    const to = end + size;
+    out.push({ from: start, to, bodyFrom: start + size, bodyTo: end, body: s.slice(start + size, end), display, raw: s.slice(start, to) });
+    i = to;
+  }
+  return out;
+}
+function splitTag(body) {
+  const auto = /% math-studio:auto:([a-zA-Z0-9-]+)/.exec(body);
+  const tags3 = [...body.matchAll(/\\tag\{([^{}]*)\}/g)];
+  const tag = tags3.length === 1 ? tags3[0] : void 0;
+  return { latex: body.replace(/% math-studio:auto:[a-zA-Z0-9-]+\s*/g, "").replace(/\\tag\{[^{}]*\}/g, "").trim(), tag: auto ? { kind: "auto", label: tag?.[1] ?? "", id: auto[1] } : tag ? { kind: "manual", label: tag[1] } : { kind: "none", label: "" } };
+}
+function unsupported(body) {
+  if (/\\(?:newcommand|renewcommand|def|gdef|require|html\w*|href|includegraphics|class|style)\b/.test(body)) return "This equation uses a macro definition or an external/HTML command. Keep editing it in native LaTeX.";
+  const stripped = body.replace(/% math-studio:auto:[a-zA-Z0-9-]+/g, "");
+  if (/(^|[^\\])%/.test(stripped)) return "This equation contains LaTeX comments. Native editing preserves them exactly.";
+  if ((body.match(/\\tag\b/g) || []).length > 1 || /\\tag\*/.test(body) || /\\label\b|\\ref\b|\\eqref\b/.test(body)) return "This equation uses labels, references or multiple tags. Use native editing to preserve them.";
+  if (/\\tag\{[^}]*\{/.test(body)) return "Nested equation tags are supported in native editing only.";
+  return null;
+}
+function compose(original, latex, tag) {
+  const label = tag.label.trim();
+  if (/[{}\\\n\r]/.test(label)) throw Error("Use a plain equation label without braces, backslashes or line breaks.");
+  let body = latex.trim();
+  if (tag.kind !== "none" && original.display) body += `\\tag{${label || "1"}}`;
+  if (tag.kind === "auto" && original.display) body += `
+% math-studio:auto:${tag.id || crypto.randomUUID()}`;
+  if (original.display) return `$$
+${body}
+$$`;
+  return `$${body}$`;
+}
+function safeReplacement(doc2, q, replacement) {
+  if (doc2.slice(q.from, q.to) !== q.raw) throw Error("The equation changed outside this visual editor. Your draft is kept open; cancel and reopen the current equation.");
+  return { from: q.from, to: q.to, insert: replacement };
+}
+function fieldEquations(value, answers) {
+  if (!answers) return equations(value);
+  const result = [];
+  let offset = 0;
+  for (const line of value.split("\n")) {
+    const start = line.search(/\S/);
+    if (start >= 0) {
+      const body = line.trim(), from = offset + start;
+      const parsed = equations(body);
+      result.push(parsed.length === 1 && parsed[0].raw === body ? { ...parsed[0], from, to: from + body.length, bodyFrom: from + (parsed[0].display ? 2 : 1), bodyTo: from + body.length - (parsed[0].display ? 2 : 1) } : { from, to: from + body.length, bodyFrom: from, bodyTo: from + body.length, raw: body, body, display: false });
+    }
+    offset += line.length + 1;
+  }
+  return result;
+}
+function replaceFieldMath(source, q, latex, tag) {
+  const replacement = q.bodyFrom === q.from ? latex.trim() : compose(q, latex, tag);
+  if (q.bodyFrom === q.from && /[\r\n]/.test(replacement)) throw Error("Keep each accepted answer on one line.");
+  safeReplacement(source, q, replacement);
+  return source.slice(0, q.from) + replacement + source.slice(q.to);
+}
+
+// src/review-model.ts
+function locateQuote(text2, a2) {
+  if (!a2.quote) return;
+  const hits = [];
+  let at = 0;
+  while ((at = text2.indexOf(a2.quote, at)) >= 0) {
+    hits.push(at);
+    at += Math.max(1, a2.quote.length);
+  }
+  const contextual = hits.filter((i) => (!a2.before || text2.slice(Math.max(0, i - a2.before.length), i) === a2.before) && (!a2.after || text2.slice(i + a2.quote.length, i + a2.quote.length + a2.after.length) === a2.after));
+  const candidates = contextual.length ? contextual : hits;
+  if (candidates.length !== 1) return;
+  return { from: candidates[0], to: candidates[0] + a2.quote.length };
+}
+function safeColor(color) {
+  return /^#[0-9a-f]{6}$/i.test(color) ? color : "#55aa77";
+}
+function anchorRanges(text2) {
+  const ranges = [];
+  let offset = 0, fence = "";
+  for (const line of text2.split("\n")) {
+    const f = /^\s*(`{3,}|~{3,})/.exec(line);
+    if (f) {
+      if (!fence) fence = f[1][0];
+      else if (f[1][0] === fence) fence = "";
+    } else if (!fence) {
+      const m = /(?:^|\s)(\^[A-Za-z0-9-]+)\s*$/.exec(line);
+      if (m) {
+        const from = offset + m.index + m[0].indexOf("^");
+        ranges.push({ from, to: from + m[1].length, id: m[1] });
+      }
+    }
+    offset += line.length + 1;
+  }
+  return ranges;
+}
+var anchorCache = /* @__PURE__ */ new WeakMap();
+function anchorsFor(doc2) {
+  let result = anchorCache.get(doc2);
+  if (!result) {
+    result = anchorRanges(doc2.toString());
+    anchorCache.set(doc2, result);
+  }
+  return result;
+}
+function defaultCommentPalette() {
+  return [
+    { color: "#e2b714", darkColor: "#ffe066", meaning: "Definitions" },
+    { color: "#398c50", darkColor: "#82d99b", meaning: "Examples / worked problems" },
+    { color: "#2675bd", darkColor: "#8bc9ff", meaning: "Important mathematics" },
+    { color: "#757575", darkColor: "#bdbdbd", meaning: "Research discrepancy" },
+    { color: "#c94f86", darkColor: "#f3a1c5", meaning: "Main takeaway" },
+    { color: "#b83b43", darkColor: "#ff6b6b", meaning: "Red" },
+    { color: "#b56720", darkColor: "#ffb86b", meaning: "Orange" },
+    { color: "#5146a3", darkColor: "#8c8cff", meaning: "Indigo" },
+    { color: "#883da8", darkColor: "#d78cf5", meaning: "Violet" }
+  ];
+}
+function commentPalette(value) {
+  if (!Array.isArray(value)) return defaultCommentPalette();
+  return value.filter((v) => !!v && typeof v.color === "string" && /^#[0-9a-f]{6}$/i.test(v.color) && typeof v.meaning === "string").map((v) => ({ ...v, darkColor: darkCommentColor(v) }));
+}
+function darkCommentColor(c) {
+  if (c.darkColor && /^#[0-9a-f]{6}$/i.test(c.darkColor)) return c.darkColor;
+  const hex = safeColor(c.color).slice(1);
+  return "#" + [0, 2, 4].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * 0.6 + 255 * 0.4).toString(16).padStart(2, "0")).join("");
+}
+var annotationStyles = ["highlight", "underline", "text", "sticky"];
+var styleNames = { highlight: "Highlight", underline: "Underline", text: "Text color", sticky: "Post-it" };
+function styleOf(c) {
+  return c.kind === "sticky" ? "sticky" : c.markStyle ?? "highlight";
+}
+function typeKey(style, meaning) {
+  return JSON.stringify([style, meaning]);
+}
+function defaultStylePalette(style) {
+  const colors = defaultCommentPalette().map((p, i) => ({ ...p, ...style === "text" ? { color: ["#806400", "#286c3c", "#285c8d", "#555555", "#a33668", "#a52a34", "#995000", "#5146a3", "#883da8"][i] } : {}, meaning: style === "highlight" ? p.meaning : ["Yellow", "Green", "Blue", "Grey", "Pink", "Red", "Orange", "Indigo", "Violet"][i] }));
+  return style === "highlight" ? colors : [5, 6, 0, 1, 2, 7, 8, 4, 3].map((i) => colors[i]);
+}
+function stylePalettes(raw, legacy) {
+  const p = raw;
+  return Object.fromEntries(annotationStyles.map((style) => [style, Array.isArray(p?.[style]) ? commentPalette(p[style]) : style === "highlight" ? commentPalette(legacy) : defaultStylePalette(style)]));
+}
+
+// src/math-anchor-location.ts
+var equationCache = /* @__PURE__ */ new Map();
+function indexedEquations(text2) {
+  let qs = equationCache.get(text2);
+  if (!qs) {
+    qs = equations(text2);
+    equationCache.set(text2, qs);
+    if (equationCache.size > 2) equationCache.delete(equationCache.keys().next().value);
+  }
+  return qs;
+}
+function locateMarginAnchor(text2, a2) {
+  const exact = locateQuote(text2, a2);
+  if (exact || a2.kind !== "math") return exact;
+  const before = a2.before.trimEnd(), after = a2.after.trimStart();
+  if (!before && !after) return;
+  const candidates = indexedEquations(text2).filter((q) => {
+    const left = text2.slice(0, q.from).trimEnd(), right = text2.slice(q.to).trimStart();
+    return (before ? left.endsWith(before) : left === "") && (after ? right.startsWith(after) : right === "");
+  });
+  if (candidates.length === 1) return { from: candidates[0].from, to: candidates[0].to };
+}
+
+// src/annotation-menu.ts
+function swatchTitle(style, p, label = p.meaning) {
+  const f = document.createDocumentFragment(), s = document.createElement("span");
+  s.className = "study-palette-swatch";
+  s.dataset.style = style;
+  s.setAttribute("aria-hidden", "true");
+  s.style.setProperty("--swatch-light", safeColor(p.color));
+  s.style.setProperty("--swatch-dark", darkCommentColor(p));
+  f.append(s, document.createTextNode(label || p.color));
+  return f;
+}
+function paletteItems(menu, style, palette, pick, current) {
+  menu.setUseNativeMenu(false);
+  if (current && !palette.some((p) => p.meaning === current.intent && p.color === current.color)) menu.addItem((i) => i.setTitle(swatchTitle(style, { ...current, meaning: current.intent }, current.intent + " (saved)")).setChecked(true).onClick(() => {
+  }));
+  for (const p of palette) menu.addItem((i) => i.setTitle(swatchTitle(style, p)).setChecked(!!current && p.meaning === current.intent && p.color === current.color).onClick(() => pick(p)));
+  if (!palette.length) menu.addItem((i) => i.setTitle("Add colors in Study Studio settings").setDisabled(true));
+}
+
+// src/margin-view.ts
+var import_obsidian5 = require("obsidian");
+
+// src/math-semantic.ts
+function signatureItems(node) {
+  const tag = node.tagName.toLowerCase();
+  if (tag === "mjx-break") return [];
+  if (["mjx-math", "mjx-mrow", "mjx-mstyle", "mjx-texatom", "mjx-script"].includes(tag)) return Array.from(node.children).flatMap(signatureItems);
+  if (["mjx-mi", "mjx-mn", "mjx-mo", "mjx-mtext"].includes(tag)) return [[tag, node.textContent]];
+  return [[tag, Array.from(node.children).map(signatureItems)]];
+}
+function mathSignature(node) {
+  return JSON.stringify(signatureItems(node));
+}
+function mathParentSignature(node) {
+  const own = mathSignature(node);
+  let parent = node.parentElement;
+  while (parent && parent.tagName.toLowerCase().startsWith("mjx-")) {
+    const key = mathSignature(parent);
+    if (key !== own) return key;
+    parent = parent.parentElement;
+  }
+  return "";
+}
+function semanticMatches(math, key, parent) {
+  const all = Array.from(math.querySelectorAll("[data-latex]"));
+  return all.filter((n) => mathSignature(n) === key && mathParentSignature(n) === parent).filter((n) => !all.some((p) => p !== n && p.contains(n) && mathSignature(p) === key && mathParentSignature(p) === parent));
+}
+var renderedKeys = /* @__PURE__ */ new Map();
+function latexSignature(latex, doc2) {
+  if (renderedKeys.has(latex)) return renderedKeys.get(latex);
+  const mj = doc2.defaultView?.MathJax;
+  if (!mj?.tex2chtml) return;
+  let key;
+  try {
+    const rendered = mj.tex2chtml(latex, { display: false });
+    const math = rendered.querySelector("mjx-math");
+    if (math && !math.querySelector("mjx-merror")) key = mathSignature(math);
+  } catch {
+  }
+  renderedKeys.set(latex, key);
+  if (renderedKeys.size > 64) renderedKeys.delete(renderedKeys.keys().next().value);
+  return key;
+}
+
+// src/math-parts.ts
+function validSemantic(s) {
+  return s === void 0 || !!s && typeof s.key === "string" && typeof s.parent === "string" && Number.isSafeInteger(s.occurrence) && Number.isSafeInteger(s.count) && s.occurrence >= 0 && s.count > s.occurrence;
+}
+function validMathPart(p) {
+  return !!p && Array.isArray(p.nodes) && p.nodes.length > 0 && p.nodes.length <= 128 && p.nodes.every((n) => n && typeof n.latex === "string" && typeof n.parentLatex === "string" && Number.isSafeInteger(n.occurrence) && n.occurrence >= 0 && validSemantic(n.semantic));
+}
+function semanticNodes(math) {
+  return Array.from(math.querySelectorAll("[data-latex]"));
+}
+function parentLatex(node) {
+  return node.parentElement?.closest("[data-latex]")?.getAttribute("data-latex")?.trim() ?? "";
+}
+function describePart(math, nodes) {
+  const all = semanticNodes(math);
+  return { nodes: nodes.map((n) => {
+    const latex = n.getAttribute("data-latex").trim(), parent = parentLatex(n), key = mathSignature(n), parentKey = mathParentSignature(n), matches = semanticMatches(math, key, parentKey), ordinal = matches.findIndex((x) => x === n || x.contains(n));
+    return { latex, parentLatex: parent, occurrence: all.filter((x) => x.getAttribute("data-latex")?.trim() === latex && parentLatex(x) === parent).indexOf(n), ...ordinal >= 0 ? { semantic: { key, parent: parentKey, occurrence: ordinal, count: matches.length } } : {} };
+  }) };
+}
+function resolvePart(math, part) {
+  const all = semanticNodes(math);
+  const found = part.nodes.map((n) => {
+    const exact = all.filter((x) => x.getAttribute("data-latex")?.trim() === n.latex.trim() && parentLatex(x) === n.parentLatex.trim())[n.occurrence];
+    if (exact) return exact;
+    const key = n.semantic?.key ?? latexSignature(n.latex, math.ownerDocument), parent = n.semantic?.parent ?? latexSignature(n.parentLatex, math.ownerDocument);
+    if (!key || parent === void 0) return;
+    const matches = semanticMatches(math, key, parent);
+    if (n.semantic) return matches.length === n.semantic.count ? matches[n.semantic.occurrence] : void 0;
+    return matches.length === 1 && n.occurrence === 0 ? matches[0] : void 0;
+  });
+  if (!found.every(Boolean)) return [];
+  const nodes = found;
+  return nodes.every((n, i) => !i || !!(nodes[i - 1].compareDocumentPosition(n) & 4)) ? nodes : [];
+}
+function selectedGlyphs(math, range) {
+  return Array.from(math.querySelectorAll("mjx-c")).filter((n) => {
+    const r = n.ownerDocument.createRange();
+    r.selectNodeContents(n);
+    return range.compareBoundaryPoints(Range.END_TO_START, r) < 0 && range.compareBoundaryPoints(Range.START_TO_END, r) > 0;
+  });
+}
+function partFromRange(math, range) {
+  const glyphs = selectedGlyphs(math, range);
+  if (!glyphs.length) return;
+  const selected = new Set(glyphs);
+  const covered = (n) => {
+    const g = [...n.querySelectorAll("mjx-c")];
+    return g.length > 0 && g.every((x) => selected.has(x));
+  };
+  const picked = /* @__PURE__ */ new Set();
+  for (const glyph of glyphs) {
+    let n = glyph.closest("[data-latex]");
+    if (!n || n === math) continue;
+    let p = n.parentElement?.closest("[data-latex]");
+    while (p && p !== math && math.contains(p) && covered(p)) {
+      n = p;
+      p = n.parentElement?.closest("[data-latex]");
+    }
+    picked.add(n);
+  }
+  const nodes = [...picked].filter((n) => ![...picked].some((p) => p !== n && p.contains(n)));
+  if (covered(math)) return;
+  return nodes.length ? describePart(math, nodes) : void 0;
+}
+function partAtTarget(math, target) {
+  const n = target.closest("[data-latex]");
+  return n && n !== math && math.contains(n) ? describePart(math, [n]) : void 0;
+}
+function partFromSource(math, body, from, to) {
+  let failed = false;
+  const ranges = /* @__PURE__ */ new Map();
+  const canon = (s) => {
+    let text2 = "", positions = [];
+    for (let i = 0; i < s.length; i++) if (!/[\s{}]/.test(s[i])) {
+      text2 += s[i];
+      positions.push(i);
+    }
+    return { text: text2, positions };
+  };
+  const visit3 = (parent, start, end) => {
+    const children = semanticNodes(parent).filter((n) => n.parentElement?.closest("[data-latex]") === parent);
+    let cursor = start;
+    for (const n of children) {
+      const value = canon(n.getAttribute("data-latex") ?? "").text, available = canon(body.slice(cursor, end));
+      if (!value) continue;
+      const at = available.text.indexOf(value);
+      if (at < 0) {
+        failed = true;
+        return;
+      }
+      const a2 = cursor + available.positions[at], b = cursor + available.positions[at + value.length - 1] + 1;
+      ranges.set(n, { from: a2, to: b });
+      visit3(n, a2, b);
+      cursor = b;
+    }
+  };
+  visit3(math, 0, body.length);
+  if (failed) return;
+  const chosen = [...ranges].filter(([n, r]) => r.from < to && r.to > from && !semanticNodes(n).some((child) => {
+    const c = ranges.get(child);
+    return c && c.from < to && c.to > from;
+  })).map(([n]) => n);
+  if (!chosen.length) return;
+  const picked = new Set(chosen);
+  for (const n of chosen) {
+    let p = n.parentElement?.closest("[data-latex]");
+    while (p && p !== math) {
+      const r = ranges.get(p);
+      if (!r || r.from < from || r.to > to) break;
+      picked.add(p);
+      p = p.parentElement?.closest("[data-latex]");
+    }
+  }
+  const nodes = [...picked].filter((n) => ![...picked].some((p) => p !== n && p.contains(n)));
+  const selected = canon(body.slice(from, to)).text;
+  const valid = nodes.every((n) => {
+    const v = canon(n.getAttribute("data-latex") ?? "").text;
+    return selected.includes(v) || v.includes(selected);
+  });
+  return nodes.length && valid ? describePart(math, nodes) : void 0;
+}
+
+// src/margin-model.ts
+function excerpts(c) {
+  return c.anchors ?? (c.quote ? [{ id: c.id, path: c.path, quote: c.quote, before: c.before, after: c.after }] : []);
+}
+function withExcerpts(c, anchors) {
+  const first = anchors[0];
+  return { ...c, anchors, ...first ? { path: first.path, quote: first.quote, before: first.before, after: first.after } : { quote: "", before: "", after: "" } };
+}
+function commentPaths(c) {
+  return /* @__PURE__ */ new Set([c.path, ...excerpts(c).map((a2) => a2.path)]);
+}
+function readingCopies(c, path) {
+  return excerpts(c).filter((a2) => a2.path === path).map((a2) => ({ ...c, quote: a2.renderedQuote ?? a2.quote, before: a2.renderedBefore ?? a2.before, after: a2.renderedAfter ?? a2.after, excerpt: a2 }));
+}
+function validComment(c) {
+  return !!c && ["id", "path", "quote", "before", "after", "comment", "color", "intent", "updated"].every((k) => typeof c[k] === "string") && typeof c.resolved === "boolean" && (c.anchors === void 0 || Array.isArray(c.anchors) && c.anchors.every((a2) => a2 && ["id", "path", "quote", "before", "after"].every((k) => typeof a2[k] === "string") && ["renderedRoot", "renderedQuote", "renderedBefore", "renderedAfter", "sectionSource"].every((k) => a2[k] === void 0 || typeof a2[k] === "string") && (a2.kind === void 0 || ["text", "math"].includes(a2.kind)) && (a2.part === void 0 || validMathPart(a2.part)))) && (c.markStyle === void 0 || ["highlight", "underline", "text"].includes(c.markStyle));
+}
+function sanitizedReview(raw) {
+  if (raw?.version !== 1 || !Array.isArray(raw.comments) || !Array.isArray(raw.questions)) throw Error("Review file has an invalid structure. The file was preserved.");
+  return { ...raw, comments: raw.comments.filter(validComment), questions: raw.questions.filter((q) => q && ["questionId", "path", "title", "context", "updated"].every((k) => typeof q[k] === "string") && typeof q.remove === "boolean") };
+}
+function canonical(x) {
+  return Array.isArray(x) ? x.map(canonical) : x && typeof x === "object" ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, canonical(x[k])])) : x;
+}
+var same = (a2, b) => JSON.stringify(canonical(a2)) === JSON.stringify(canonical(b));
+function mergeReview(base2, local, remote) {
+  if (remote?.version !== 1 || !Array.isArray(remote.comments) || !Array.isArray(remote.questions)) throw Error("Review file has an invalid structure. The file was preserved.");
+  const merged = { ...remote };
+  if (local.paletteSpectrumVersion) merged.paletteSpectrumVersion = local.paletteSpectrumVersion;
+  for (const key of ["comments", "questions"]) {
+    const id3 = (x) => key === "comments" ? validComment(x) ? x.id : "invalid:" + JSON.stringify(x) : JSON.stringify([x?.questionId, x?.path, x?.context]);
+    const b = new Map((base2[key] ?? []).map((x) => [id3(x), x])), l = new Map(local[key].map((x) => [id3(x), x])), r = new Map(remote[key].map((x) => [id3(x), x]));
+    for (const k of /* @__PURE__ */ new Set([...b.keys(), ...l.keys()])) {
+      if (same(b.get(k), l.get(k))) continue;
+      if (!same(b.get(k), r.get(k)) && !same(l.get(k), r.get(k))) {
+        if (key === "comments") {
+          const localRecord = l.get(k);
+          if (localRecord) {
+            const copy = { ...localRecord, id: crypto.randomUUID(), conflictOf: k };
+            r.set(copy.id, copy);
+          }
+          continue;
+        }
+        continue;
+      }
+      if (l.has(k)) r.set(k, l.get(k));
+      else r.delete(k);
+    }
+    merged[key] = [...r.values()];
+  }
+  if (!same(base2.palette, local.palette) && same(base2.palette, remote.palette)) merged.palette = local.palette;
+  for (const style of ["highlight", "underline", "text", "sticky"]) {
+    if (!same(base2.palettes?.[style], local.palettes?.[style]) && same(base2.palettes?.[style], remote.palettes?.[style])) merged.palettes = { ...merged.palettes, [style]: local.palettes?.[style] };
+  }
+  return merged;
+}
+
+// src/rich-markdown.ts
+var import_obsidian2 = require("obsidian");
 
 // src/rich-blocks.ts
 var markdownParser = parser.configure([Table]);
@@ -17275,6 +17292,30 @@ GutterMarker.prototype.mapMode = MapMode.TrackBefore;
 GutterMarker.prototype.startSide = GutterMarker.prototype.endSide = -1;
 GutterMarker.prototype.point = true;
 
+// src/margin-format.ts
+function marginFormatting(state, covered) {
+  const ranges = [], source = state.doc.toString();
+  const { tree } = markdownContext(source);
+  tree.iterate({ enter: (n) => {
+    const intersects = covered.filter((r) => n.from < r.to && n.to > r.from);
+    let unsafe = intersects.some((r) => r.from <= n.from || r.to >= n.to);
+    for (let child = n.node.firstChild; child; child = child.nextSibling) if (["EmphasisMark", "StrikethroughMark", "CodeMark", "LinkMark", "URL"].includes(child.name) && intersects.some((r) => child.from < r.to && child.to > r.from)) unsafe = true;
+    if (unsafe && ["Strikethrough", "StrongEmphasis", "Emphasis", "InlineCode", "Link", "Image"].includes(n.name)) return false;
+    if (["FencedCode", "CodeBlock", "HTMLBlock", "CommentBlock"].includes(n.name)) return false;
+    const cls = { Strikethrough: "study-live-strike", StrongEmphasis: "study-live-strong", Emphasis: "study-live-em", InlineCode: "study-live-code", Link: "study-live-link" };
+    if (cls[n.name] && !unsafe) {
+      ranges.push(Decoration.mark({ class: cls[n.name] }).range(n.from, n.to));
+      if (!(n.name === "Link" && source[n.from - 1] === "[" && source[n.to] === "]") && !state.selection.ranges.some((r) => r.from <= n.to && r.to >= n.from)) {
+        for (let child = n.node.firstChild; child; child = child.nextSibling) if (["StrikethroughMark", "EmphasisMark", "CodeMark", "LinkMark", "URL"].includes(child.name)) ranges.push(Decoration.replace({}).range(child.from, child.to));
+      }
+      if (n.name === "InlineCode") return false;
+    }
+    if (/^ATXHeading[1-6]$/.test(n.name) && !unsafe) ranges.push(Decoration.line({ class: "study-live-heading" }).range(state.doc.lineAt(n.from).from));
+    if (n.name === "ListMark") ranges.push(Decoration.mark({ class: "study-live-list-mark" }).range(n.from, n.to));
+  } });
+  return ranges;
+}
+
 // node_modules/@codemirror/language/dist/index.js
 var _a;
 var languageDataProp = /* @__PURE__ */ new NodeProp();
@@ -17292,14 +17333,14 @@ var Language = class {
   configure your parser to [attach](https://codemirror.net/6/docs/ref/#language.languageDataProp) it
   to the language's outer syntax node.
   */
-  constructor(data2, parser7, extraExtensions = [], name2 = "") {
+  constructor(data2, parser8, extraExtensions = [], name2 = "") {
     this.data = data2;
     this.name = name2;
     if (!EditorState.prototype.hasOwnProperty("tree"))
       Object.defineProperty(EditorState.prototype, "tree", { get() {
         return syntaxTree(this);
       } });
-    this.parser = parser7;
+    this.parser = parser8;
     this.extension = [
       language.of(this),
       EditorState.languageData.of((state, pos, side) => {
@@ -17386,9 +17427,9 @@ function topNodeAt(state, pos, side) {
   return tree;
 }
 var LRLanguage = class _LRLanguage extends Language {
-  constructor(data2, parser7, name2) {
-    super(data2, parser7, [], name2);
-    this.parser = parser7;
+  constructor(data2, parser8, name2) {
+    super(data2, parser8, [], name2);
+    this.parser = parser8;
   }
   /**
   Define a language from a parser.
@@ -17449,8 +17490,8 @@ var DocInput = class {
 };
 var currentContext = null;
 var ParseContext = class _ParseContext {
-  constructor(parser7, state, fragments = [], tree, treeLen, viewport, skipped, scheduleOn) {
-    this.parser = parser7;
+  constructor(parser8, state, fragments = [], tree, treeLen, viewport, skipped, scheduleOn) {
+    this.parser = parser8;
     this.state = state;
     this.fragments = fragments;
     this.tree = tree;
@@ -17464,8 +17505,8 @@ var ParseContext = class _ParseContext {
   /**
   @internal
   */
-  static create(parser7, state, viewport) {
-    return new _ParseContext(parser7, state, [], Tree.empty, 0, viewport, [], null);
+  static create(parser8, state, viewport) {
+    return new _ParseContext(parser8, state, [], Tree.empty, 0, viewport, [], null);
   }
   startParse() {
     return this.parser.startParse(new DocInput(this.state.doc), this.fragments);
@@ -17613,7 +17654,7 @@ var ParseContext = class _ParseContext {
     return new class extends Parser {
       createParse(input, fragments, ranges) {
         let from = ranges[0].from, to = ranges[ranges.length - 1].to;
-        let parser7 = {
+        let parser8 = {
           parsedPos: from,
           advance() {
             let cx = currentContext;
@@ -17630,7 +17671,7 @@ var ParseContext = class _ParseContext {
           stopAt() {
           }
         };
-        return parser7;
+        return parser8;
       }
     }();
   }
@@ -18613,20 +18654,20 @@ function defaultCopyState(state) {
 }
 var IndentedFrom = /* @__PURE__ */ new WeakMap();
 var StreamLanguage = class _StreamLanguage extends Language {
-  constructor(parser7) {
-    let data2 = defineLanguageFacet(parser7.languageData);
-    let p = fullParser(parser7), self;
+  constructor(parser8) {
+    let data2 = defineLanguageFacet(parser8.languageData);
+    let p = fullParser(parser8), self;
     let impl = new class extends Parser {
       createParse(input, fragments, ranges) {
         return new Parse(self, input, fragments, ranges);
       }
     }();
-    super(data2, impl, [], parser7.name);
+    super(data2, impl, [], parser8.name);
     this.topNode = docID(data2, this);
     self = this;
     this.streamParser = p;
     this.stateAfter = new NodeProp({ perNode: true });
-    this.tokenTable = parser7.tokenTable ? new TokenTable(p.tokenTable) : defaultTokenTable;
+    this.tokenTable = parser8.tokenTable ? new TokenTable(p.tokenTable) : defaultTokenTable;
   }
   /**
   Define a stream language.
@@ -20201,23 +20242,23 @@ var Stack = class _Stack {
   reduce(action) {
     var _a2;
     let depth = action >> 19, type = action & 65535;
-    let { parser: parser7 } = this.p;
+    let { parser: parser8 } = this.p;
     let lookaheadRecord = this.reducePos < this.pos - 25 && this.setLookAhead(this.pos);
-    let dPrec = parser7.dynamicPrecedence(type);
+    let dPrec = parser8.dynamicPrecedence(type);
     if (dPrec)
       this.score += dPrec;
     if (depth == 0) {
-      if (type < parser7.minRepeatTerm && this.reducePos < this.pos)
+      if (type < parser8.minRepeatTerm && this.reducePos < this.pos)
         this.reducePos = this.pos;
-      this.pushState(parser7.getGoto(this.state, type, true), this.reducePos);
-      if (type < parser7.minRepeatTerm)
+      this.pushState(parser8.getGoto(this.state, type, true), this.reducePos);
+      if (type < parser8.minRepeatTerm)
         this.storeNode(type, this.reducePos, this.reducePos, lookaheadRecord ? 8 : 4, true);
       this.reduceContext(type, this.reducePos);
       return;
     }
     let base2 = this.stack.length - (depth - 1) * 3 - (action & 262144 ? 6 : 0);
     let start = base2 ? this.stack[base2 - 2] : this.p.ranges[0].from;
-    if (type < parser7.minRepeatTerm && start == this.reducePos && this.reducePos < this.pos)
+    if (type < parser8.minRepeatTerm && start == this.reducePos && this.reducePos < this.pos)
       this.reducePos = this.pos;
     let size = this.reducePos - start;
     if (size >= 2e3 && !((_a2 = this.p.parser.nodeSet.types[type]) === null || _a2 === void 0 ? void 0 : _a2.isAnonymous)) {
@@ -20231,8 +20272,8 @@ var Stack = class _Stack {
       }
     }
     let bufferBase = base2 ? this.stack[base2 - 1] : 0, count2 = this.bufferBase + this.buffer.length - bufferBase;
-    if (type < parser7.minRepeatTerm || action & 131072) {
-      let pos = parser7.stateFlag(
+    if (type < parser8.minRepeatTerm || action & 131072) {
+      let pos = parser8.stateFlag(
         this.state,
         1
         /* StateFlag.Skipped */
@@ -20243,7 +20284,7 @@ var Stack = class _Stack {
       this.state = this.stack[base2];
     } else {
       let baseStateID = this.stack[base2 - 3];
-      this.state = parser7.getGoto(baseStateID, type, true);
+      this.state = parser8.getGoto(baseStateID, type, true);
     }
     while (this.stack.length > base2)
       this.stack.pop();
@@ -20302,18 +20343,18 @@ var Stack = class _Stack {
     if (action & 131072) {
       this.pushState(action & 65535, this.pos);
     } else if ((action & 262144) == 0) {
-      let nextState = action, { parser: parser7 } = this.p;
+      let nextState = action, { parser: parser8 } = this.p;
       this.pos = end;
-      let skipped = parser7.stateFlag(
+      let skipped = parser8.stateFlag(
         nextState,
         1
         /* StateFlag.Skipped */
       );
-      if (!skipped && (end > start || type <= parser7.maxNode))
+      if (!skipped && (end > start || type <= parser8.maxNode))
         this.reducePos = end;
       this.pushState(nextState, skipped ? start : Math.min(start, this.reducePos));
       this.shiftContext(type, start);
-      if (type <= parser7.maxNode)
+      if (type <= parser8.maxNode)
         this.buffer.push(type, start, end, 4);
     } else {
       this.pos = end;
@@ -20449,18 +20490,18 @@ var Stack = class _Stack {
   @internal
   */
   forceReduce() {
-    let { parser: parser7 } = this.p;
-    let reduce = parser7.stateSlot(
+    let { parser: parser8 } = this.p;
+    let reduce = parser8.stateSlot(
       this.state,
       5
       /* ParseState.ForcedReduce */
     );
     if ((reduce & 65536) == 0)
       return false;
-    if (!parser7.validAction(this.state, reduce)) {
+    if (!parser8.validAction(this.state, reduce)) {
       let depth = reduce >> 19, term = reduce & 65535;
       let target = this.stack.length - depth * 3;
-      if (target < 0 || parser7.getGoto(this.stack[target], term, false) < 0) {
+      if (target < 0 || parser8.getGoto(this.stack[target], term, false) < 0) {
         let backup = this.findForcedReduction();
         if (backup == null)
           return false;
@@ -20479,18 +20520,18 @@ var Stack = class _Stack {
   isn't a valid action. @internal
   */
   findForcedReduction() {
-    let { parser: parser7 } = this.p, seen = [];
+    let { parser: parser8 } = this.p, seen = [];
     let explore = (state, depth) => {
       if (seen.includes(state))
         return;
       seen.push(state);
-      return parser7.allActions(state, (action) => {
+      return parser8.allActions(state, (action) => {
         if (action & (262144 | 131072)) ;
         else if (action & 65536) {
           let rDepth = (action >> 19) - depth;
           if (rDepth > 1) {
             let term = action & 65535, target = this.stack.length - rDepth * 3;
-            if (target >= 0 && parser7.getGoto(this.stack[target], term, false) >= 0)
+            if (target >= 0 && parser8.getGoto(this.stack[target], term, false) >= 0)
               return rDepth << 19 | 65536 | term;
           }
         } else {
@@ -20526,12 +20567,12 @@ var Stack = class _Stack {
   get deadEnd() {
     if (this.stack.length != 3)
       return false;
-    let { parser: parser7 } = this.p;
-    return parser7.data[parser7.stateSlot(
+    let { parser: parser8 } = this.p;
+    return parser8.data[parser8.stateSlot(
       this.state,
       1
       /* ParseState.Actions */
-    )] == 65535 && !parser7.stateSlot(
+    )] == 65535 && !parser8.stateSlot(
       this.state,
       4
       /* ParseState.DefaultReduce */
@@ -20954,8 +20995,8 @@ var TokenGroup = class {
     this.id = id3;
   }
   token(input, stack) {
-    let { parser: parser7 } = stack.p;
-    readToken2(this.data, input, stack, this.id, parser7.data, parser7.tokenPrecTable);
+    let { parser: parser8 } = stack.p;
+    readToken2(this.data, input, stack, this.id, parser8.data, parser8.tokenPrecTable);
   }
 };
 TokenGroup.prototype.contextual = TokenGroup.prototype.fallback = TokenGroup.prototype.extend = false;
@@ -21156,18 +21197,18 @@ var FragmentCursor3 = class {
   }
 };
 var TokenCache = class {
-  constructor(parser7, stream) {
+  constructor(parser8, stream) {
     this.stream = stream;
     this.tokens = [];
     this.mainToken = null;
     this.actions = [];
-    this.tokens = parser7.tokenizers.map((_) => new CachedToken());
+    this.tokens = parser8.tokenizers.map((_) => new CachedToken());
   }
   getActions(stack) {
     let actionIndex = 0;
     let main = null;
-    let { parser: parser7 } = stack.p, { tokenizers } = parser7;
-    let mask = parser7.stateSlot(
+    let { parser: parser8 } = stack.p, { tokenizers } = parser8;
+    let mask = parser8.stateSlot(
       stack.state,
       3
       /* ParseState.TokenizerMask */
@@ -21225,10 +21266,10 @@ var TokenCache = class {
     let start = this.stream.clipPos(stack.pos);
     tokenizer.token(this.stream.reset(start, token), stack);
     if (token.value > -1) {
-      let { parser: parser7 } = stack.p;
-      for (let i = 0; i < parser7.specialized.length; i++)
-        if (parser7.specialized[i] == token.value) {
-          let result = parser7.specializers[i](this.stream.read(token.start, token.end), stack);
+      let { parser: parser8 } = stack.p;
+      for (let i = 0; i < parser8.specialized.length; i++)
+        if (parser8.specialized[i] == token.value) {
+          let result = parser8.specializers[i](this.stream.read(token.start, token.end), stack);
           if (result >= 0 && stack.p.parser.dialect.allows(result >> 1)) {
             if ((result & 1) == 0)
               token.value = result >> 1;
@@ -21252,9 +21293,9 @@ var TokenCache = class {
     return index2;
   }
   addActions(stack, token, end, index2) {
-    let { state } = stack, { parser: parser7 } = stack.p, { data: data2 } = parser7;
+    let { state } = stack, { parser: parser8 } = stack.p, { data: data2 } = parser8;
     for (let set2 = 0; set2 < 2; set2++) {
-      for (let i = parser7.stateSlot(
+      for (let i = parser8.stateSlot(
         state,
         set2 ? 2 : 1
         /* ParseState.Actions */
@@ -21276,8 +21317,8 @@ var TokenCache = class {
   }
 };
 var Parse2 = class {
-  constructor(parser7, input, fragments, ranges) {
-    this.parser = parser7;
+  constructor(parser8, input, fragments, ranges) {
+    this.parser = parser8;
     this.input = input;
     this.ranges = ranges;
     this.recovering = 0;
@@ -21289,11 +21330,11 @@ var Parse2 = class {
     this.lastBigReductionSize = 0;
     this.bigReductionCount = 0;
     this.stream = new InputStream(input, ranges);
-    this.tokens = new TokenCache(parser7, this.stream);
-    this.topTerm = parser7.top[1];
+    this.tokens = new TokenCache(parser8, this.stream);
+    this.topTerm = parser8.top[1];
     let { from } = ranges[0];
-    this.stacks = [Stack.start(this, parser7.top[0], from)];
-    this.fragments = fragments.length && this.stream.end - from > parser7.bufferLength * 4 ? new FragmentCursor3(fragments, parser7.nodeSet) : null;
+    this.stacks = [Stack.start(this, parser8.top[0], from)];
+    this.fragments = fragments.length && this.stream.end - from > parser8.bufferLength * 4 ? new FragmentCursor3(fragments, parser8.nodeSet) : null;
   }
   get parsedPos() {
     return this.minStackPos;
@@ -21406,18 +21447,18 @@ var Parse2 = class {
   // given, stacks split off by ambiguous operations will be pushed to
   // `split`, or added to `stacks` if they move `pos` forward.
   advanceStack(stack, stacks, split) {
-    let start = stack.pos, { parser: parser7 } = this;
+    let start = stack.pos, { parser: parser8 } = this;
     let base2 = verbose ? this.stackID(stack) + " -> " : "";
     if (this.stoppedAt != null && start > this.stoppedAt)
       return stack.forceReduce() ? stack : null;
     if (this.fragments) {
       let strictCx = stack.curContext && stack.curContext.tracker.strict, cxHash = strictCx ? stack.curContext.hash : 0;
       for (let cached = this.fragments.nodeAt(start); cached; ) {
-        let match = this.parser.nodeSet.types[cached.type.id] == cached.type ? parser7.getGoto(stack.state, cached.type.id) : -1;
+        let match = this.parser.nodeSet.types[cached.type.id] == cached.type ? parser8.getGoto(stack.state, cached.type.id) : -1;
         if (match > -1 && cached.length && (!strictCx || (cached.prop(NodeProp.contextHash) || 0) == cxHash)) {
           stack.useNode(cached, match);
           if (verbose)
-            console.log(base2 + this.stackID(stack) + ` (via reuse of ${parser7.getName(cached.type.id)})`);
+            console.log(base2 + this.stackID(stack) + ` (via reuse of ${parser8.getName(cached.type.id)})`);
           return true;
         }
         if (!(cached instanceof Tree) || cached.children.length == 0 || cached.positions[0] > 0)
@@ -21429,7 +21470,7 @@ var Parse2 = class {
           break;
       }
     }
-    let defaultReduce = parser7.stateSlot(
+    let defaultReduce = parser8.stateSlot(
       stack.state,
       4
       /* ParseState.DefaultReduce */
@@ -21437,7 +21478,7 @@ var Parse2 = class {
     if (defaultReduce > 0) {
       stack.reduce(defaultReduce);
       if (verbose)
-        console.log(base2 + this.stackID(stack) + ` (via always-reduce ${parser7.getName(
+        console.log(base2 + this.stackID(stack) + ` (via always-reduce ${parser8.getName(
           defaultReduce & 65535
           /* Action.ValueMask */
         )})`);
@@ -21455,10 +21496,10 @@ var Parse2 = class {
       let main = this.tokens.mainToken;
       localStack.apply(action, term, main ? main.start : localStack.pos, end);
       if (verbose)
-        console.log(base2 + this.stackID(localStack) + ` (via ${(action & 65536) == 0 ? "shift" : `reduce of ${parser7.getName(
+        console.log(base2 + this.stackID(localStack) + ` (via ${(action & 65536) == 0 ? "shift" : `reduce of ${parser8.getName(
           action & 65535
           /* Action.ValueMask */
-        )}`} for ${parser7.getName(term)} @ ${start}${localStack == stack ? "" : ", split"})`);
+        )}`} for ${parser8.getName(term)} @ ${start}${localStack == stack ? "" : ", split"})`);
       if (last)
         return true;
       else if (localStack.pos > start)
@@ -22218,7 +22259,7 @@ var pythonHighlighting = styleTags({
   ", ;": tags.separator
 });
 var spec_identifier = { __proto__: null, await: 44, or: 54, and: 56, in: 60, not: 62, is: 64, if: 70, else: 72, lambda: 76, yield: 94, from: 96, async: 102, for: 104, None: 162, True: 164, False: 164, del: 178, pass: 182, break: 186, continue: 190, return: 194, raise: 202, import: 206, as: 208, global: 212, nonlocal: 214, assert: 218, type: 223, elif: 236, while: 240, try: 246, except: 248, finally: 250, with: 254, def: 258, class: 268, match: 279, case: 285 };
-var parser2 = LRParser.deserialize({
+var parser3 = LRParser.deserialize({
   version: 14,
   states: "##jQ`QeOOP$}OSOOO&WQtO'#HUOOQS'#Co'#CoOOQS'#Cp'#CpO'vQdO'#CnO*UQtO'#HTOOQS'#HU'#HUOOQS'#DU'#DUOOQS'#HT'#HTO*rQdO'#D_O+VQdO'#DfO+gQdO'#DjO+zOWO'#DuO,VOWO'#DvO.[QtO'#GuOOQS'#Gu'#GuO'vQdO'#GtO0ZQtO'#GtOOQS'#Eb'#EbO0rQdO'#EcOOQS'#Gs'#GsO0|QdO'#GrOOQV'#Gr'#GrO1XQdO'#FYOOQS'#G^'#G^O1^QdO'#FXOOQV'#IS'#ISOOQV'#Gq'#GqOOQV'#Fq'#FqQ`QeOOO'vQdO'#CqO1lQdO'#C}O1sQdO'#DRO2RQdO'#HYO2cQtO'#EVO'vQdO'#EWOOQS'#EY'#EYOOQS'#E['#E[OOQS'#E^'#E^O2wQdO'#E`O3_QdO'#EdO3rQdO'#EfO3zQtO'#EfO1XQdO'#EiO0rQdO'#ElO1XQdO'#EnO0rQdO'#EtO0rQdO'#EwO4VQdO'#EyO4^QdO'#FOO4iQdO'#EzO0rQdO'#FOO1XQdO'#FQO1XQdO'#FVO4nQdO'#F[P4uOdO'#GpPOOO)CBd)CBdOOQS'#Ce'#CeOOQS'#Cf'#CfOOQS'#Cg'#CgOOQS'#Ch'#ChOOQS'#Ci'#CiOOQS'#Cj'#CjOOQS'#Cl'#ClO'vQdO,59OO'vQdO,59OO'vQdO,59OO'vQdO,59OO'vQdO,59OO'vQdO,59OO5TQdO'#DoOOQS,5:Y,5:YO5hQdO'#HdOOQS,5:],5:]O5uQ!fO,5:]O5zQtO,59YO1lQdO,59bO1lQdO,59bO1lQdO,59bO8jQdO,59bO8oQdO,59bO8vQdO,59jO8}QdO'#HTO:TQdO'#HSOOQS'#HS'#HSOOQS'#D['#D[O:lQdO,59aO'vQdO,59aO:zQdO,59aOOQS,59y,59yO;PQdO,5:RO'vQdO,5:ROOQS,5:Q,5:QO;_QdO,5:QO;dQdO,5:XO'vQdO,5:XO'vQdO,5:VOOQS,5:U,5:UO;uQdO,5:UO;zQdO,5:WOOOW'#Fy'#FyO<POWO,5:aOOQS,5:a,5:aO<[QdO'#HwOOOW'#Dw'#DwOOOW'#Fz'#FzO<lOWO,5:bOOQS,5:b,5:bOOQS'#F}'#F}O<zQtO,5:iO?lQtO,5=`O@VQ#xO,5=`O@vQtO,5=`OOQS,5:},5:}OA_QeO'#GWOBqQdO,5;^OOQV,5=^,5=^OB|QtO'#IPOCkQdO,5;tOOQS-E:[-E:[OOQV,5;s,5;sO4dQdO'#FQOOQV-E9o-E9oOCsQtO,59]OEzQtO,59iOFeQdO'#HVOFpQdO'#HVO1XQdO'#HVOF{QdO'#DTOGTQdO,59mOGYQdO'#HZO'vQdO'#HZO0rQdO,5=tOOQS,5=t,5=tO0rQdO'#EROOQS'#ES'#ESOGwQdO'#GPOHXQdO,58|OHXQdO,58|O*xQdO,5:oOHgQtO'#H]OOQS,5:r,5:rOOQS,5:z,5:zOHzQdO,5;OOI]QdO'#IOO1XQdO'#H}OOQS,5;Q,5;QOOQS'#GT'#GTOIqQtO,5;QOJPQdO,5;QOJUQdO'#IQOOQS,5;T,5;TOJdQdO'#H|OOQS,5;W,5;WOJuQdO,5;YO4iQdO,5;`O4iQdO,5;cOJ}QtO'#ITO'vQdO'#ITOKXQdO,5;eO4VQdO,5;eO0rQdO,5;jO1XQdO,5;lOK^QeO'#EuOLjQgO,5;fO!!kQdO'#IUO4iQdO,5;jO!!vQdO,5;lO!#OQdO,5;qO!#ZQtO,5;vO'vQdO,5;vPOOO,5=[,5=[P!#bOSO,5=[P!#jOdO,5=[O!&bQtO1G.jO!&iQtO1G.jO!)YQtO1G.jO!)dQtO1G.jO!+}QtO1G.jO!,bQtO1G.jO!,uQdO'#HcO!-TQtO'#GuO0rQdO'#HcO!-_QdO'#HbOOQS,5:Z,5:ZO!-gQdO,5:ZO!-lQdO'#HeO!-wQdO'#HeO!.[QdO,5>OOOQS'#Ds'#DsOOQS1G/w1G/wOOQS1G.|1G.|O!/[QtO1G.|O!/cQtO1G.|O1lQdO1G.|O!0OQdO1G/UOOQS'#DZ'#DZO0rQdO,59tOOQS1G.{1G.{O!0VQdO1G/eO!0gQdO1G/eO!0oQdO1G/fO'vQdO'#H[O!0tQdO'#H[O!0yQtO1G.{O!1ZQdO,59iO!2aQdO,5=zO!2qQdO,5=zO!2yQdO1G/mO!3OQtO1G/mOOQS1G/l1G/lO!3`QdO,5=uO!4VQdO,5=uO0rQdO1G/qO!4tQdO1G/sO!4yQtO1G/sO!5ZQtO1G/qOOQS1G/p1G/pOOQS1G/r1G/rOOOW-E9w-E9wOOQS1G/{1G/{O!5kQdO'#HxO0rQdO'#HxO!5|QdO,5>cOOOW-E9x-E9xOOQS1G/|1G/|OOQS-E9{-E9{O!6[Q#xO1G2zO!6{QtO1G2zO'vQdO,5<jOOQS,5<j,5<jOOQS-E9|-E9|OOQS,5<r,5<rOOQS-E:U-E:UOOQV1G0x1G0xO1XQdO'#GRO!7dQtO,5>kOOQS1G1`1G1`O!8RQdO1G1`OOQS'#DV'#DVO0rQdO,5=qOOQS,5=q,5=qO!8WQdO'#FrO!8cQdO,59oO!8kQdO1G/XO!8uQtO,5=uOOQS1G3`1G3`OOQS,5:m,5:mO!9fQdO'#GtOOQS,5<k,5<kOOQS-E9}-E9}O!9wQdO1G.hOOQS1G0Z1G0ZO!:VQdO,5=wO!:gQdO,5=wO0rQdO1G0jO0rQdO1G0jO!:xQdO,5>jO!;ZQdO,5>jO1XQdO,5>jO!;lQdO,5>iOOQS-E:R-E:RO!;qQdO1G0lO!;|QdO1G0lO!<RQdO,5>lO!<aQdO,5>lO!<oQdO,5>hO!=VQdO,5>hO!=hQdO'#EpO0rQdO1G0tO!=sQdO1G0tO!=xQgO1G0zO!AvQgO1G0}O!EqQdO,5>oO!E{QdO,5>oO!FTQtO,5>oO0rQdO1G1PO!F_QdO1G1PO4iQdO1G1UO!!vQdO1G1WOOQV,5;a,5;aO!FdQfO,5;aO!FiQgO1G1QO!JjQdO'#GZO4iQdO1G1QO4iQdO1G1QO!JzQdO,5>pO!KXQdO,5>pO1XQdO,5>pOOQV1G1U1G1UO!KaQdO'#FSO!KrQ!fO1G1WO!KzQdO1G1WOOQV1G1]1G1]O4iQdO1G1]O!LPQdO1G1]O!LXQdO'#F^OOQV1G1b1G1bO!#ZQtO1G1bPOOO1G2v1G2vP!L^OSO1G2vOOQS,5=},5=}OOQS'#Dp'#DpO0rQdO,5=}O!LfQdO,5=|O!LyQdO,5=|OOQS1G/u1G/uO!MRQdO,5>PO!McQdO,5>PO!MkQdO,5>PO!NOQdO,5>PO!N`QdO,5>POOQS1G3j1G3jOOQS7+$h7+$hO!8kQdO7+$pO#!RQdO1G.|O#!YQdO1G.|OOQS1G/`1G/`OOQS,5<`,5<`O'vQdO,5<`OOQS7+%P7+%PO#!aQdO7+%POOQS-E9r-E9rOOQS7+%Q7+%QO#!qQdO,5=vO'vQdO,5=vOOQS7+$g7+$gO#!vQdO7+%PO##OQdO7+%QO##TQdO1G3fOOQS7+%X7+%XO##eQdO1G3fO##mQdO7+%XOOQS,5<_,5<_O'vQdO,5<_O##rQdO1G3aOOQS-E9q-E9qO#$iQdO7+%]OOQS7+%_7+%_O#$wQdO1G3aO#%fQdO7+%_O#%kQdO1G3gO#%{QdO1G3gO#&TQdO7+%]O#&YQdO,5>dO#&sQdO,5>dO#&sQdO,5>dOOQS'#Dx'#DxO#'UO&jO'#DzO#'aO`O'#HyOOOW1G3}1G3}O#'fQdO1G3}O#'nQdO1G3}O#'yQ#xO7+(fO#(jQtO1G2UP#)TQdO'#GOOOQS,5<m,5<mOOQS-E:P-E:POOQS7+&z7+&zOOQS1G3]1G3]OOQS,5<^,5<^OOQS-E9p-E9pOOQS7+$s7+$sO#)bQdO,5=`O#){QdO,5=`O#*^QtO,5<aO#*qQdO1G3cOOQS-E9s-E9sOOQS7+&U7+&UO#+RQdO7+&UO#+aQdO,5<nO#+uQdO1G4UOOQS-E:Q-E:QO#,WQdO1G4UOOQS1G4T1G4TOOQS7+&W7+&WO#,iQdO7+&WOOQS,5<p,5<pO#,tQdO1G4WOOQS-E:S-E:SOOQS,5<l,5<lO#-SQdO1G4SOOQS-E:O-E:OO1XQdO'#EqO#-jQdO'#EqO#-uQdO'#IRO#-}QdO,5;[OOQS7+&`7+&`O0rQdO7+&`O#.SQgO7+&fO!JmQdO'#GXO4iQdO7+&fO4iQdO7+&iO#2QQtO,5<tO'vQdO,5<tO#2[QdO1G4ZOOQS-E:W-E:WO#2fQdO1G4ZO4iQdO7+&kO0rQdO7+&kOOQV7+&p7+&pO!KrQ!fO7+&rO!KzQdO7+&rO`QeO1G0{OOQV-E:X-E:XO4iQdO7+&lO4iQdO7+&lOOQV,5<u,5<uO#2nQdO,5<uO!JmQdO,5<uOOQV7+&l7+&lO#2yQgO7+&lO#6tQdO,5<vO#7PQdO1G4[OOQS-E:Y-E:YO#7^QdO1G4[O#7fQdO'#IWO#7tQdO'#IWO1XQdO'#IWOOQS'#IW'#IWO#8PQdO'#IVOOQS,5;n,5;nO#8XQdO,5;nO0rQdO'#FUOOQV7+&r7+&rO4iQdO7+&rOOQV7+&w7+&wO4iQdO7+&wO#8^QfO,5;xOOQV7+&|7+&|POOO7+(b7+(bO#8cQdO1G3iOOQS,5<c,5<cO#8qQdO1G3hOOQS-E9u-E9uO#9UQdO,5<dO#9aQdO,5<dO#9tQdO1G3kOOQS-E9v-E9vO#:UQdO1G3kO#:^QdO1G3kO#:nQdO1G3kO#:UQdO1G3kOOQS<<H[<<H[O#:yQtO1G1zOOQS<<Hk<<HkP#;WQdO'#FtO8vQdO1G3bO#;eQdO1G3bO#;jQdO<<HkOOQS<<Hl<<HlO#;zQdO7+)QOOQS<<Hs<<HsO#<[QtO1G1yP#<{QdO'#FsO#=YQdO7+)RO#=jQdO7+)RO#=rQdO<<HwO#=wQdO7+({OOQS<<Hy<<HyO#>nQdO,5<bO'vQdO,5<bOOQS-E9t-E9tOOQS<<Hw<<HwOOQS,5<g,5<gO0rQdO,5<gO#>sQdO1G4OOOQS-E9y-E9yO#?^QdO1G4OO<[QdO'#H{OOOO'#D{'#D{OOOO'#F|'#F|O#?oO&jO,5:fOOOW,5>e,5>eOOOW7+)i7+)iO#?zQdO7+)iO#@SQdO1G2zO#@mQdO1G2zP'vQdO'#FuO0rQdO<<IpO1XQdO1G2YP1XQdO'#GSO#AOQdO7+)pO#AaQdO7+)pOOQS<<Ir<<IrP1XQdO'#GUP0rQdO'#GQOOQS,5;],5;]O#ArQdO,5>mO#BQQdO,5>mOOQS1G0v1G0vOOQS<<Iz<<IzOOQV-E:V-E:VO4iQdO<<JQOOQV,5<s,5<sO4iQdO,5<sOOQV<<JQ<<JQOOQV<<JT<<JTO#BYQtO1G2`P#BdQdO'#GYO#BkQdO7+)uO#BuQgO<<JVO4iQdO<<JVOOQV<<J^<<J^O4iQdO<<J^O!KrQ!fO<<J^O#FpQgO7+&gOOQV<<JW<<JWO#FzQgO<<JWOOQV1G2a1G2aO1XQdO1G2aO#JuQdO1G2aO4iQdO<<JWO1XQdO1G2bP0rQdO'#G[O#KQQdO7+)vO#K_QdO7+)vOOQS'#FT'#FTO0rQdO,5>rO#KgQdO,5>rO#KrQdO,5>rO#K}QdO,5>qO#L`QdO,5>qOOQS1G1Y1G1YOOQS,5;p,5;pOOQV<<Jc<<JcO#LhQdO1G1dOOQS7+)T7+)TP#LmQdO'#FwO#L}QdO1G2OO#MbQdO1G2OO#MrQdO1G2OP#M}QdO'#FxO#N[QdO7+)VO#NlQdO7+)VO#NlQdO7+)VO#NtQdO7+)VO$ UQdO7+(|O8vQdO7+(|OOQSAN>VAN>VO$ oQdO<<LmOOQSAN>cAN>cO0rQdO1G1|O$!PQtO1G1|P$!ZQdO'#FvOOQS1G2R1G2RP$!hQdO'#F{O$!uQdO7+)jO$#`QdO,5>gOOOO-E9z-E9zOOOW<<MT<<MTO$#nQdO7+(fOOQSAN?[AN?[OOQS7+'t7+'tO$$XQdO<<M[OOQS,5<q,5<qO$$jQdO1G4XOOQS-E:T-E:TOOQVAN?lAN?lOOQV1G2_1G2_O4iQdOAN?qO$$xQgOAN?qOOQVAN?xAN?xO4iQdOAN?xOOQV<<JR<<JRO4iQdOAN?rO4iQdO7+'{OOQV7+'{7+'{O1XQdO7+'{OOQVAN?rAN?rOOQS7+'|7+'|O$(sQdO<<MbOOQS1G4^1G4^O0rQdO1G4^OOQS,5<w,5<wO$)QQdO1G4]OOQS-E:Z-E:ZOOQU'#G_'#G_O$)cQfO7+'OO$)nQdO'#F_O$*uQdO7+'jO$+VQdO7+'jOOQS7+'j7+'jO$+bQdO<<LqO$+rQdO<<LqO$+rQdO<<LqO$+zQdO'#H^OOQS<<Lh<<LhO$,UQdO<<LhOOQS7+'h7+'hOOQS'#D|'#D|OOOO1G4R1G4RO$,oQdO1G4RO$,wQdO1G4RP!=hQdO'#GVOOQVG25]G25]O4iQdOG25]OOQVG25dG25dOOQVG25^G25^OOQV<<Kg<<KgO4iQdO<<KgOOQS7+)x7+)xP$-SQdO'#G]OOQU-E:]-E:]OOQV<<Jj<<JjO$-vQtO'#FaOOQS'#Fc'#FcO$.WQdO'#FbO$.xQdO'#FbOOQS'#Fb'#FbO$.}QdO'#IYO$)nQdO'#FiO$)nQdO'#FiO$/fQdO'#FjO$)nQdO'#FkO$/mQdO'#IZOOQS'#IZ'#IZO$0[QdO,5;yOOQS<<KU<<KUO$0dQdO<<KUO$0tQdOANB]O$1UQdOANB]O$1^QdO'#H_OOQS'#H_'#H_O1sQdO'#DcO$1wQdO,5=xOOQSANBSANBSOOOO7+)m7+)mO$2`QdO7+)mOOQVLD*wLD*wOOQVANARANARO5uQ!fO'#GaO$2hQtO,5<SO$)nQdO'#FmOOQS,5<W,5<WOOQS'#Fd'#FdO$3YQdO,5;|O$3_QdO,5;|OOQS'#Fg'#FgO$)nQdO'#G`O$4PQdO,5<QO$4kQdO,5>tO$4{QdO,5>tO1XQdO,5<PO$5^QdO,5<TO$5cQdO,5<TO$)nQdO'#I[O$5hQdO'#I[O$5mQdO,5<UOOQS,5<V,5<VO0rQdO'#FpOOQU1G1e1G1eO4iQdO1G1eOOQSAN@pAN@pO$5rQdOG27wO$6SQdO,59}OOQS1G3d1G3dOOOO<<MX<<MXOOQS,5<{,5<{OOQS-E:_-E:_O$6XQtO'#FaO$6`QdO'#I]O$6nQdO'#I]O$6vQdO,5<XOOQS1G1h1G1hO$6{QdO1G1hO$7QQdO,5<zOOQS-E:^-E:^O$7lQdO,5=OO$8TQdO1G4`OOQS-E:b-E:bOOQS1G1k1G1kOOQS1G1o1G1oO$8eQdO,5>vO$)nQdO,5>vOOQS1G1p1G1pOOQS,5<[,5<[OOQU7+'P7+'PO$+zQdO1G/iO$)nQdO,5<YO$8sQdO,5>wO$8zQdO,5>wOOQS1G1s1G1sOOQS7+'S7+'SP$)nQdO'#GdO$9SQdO1G4bO$9^QdO1G4bO$9fQdO1G4bOOQS7+%T7+%TO$9tQdO1G1tO$:SQtO'#FaO$:ZQdO,5<}OOQS,5<},5<}O$:iQdO1G4cOOQS-E:a-E:aO$)nQdO,5<|O$:pQdO,5<|O$:uQdO7+)|OOQS-E:`-E:`O$;PQdO7+)|O$)nQdO,5<ZP$)nQdO'#GcO$;XQdO1G2hO$)nQdO1G2hP$;gQdO'#GbO$;nQdO<<MhO$;xQdO1G1uO$<WQdO7+(SO8vQdO'#C}O8vQdO,59bO8vQdO,59bO8vQdO,59bO$<fQtO,5=`O8vQdO1G.|O0rQdO1G/XO0rQdO7+$pP$<yQdO'#GOO'vQdO'#GtO$=WQdO,59bO$=]QdO,59bO$=dQdO,59mO$=iQdO1G/UO1sQdO'#DRO8vQdO,59j",
   stateData: "$>S~O%cOS%^OSSOS%]PQ~OPdOVaOfoOhYOopOs!POvqO!PrO!Q{O!T!SO!U!RO!XZO!][O!h`O!r`O!s`O!t`O!{tO!}uO#PvO#RwO#TxO#XyO#ZzO#^|O#_|O#a}O#c!OO#l!QO#o!TO#s!UO#u!VO#z!WO#}hO$P!XO%oRO%pRO%tSO%uWO&Z]O&[]O&]]O&^]O&_]O&`]O&a]O&b]O&c^O&d^O&e^O&f^O&g^O&h^O&i^O&j^O~O%]!YO~OV!aO_!aOa!bOh!iO!X!kO!f!mO%j![O%k!]O%l!^O%m!_O%n!_O%o!`O%p!`O%q!aO%r!aO%s!aO~Ok%xXl%xXm%xXn%xXo%xXp%xXs%xXz%xX{%xX!x%xX#g%xX%[%xX%_%xX%z%xXg%xX!T%xX!U%xX%{%xX!W%xX![%xX!Q%xX#[%xXt%xX!m%xX~P%SOfoOhYO!XZO!][O!h`O!r`O!s`O!t`O%oRO%pRO%tSO%uWO&Z]O&[]O&]]O&^]O&_]O&`]O&a]O&b]O&c^O&d^O&e^O&f^O&g^O&h^O&i^O&j^O~Oz%wX{%wX#g%wX%[%wX%_%wX%z%wX~Ok!pOl!qOm!oOn!oOo!rOp!sOs!tO!x%wX~P)pOV!zOg!|Oo0cOv0qO!PrO~P'vOV#OOo0cOv0qO!W#PO~P'vOV#SOa#TOo0cOv0qO![#UO~P'vOQ#XO%`#XO%a#ZO~OQ#^OR#[O%`#^O%a#`O~OV%iX_%iXa%iXh%iXk%iXl%iXm%iXn%iXo%iXp%iXs%iXz%iX!X%iX!f%iX%j%iX%k%iX%l%iX%m%iX%n%iX%o%iX%p%iX%q%iX%r%iX%s%iXg%iX!T%iX!U%iX~O&Z]O&[]O&]]O&^]O&_]O&`]O&a]O&b]O&c^O&d^O&e^O&f^O&g^O&h^O&i^O&j^O{%iX!x%iX#g%iX%[%iX%_%iX%z%iX%{%iX!W%iX![%iX!Q%iX#[%iXt%iX!m%iX~P,eOz#dO{%hX!x%hX#g%hX%[%hX%_%hX%z%hX~Oo0cOv0qO~P'vO#g#gO%[#iO%_#iO~O%uWO~O!T#nO#u!VO#z!WO#}hO~OopO~P'vOV#sOa#tO%uWO{wP~OV#xOo0cOv0qO!Q#yO~P'vO{#{O!x$QO%z#|O#g!yX%[!yX%_!yX~OV#xOo0cOv0qO#g#SX%[#SX%_#SX~P'vOo0cOv0qO#g#WX%[#WX%_#WX~P'vOh$WO%uWO~O!f$YO!r$YO%uWO~OV$eO~P'vO!U$gO#s$hO#u$iO~O{$jO~OV$qO~P'vOS$sO%[$rO%_$rO%c$tO~OV$}Oa$}Og%POo0cOv0qO~P'vOo0cOv0qO{%SO~P'vO&Y%UO~Oa!bOh!iO!X!kO!f!mOVba_bakbalbambanbaobapbasbazba{ba!xba#gba%[ba%_ba%jba%kba%lba%mba%nba%oba%pba%qba%rba%sba%zbagba!Tba!Uba%{ba!Wba![ba!Qba#[batba!mba~On%ZO~Oo%ZO~P'vOo0cO~P'vOk0eOl0fOm0dOn0dOo0mOp0nOs0rOg%wX!T%wX!U%wX%{%wX!W%wX![%wX!Q%wX#[%wX!m%wX~P)pO%{%]Og%vXz%vX!T%vX!U%vX!W%vX{%vX~Og%_Oz%`O!T%dO!U%cO~Og%_O~Oz%gO!T%dO!U%cO!W&SX~O!W%kO~Oz%lO{%nO!T%dO!U%cO![%}X~O![%rO~O![%sO~OQ#XO%`#XO%a%uO~OV%wOo0cOv0qO!PrO~P'vOQ#^OR#[O%`#^O%a%zO~OV!qa_!qaa!qah!qak!qal!qam!qan!qao!qap!qas!qaz!qa{!qa!X!qa!f!qa!x!qa#g!qa%[!qa%_!qa%j!qa%k!qa%l!qa%m!qa%n!qa%o!qa%p!qa%q!qa%r!qa%s!qa%z!qag!qa!T!qa!U!qa%{!qa!W!qa![!qa!Q!qa#[!qat!qa!m!qa~P#yOz%|O{%ha!x%ha#g%ha%[%ha%_%ha%z%ha~P%SOV&OOopOvqO{%ha!x%ha#g%ha%[%ha%_%ha%z%ha~P'vOz%|O{%ha!x%ha#g%ha%[%ha%_%ha%z%ha~OPdOVaOopOvqO!PrO!Q{O!{tO!}uO#PvO#RwO#TxO#XyO#ZzO#^|O#_|O#a}O#c!OO#g$zX%[$zX%_$zX~P'vO#g#gO%[&TO%_&TO~O!f&UOh&sX%[&sXz&sX#[&sX#g&sX%_&sX#Z&sXg&sX~Oh!iO%[&WO~Okealeameaneaoeapeaseazea{ea!xea#gea%[ea%_ea%zeagea!Tea!Uea%{ea!Wea![ea!Qea#[eatea!mea~P%SOsqazqa{qa#gqa%[qa%_qa%zqa~Ok!pOl!qOm!oOn!oOo!rOp!sO!xqa~PEcO%z&YOz%yX{%yX~O%uWOz%yX{%yX~Oz&]O{wX~O{&_O~Oz%lO#g%}X%[%}X%_%}Xg%}X{%}X![%}X!m%}X%z%}X~OV0lOo0cOv0qO!PrO~P'vO%z#|O#gUa%[Ua%_Ua~Oz&hO#g&PX%[&PX%_&PXn&PX~P%SOz&kO!Q&jO#g#Wa%[#Wa%_#Wa~Oz&lO#[&nO#g&rX%[&rX%_&rXg&rX~O!f$YO!r$YO#Z&qO%uWO~O#Z&qO~Oz&sO#g&tX%[&tX%_&tX~Oz&uO#g&pX%[&pX%_&pX{&pX~O!X&wO%z&xO~Oz&|On&wX~P%SOn'PO~OPdOVaOopOvqO!PrO!Q{O!{tO!}uO#PvO#RwO#TxO#XyO#ZzO#^|O#_|O#a}O#c!OO%['UO~P'vOt'YO#p'WO#q'XOP#naV#naf#nah#nao#nas#nav#na!P#na!Q#na!T#na!U#na!X#na!]#na!h#na!r#na!s#na!t#na!{#na!}#na#P#na#R#na#T#na#X#na#Z#na#^#na#_#na#a#na#c#na#l#na#o#na#s#na#u#na#z#na#}#na$P#na%X#na%o#na%p#na%t#na%u#na&Z#na&[#na&]#na&^#na&_#na&`#na&a#na&b#na&c#na&d#na&e#na&f#na&g#na&h#na&i#na&j#na%Z#na%_#na~Oz'ZO#[']O{&xX~Oh'_O!X&wO~Oh!iO{$jO!X&wO~O{'eO~P%SO%['hO%_'hO~OS'iO%['hO%_'hO~OV!aO_!aOa!bOh!iO!X!kO!f!mO%l!^O%m!_O%n!_O%o!`O%p!`O%q!aO%r!aO%s!aOkWilWimWinWioWipWisWizWi{Wi!xWi#gWi%[Wi%_Wi%jWi%zWigWi!TWi!UWi%{Wi!WWi![Wi!QWi#[WitWi!mWi~O%k!]O~P!#uO%kWi~P!#uOV!aO_!aOa!bOh!iO!X!kO!f!mO%o!`O%p!`O%q!aO%r!aO%s!aOkWilWimWinWioWipWisWizWi{Wi!xWi#gWi%[Wi%_Wi%jWi%kWi%lWi%zWigWi!TWi!UWi%{Wi!WWi![Wi!QWi#[WitWi!mWi~O%m!_O%n!_O~P!&pO%mWi%nWi~P!&pOa!bOh!iO!X!kO!f!mOkWilWimWinWioWipWisWizWi{Wi!xWi#gWi%[Wi%_Wi%jWi%kWi%lWi%mWi%nWi%oWi%pWi%zWigWi!TWi!UWi%{Wi!WWi![Wi!QWi#[WitWi!mWi~OV!aO_!aO%q!aO%r!aO%s!aO~P!)nOVWi_Wi%qWi%rWi%sWi~P!)nO!T%dO!U%cOg&VXz&VX~O%z'kO%{'kO~P,eOz'mOg&UX~Og'oO~Oz'pO{'rO!W&XX~Oo0cOv0qOz'pO{'sO!W&XX~P'vO!W'uO~Om!oOn!oOo!rOp!sOkjisjizji{ji!xji#gji%[ji%_ji%zji~Ol!qO~P!.aOlji~P!.aOk0eOl0fOm0dOn0dOo0mOp0nO~Ot'wO~P!/jOV'|Og'}Oo0cOv0qO~P'vOg'}Oz(OO~Og(QO~O!U(SO~Og(TOz(OO!T%dO!U%cO~P%SOk0eOl0fOm0dOn0dOo0mOp0nOgqa!Tqa!Uqa%{qa!Wqa![qa!Qqa#[qatqa!mqa~PEcOV'|Oo0cOv0qO!W&Sa~P'vOz(WO!W&Sa~O!W(XO~Oz(WO!T%dO!U%cO!W&Sa~P%SOV(]Oo0cOv0qO![%}a#g%}a%[%}a%_%}ag%}a{%}a!m%}a%z%}a~P'vOz(^O![%}a#g%}a%[%}a%_%}ag%}a{%}a!m%}a%z%}a~O![(aO~Oz(^O!T%dO!U%cO![%}a~P%SOz(dO!T%dO!U%cO![&Ta~P%SOz(gO{&lX![&lX!m&lX%z&lX~O{(kO![(mO!m(nO%z(jO~OV&OOopOvqO{%hi!x%hi#g%hi%[%hi%_%hi%z%hi~P'vOz(pO{%hi!x%hi#g%hi%[%hi%_%hi%z%hi~O!f&UOh&sa%[&saz&sa#[&sa#g&sa%_&sa#Z&sag&sa~O%[(uO~OV#sOa#tO%uWO~Oz&]O{wa~OopOvqO~P'vOz(^O#g%}a%[%}a%_%}ag%}a{%}a![%}a!m%}a%z%}a~P%SOz(zO#g%hX%[%hX%_%hX%z%hX~O%z#|O#gUi%[Ui%_Ui~O#g&Pa%[&Pa%_&Pan&Pa~P'vOz(}O#g&Pa%[&Pa%_&Pan&Pa~O%uWO#g&ra%[&ra%_&rag&ra~Oz)SO#g&ra%[&ra%_&rag&ra~Og)VO~OV)WOh$WO%uWO~O#Z)XO~O%uWO#g&ta%[&ta%_&ta~Oz)ZO#g&ta%[&ta%_&ta~Oo0cOv0qO#g&pa%[&pa%_&pa{&pa~P'vOz)^O#g&pa%[&pa%_&pa{&pa~OV)`Oa)`O%uWO~O%z)eO~Ot)hO#j)gOP#hiV#hif#hih#hio#his#hiv#hi!P#hi!Q#hi!T#hi!U#hi!X#hi!]#hi!h#hi!r#hi!s#hi!t#hi!{#hi!}#hi#P#hi#R#hi#T#hi#X#hi#Z#hi#^#hi#_#hi#a#hi#c#hi#l#hi#o#hi#s#hi#u#hi#z#hi#}#hi$P#hi%X#hi%o#hi%p#hi%t#hi%u#hi&Z#hi&[#hi&]#hi&^#hi&_#hi&`#hi&a#hi&b#hi&c#hi&d#hi&e#hi&f#hi&g#hi&h#hi&i#hi&j#hi%Z#hi%_#hi~Ot)iOP#kiV#kif#kih#kio#kis#kiv#ki!P#ki!Q#ki!T#ki!U#ki!X#ki!]#ki!h#ki!r#ki!s#ki!t#ki!{#ki!}#ki#P#ki#R#ki#T#ki#X#ki#Z#ki#^#ki#_#ki#a#ki#c#ki#l#ki#o#ki#s#ki#u#ki#z#ki#}#ki$P#ki%X#ki%o#ki%p#ki%t#ki%u#ki&Z#ki&[#ki&]#ki&^#ki&_#ki&`#ki&a#ki&b#ki&c#ki&d#ki&e#ki&f#ki&g#ki&h#ki&i#ki&j#ki%Z#ki%_#ki~OV)kOn&wa~P'vOz)lOn&wa~Oz)lOn&wa~P%SOn)pO~O%Y)tO~Ot)wO#p'WO#q)vOP#niV#nif#nih#nio#nis#niv#ni!P#ni!Q#ni!T#ni!U#ni!X#ni!]#ni!h#ni!r#ni!s#ni!t#ni!{#ni!}#ni#P#ni#R#ni#T#ni#X#ni#Z#ni#^#ni#_#ni#a#ni#c#ni#l#ni#o#ni#s#ni#u#ni#z#ni#}#ni$P#ni%X#ni%o#ni%p#ni%t#ni%u#ni&Z#ni&[#ni&]#ni&^#ni&_#ni&`#ni&a#ni&b#ni&c#ni&d#ni&e#ni&f#ni&g#ni&h#ni&i#ni&j#ni%Z#ni%_#ni~OV)zOo0cOv0qO{$jO~P'vOo0cOv0qO{&xa~P'vOz*OO{&xa~OV*SOa*TOg*WO%q*UO%uWO~O{$jO&{*YO~Oh'_O~Oh!iO{$jO~O%[*_O~O%[*aO%_*aO~OV$}Oa$}Oo0cOv0qOg&Ua~P'vOz*dOg&Ua~Oo0cOv0qO{*gO!W&Xa~P'vOz*hO!W&Xa~Oo0cOv0qOz*hO{*kO!W&Xa~P'vOo0cOv0qOz*hO!W&Xa~P'vOz*hO{*kO!W&Xa~Om0dOn0dOo0mOp0nOgjikjisjizji!Tji!Uji%{ji!Wji{ji![ji#gji%[ji%_ji!Qji#[jitji!mji%zji~Ol0fO~P!NkOlji~P!NkOV'|Og*pOo0cOv0qO~P'vOn*rO~Og*pOz*tO~Og*uO~OV'|Oo0cOv0qO!W&Si~P'vOz*vO!W&Si~O!W*wO~OV(]Oo0cOv0qO![%}i#g%}i%[%}i%_%}ig%}i{%}i!m%}i%z%}i~P'vOz*zO!T%dO!U%cO![&Ti~Oz*}O![%}i#g%}i%[%}i%_%}ig%}i{%}i!m%}i%z%}i~O![+OO~Oa+QOo0cOv0qO![&Ti~P'vOz*zO![&Ti~O![+SO~OV+UOo0cOv0qO{&la![&la!m&la%z&la~P'vOz+VO{&la![&la!m&la%z&la~O!]+YO&n+[O![!nX~O![+^O~O{(kO![+_O~O{(kO![+_O!m+`O~OV&OOopOvqO{%hq!x%hq#g%hq%[%hq%_%hq%z%hq~P'vOz$ri{$ri!x$ri#g$ri%[$ri%_$ri%z$ri~P%SOV&OOopOvqO~P'vOV&OOo0cOv0qO#g%ha%[%ha%_%ha%z%ha~P'vOz+aO#g%ha%[%ha%_%ha%z%ha~Oz$ia#g$ia%[$ia%_$ian$ia~P%SO#g&Pi%[&Pi%_&Pin&Pi~P'vOz+dO#g#Wq%[#Wq%_#Wq~O#[+eOz$va#g$va%[$va%_$vag$va~O%uWO#g&ri%[&ri%_&rig&ri~Oz+gO#g&ri%[&ri%_&rig&ri~OV+iOh$WO%uWO~O%uWO#g&ti%[&ti%_&ti~Oo0cOv0qO#g&pi%[&pi%_&pi{&pi~P'vO{#{Oz#eX!W#eX~Oz+mO!W&uX~O!W+oO~Ot+rO#j)gOP#hqV#hqf#hqh#hqo#hqs#hqv#hq!P#hq!Q#hq!T#hq!U#hq!X#hq!]#hq!h#hq!r#hq!s#hq!t#hq!{#hq!}#hq#P#hq#R#hq#T#hq#X#hq#Z#hq#^#hq#_#hq#a#hq#c#hq#l#hq#o#hq#s#hq#u#hq#z#hq#}#hq$P#hq%X#hq%o#hq%p#hq%t#hq%u#hq&Z#hq&[#hq&]#hq&^#hq&_#hq&`#hq&a#hq&b#hq&c#hq&d#hq&e#hq&f#hq&g#hq&h#hq&i#hq&j#hq%Z#hq%_#hq~On$|az$|a~P%SOV)kOn&wi~P'vOz+yOn&wi~Oz,TO{$jO#[,TO~O#q,VOP#nqV#nqf#nqh#nqo#nqs#nqv#nq!P#nq!Q#nq!T#nq!U#nq!X#nq!]#nq!h#nq!r#nq!s#nq!t#nq!{#nq!}#nq#P#nq#R#nq#T#nq#X#nq#Z#nq#^#nq#_#nq#a#nq#c#nq#l#nq#o#nq#s#nq#u#nq#z#nq#}#nq$P#nq%X#nq%o#nq%p#nq%t#nq%u#nq&Z#nq&[#nq&]#nq&^#nq&_#nq&`#nq&a#nq&b#nq&c#nq&d#nq&e#nq&f#nq&g#nq&h#nq&i#nq&j#nq%Z#nq%_#nq~O#[,WOz%Oa{%Oa~Oo0cOv0qO{&xi~P'vOz,YO{&xi~O{#{O%z,[Og&zXz&zX~O%uWOg&zXz&zX~Oz,`Og&yX~Og,bO~O%Y,eO~O!T%dO!U%cOg&Viz&Vi~OV$}Oa$}Oo0cOv0qOg&Ui~P'vO{,hOz$la!W$la~Oo0cOv0qO{,iOz$la!W$la~P'vOo0cOv0qO{*gO!W&Xi~P'vOz,lO!W&Xi~Oo0cOv0qOz,lO!W&Xi~P'vOz,lO{,oO!W&Xi~Og$hiz$hi!W$hi~P%SOV'|Oo0cOv0qO~P'vOn,qO~OV'|Og,rOo0cOv0qO~P'vOV'|Oo0cOv0qO!W&Sq~P'vOz$gi![$gi#g$gi%[$gi%_$gig$gi{$gi!m$gi%z$gi~P%SOV(]Oo0cOv0qO~P'vOa+QOo0cOv0qO![&Tq~P'vOz,sO![&Tq~O![,tO~OV(]Oo0cOv0qO![%}q#g%}q%[%}q%_%}qg%}q{%}q!m%}q%z%}q~P'vO{,uO~OV+UOo0cOv0qO{&li![&li!m&li%z&li~P'vOz,zO{&li![&li!m&li%z&li~O!]+YO&n+[O![!na~O{(kO![,}O~OV&OOo0cOv0qO#g%hi%[%hi%_%hi%z%hi~P'vOz-OO#g%hi%[%hi%_%hi%z%hi~O%uWO#g&rq%[&rq%_&rqg&rq~Oz-RO#g&rq%[&rq%_&rqg&rq~OV)`Oa)`O%uWO!W&ua~Oz-TO!W&ua~On$|iz$|i~P%SOV)kO~P'vOV)kOn&wq~P'vOt-XOP#myV#myf#myh#myo#mys#myv#my!P#my!Q#my!T#my!U#my!X#my!]#my!h#my!r#my!s#my!t#my!{#my!}#my#P#my#R#my#T#my#X#my#Z#my#^#my#_#my#a#my#c#my#l#my#o#my#s#my#u#my#z#my#}#my$P#my%X#my%o#my%p#my%t#my%u#my&Z#my&[#my&]#my&^#my&_#my&`#my&a#my&b#my&c#my&d#my&e#my&f#my&g#my&h#my&i#my&j#my%Z#my%_#my~O%Z-]O%_-]O~P`O#q-^OP#nyV#nyf#nyh#nyo#nys#nyv#ny!P#ny!Q#ny!T#ny!U#ny!X#ny!]#ny!h#ny!r#ny!s#ny!t#ny!{#ny!}#ny#P#ny#R#ny#T#ny#X#ny#Z#ny#^#ny#_#ny#a#ny#c#ny#l#ny#o#ny#s#ny#u#ny#z#ny#}#ny$P#ny%X#ny%o#ny%p#ny%t#ny%u#ny&Z#ny&[#ny&]#ny&^#ny&_#ny&`#ny&a#ny&b#ny&c#ny&d#ny&e#ny&f#ny&g#ny&h#ny&i#ny&j#ny%Z#ny%_#ny~Oz-aO{$jO#[-aO~Oo0cOv0qO{&xq~P'vOz-dO{&xq~O%z,[Og&zaz&za~O{#{Og&zaz&za~OV*SOa*TO%q*UO%uWOg&ya~Oz-hOg&ya~O$S-lO~OV$}Oa$}Oo0cOv0qO~P'vOo0cOv0qO{-mOz$li!W$li~P'vOo0cOv0qOz$li!W$li~P'vO{-mOz$li!W$li~Oo0cOv0qO{*gO~P'vOo0cOv0qO{*gO!W&Xq~P'vOz-pO!W&Xq~Oo0cOv0qOz-pO!W&Xq~P'vOs-sO!T%dO!U%cOg&Oq!W&Oq![&Oqz&Oq~P!/jOa+QOo0cOv0qO![&Ty~P'vOz$ji![$ji~P%SOa+QOo0cOv0qO~P'vOV+UOo0cOv0qO~P'vOV+UOo0cOv0qO{&lq![&lq!m&lq%z&lq~P'vO{(kO![-xO!m-yO%z-wO~OV&OOo0cOv0qO#g%hq%[%hq%_%hq%z%hq~P'vO%uWO#g&ry%[&ry%_&ryg&ry~OV)`Oa)`O%uWO!W&ui~Ot-}OP#m!RV#m!Rf#m!Rh#m!Ro#m!Rs#m!Rv#m!R!P#m!R!Q#m!R!T#m!R!U#m!R!X#m!R!]#m!R!h#m!R!r#m!R!s#m!R!t#m!R!{#m!R!}#m!R#P#m!R#R#m!R#T#m!R#X#m!R#Z#m!R#^#m!R#_#m!R#a#m!R#c#m!R#l#m!R#o#m!R#s#m!R#u#m!R#z#m!R#}#m!R$P#m!R%X#m!R%o#m!R%p#m!R%t#m!R%u#m!R&Z#m!R&[#m!R&]#m!R&^#m!R&_#m!R&`#m!R&a#m!R&b#m!R&c#m!R&d#m!R&e#m!R&f#m!R&g#m!R&h#m!R&i#m!R&j#m!R%Z#m!R%_#m!R~Oo0cOv0qO{&xy~P'vOV*SOa*TO%q*UO%uWOg&yi~O$S-lO%Z.VO%_.VO~OV.aOh._O!X.^O!].`O!h.YO!s.[O!t.[O%p.XO%uWO&Z]O&[]O&]]O&^]O&_]O&`]O&a]O&b]O~Oo0cOv0qOz$lq!W$lq~P'vO{.fOz$lq!W$lq~Oo0cOv0qO{*gO!W&Xy~P'vOz.gO!W&Xy~Oo0cOv.kO~P'vOs-sO!T%dO!U%cOg&Oy!W&Oy![&Oyz&Oy~P!/jO{(kO![.nO~O{(kO![.nO!m.oO~OV*SOa*TO%q*UO%uWO~Oh.tO!f.rOz$TX#[$TX%j$TXg$TX~Os$TX{$TX!W$TX![$TX~P$-bO%o.vO%p.vOs$UXz$UX{$UX#[$UX%j$UX!W$UXg$UX![$UX~O!h.xO~Oz.|O#[/OO%j.yOs&|X{&|X!W&|Xg&|X~Oa/RO~P$)zOh.tOs&}Xz&}X{&}X#[&}X%j&}X!W&}Xg&}X![&}X~Os/VO{$jO~Oo0cOv0qOz$ly!W$ly~P'vOo0cOv0qO{*gO!W&X!R~P'vOz/ZO!W&X!R~Og&RXs&RX!T&RX!U&RX!W&RX![&RXz&RX~P!/jOs-sO!T%dO!U%cOg&Qa!W&Qa![&Qaz&Qa~O{(kO![/^O~O!f.rOh$[as$[az$[a{$[a#[$[a%j$[a!W$[ag$[a![$[a~O!h/eO~O%o.vO%p.vOs$Uaz$Ua{$Ua#[$Ua%j$Ua!W$Uag$Ua![$Ua~O%j.yOs$Yaz$Ya{$Ya#[$Ya!W$Yag$Ya![$Ya~Os&|a{&|a!W&|ag&|a~P$)nOz/jOs&|a{&|a!W&|ag&|a~O!W/mO~Og/mO~O{/oO~O![/pO~Oo0cOv0qO{*gO!W&X!Z~P'vO{/sO~O%z/tO~P$-bOz/uO#[/OO%j.yOg'PX~Oz/uOg'PX~Og/wO~O!h/xO~O#[/OOs%Saz%Sa{%Sa%j%Sa!W%Sag%Sa![%Sa~O#[/OO%j.yOs%Waz%Wa{%Wa!W%Wag%Wa~Os&|i{&|i!W&|ig&|i~P$)nOz/zO#[/OO%j.yO!['Oa~Og'Pa~P$)nOz0SOg'Pa~Oa0UO!['Oi~P$)zOz0WO!['Oi~Oz0WO#[/OO%j.yO!['Oi~O#[/OO%j.yOg$biz$bi~O%z0ZO~P$-bO#[/OO%j.yOg%Vaz%Va~Og'Pi~P$)nO{0^O~Oa0UO!['Oq~P$)zOz0`O!['Oq~O#[/OO%j.yOz%Ui![%Ui~Oa0UO~P$)zOa0UO!['Oy~P$)zO#[/OO%j.yOg$ciz$ci~O#[/OO%j.yOz%Uq![%Uq~Oz+aO#g%ha%[%ha%_%ha%z%ha~P%SOV&OOo0cOv0qO~P'vOn0hO~Oo0hO~P'vO{0iO~Ot0jO~P!/jO&]&Z&j&h&i&g&f&d&e&c&b&`&a&_&^&[%u~",
@@ -23054,7 +23095,7 @@ function indentBody(context, node) {
 }
 var pythonLanguage = /* @__PURE__ */ LRLanguage.define({
   name: "python",
-  parser: /* @__PURE__ */ parser2.configure({
+  parser: /* @__PURE__ */ parser3.configure({
     props: [
       /* @__PURE__ */ indentNodeProp.add({
         Body: (context) => {
@@ -23242,7 +23283,7 @@ var spec_identifier2 = { __proto__: null, bool: 36, char: 36, int: 36, float: 36
 var spec_ = { __proto__: null, "<": 767 };
 var spec_templateArgsEnd = { __proto__: null, ">": 135 };
 var spec_scopedIdentifier = { __proto__: null, operator: 388, new: 576, delete: 582 };
-var parser3 = LRParser.deserialize({
+var parser4 = LRParser.deserialize({
   version: 14,
   states: "$<[Q!QQVOOP'gOUOOO([OWO'#CdO,UQUO'#CgO,`QUO'#FjO-vQbO'#CxO.XQUO'#CxO0WQUO'#KaO0_QUO'#CwO0jOpO'#DvO0rQ!dO'#D]OOQR'#JP'#JPO5[QVO'#GUO5iQUO'#JWOOQQ'#JW'#JWO8}QUO'#KtO<hQUO'#KtO?OQVO'#E^O?`QUO'#E^OOQQ'#Ed'#EdOOQQ'#Ee'#EeO?eQVO'#EfO@[QVO'#EiOBXQUO'#FPOByQUO'#FhOOQR'#Fj'#FjOCOQUO'#FjOOQR'#LX'#LXOOQR'#LW'#LWOEWQVO'#KWOF{QUO'#L_OGYQUO'#KxOGnQUO'#L_OH`QUO'#LaOOQR'#HU'#HUOOQR'#HV'#HVOOQR'#HW'#HWOOQR'#LT'#LTOOQR'#J`'#J`Q!QQVOOOHnQVO'#FOOIZQUO'#EhOIbQUOOOK^QVO'#HgOKnQUO'#HgONYQUO'#KxONdQUO'#KxOOQQ'#Kx'#KxO!!bQUO'#KxOOQQ'#Js'#JsO!!oQUO'#HxOOQQ'#Ka'#KaO!&aQUO'#KaO!&}QUO'#KWO!(}QVO'#I]O!(}QVO'#I`OCTQUO'#KWOOQQ'#Ip'#IpOOQQ'#KW'#KWO!-QQUO'#KaOOQR'#K`'#K`O!-XQUO'#DZO!/pQUO'#KuOOQQ'#Ku'#KuO!/wQUO'#KuO!0OQUO'#ETO!0TQUO'#EWO!0YQUO'#FRO8}QUO'#FPO!QQVO'#F^O!0_Q#vO'#F`O!0jQUO'#FkO!0rQUO'#FpO!0wQVO'#FrO!0rQUO'#FuO!3vQUO'#FvO!3{QVO'#FxO!4VQUO'#FzO!4[QUO'#F|O!4aQUO'#GOO!4fQVO'#GQO!(}QVO'#GSO!4mQUO'#GpO!4{QUO'#GYO!(}QVO'#FeO!6YQUO'#FeO!6_QVO'#G`O!6fQUO'#GaO!6qQUO'#GnO!6vQUO'#GrO!6{QUO'#GzO!7mQ&lO'#HiO!:pQUO'#GuO!;QQUO'#HXO!;]QUO'#HZO!;eQUO'#DXO!;eQUO'#HuO!;eQUO'#HvO!;|QUO'#HwO!<_QUO'#H|O!=SQUO'#H}O!>xQVO'#IbO!(}QVO'#IdO!?SQUO'#IgO!?ZQVO'#IjP!AQO!LQO'#CaP!A]{,UO'#CbP!6q{,UO'#CbP!Ah{7[O'#CbP!6q{,UO'#CbP!Am{,UO'#CbP!AxOSO'#IzPOOO)CEp)CEpOOOO'#I}'#I}O!BSOWO,59OOOQR,59O,59OO!(}QVO,59VOOQQ,59X,59XOOQR'#Do'#DoO!(}QVO,5;ROOQR,5<U,5<UO!B_QUO,59ZO!(}QVO,5>qOOQR'#IX'#IXOOQR'#IY'#IYOOQR'#IZ'#IZOOQR'#I['#I[O!(}QVO,5>rO!(}QVO,5>rO!(}QVO,5>rO!(}QVO,5>rO!(}QVO,5>rO!(}QVO,5>rO!(}QVO,5>rO!(}QVO,5>rO!(}QVO,5>rO!(}QVO,5>rO!D^QVO,5>zOOQQ,5?W,5?WO!FPQVO'#CjO!IxQUO'#CzOOQQ,59d,59dOOQQ,59c,59cOOQQ,5<},5<}O!JVQ&lO,5=mO!?SQUO,5?RO!LyQVO,5?UO!MQQbO,59dO!M]QVO'#FYOOQQ,5?P,5?PO!MmQVO,59WO!MtO`O,5:bO!MyQbO'#D^O!N[QbO'#KeO!NjQbO,59wO!NrQbO'#CxO# TQUO'#CxO# YQUO'#KaO# dQUO'#CwOOQR-E<}-E<}O# oQUO,5AvO# vQVO'#EfO@[QVO'#EiOBXQUO,5;kOOQR,5<p,5<pO#$oQUO'#KWO#$vQUO'#KWO!(}QVO'#IUO8}QUO,5;kO#%ZQ&lO'#HiO#(bQUO'#CtO#+VQbO'#CxO#+[QUO'#CwO#.xQUO'#KaOOQQ-E=U-E=UO#1]QUO,5A`O#1gQUO'#KaO#1qQUO,5A`OOQR,5Av,5AvOOQQ,5>l,5>lO#3uQUO'#CgO#4kQUO,5>pO#6^QUO'#IeOOQR'#JO'#JOO#6fQUO,5:xO#7SQUO,5:xO#7sQUO,5:xO#8hQUO'#CuO!0TQUO'#CmOOQQ'#JX'#JXO#7SQUO,5:xO#8pQUO,5;QO!4{QUO'#DOO#9yQUO,5;QO#:OQUO,5>QO#;[QUO'#DOO#;rQUO,5>{O#;wQUO'#LOO#=QQUO,5;TO#=YQVO,5;TO#=dQUO,5;TOOQQ,5;T,5;TO#?]QUO'#LdO#?dQUO,5>UO#?iQbO'#CxO#?tQUO'#GcO#?yQUO'#E^O#@jQUO,5;kO#ARQUO'#LUO#AZQUO,5;rOKnQUO'#HfOBXQUO'#HgO#A`QUO'#KxO!6qQUO'#HjO#BWQUO'#CuO!0wQVO,5<SOOQQ'#Cg'#CgOOQR'#Jj'#JjO#B]QVO,5=`OOQQ,5?Z,5?ZO#DfQbO'#CxO#DqQUO'#GcOOQQ'#Jk'#JkOOQQ-E=i-E=iOGYQUO,5AyOGnQUO,5AyO#DvQUO,5A{O#ERQUO'#G|OOQR,5Ay,5AyO#DvQUO,5AyO#E^QUO'#HOO#EfQUO,5A{OOQR,5A{,5A{OOQR,5A|,5A|O#EtQVO,5A|OOQR-E=^-E=^O#GnQVO,5;jOOQR,5;j,5;jO#IoQUO'#EjO#JtQUO'#EwO#KkQVO'#ExO#M}QUO'#EvO#NVQUO'#EyO$ UQUO'#EzOOQQ'#LR'#LRO$ {QUO,5;SO$#RQUO'#EvOOQQ,5;S,5;SO$$OQUO,5;SO$%qQUO,5:yO$([QVO,5>PO$(fQUO'#E[O$(sQUO,5>ROOQQ,5>S,5>SO$,aQVO'#C|OOQQ-E=q-E=qOOQQ,5>d,5>dOOQQ,59a,59aO$,kQUO,5>wO$.kQUO,5>zO!6qQUO,59uO$/OQUO,5;qO$/]QUO,5<{O!0TQUO,5:oOOQQ,5:r,5:rO$/hQUO,5;mO$/mQUO'#KtOBXQUO,5;kOOQR,5;x,5;xO$0^QUO'#FbO$0lQUO'#FbO$0qQUO,5;zO$4[QVO'#FmO!0wQVO,5<VO!0rQUO,5<VO!0YQUO,5<[O$4cQVO'#GUO$7_QUO,5<^O!0wQVO,5<aO$:uQVO,5<bO$;SQUO,5<dOOQR,5<d,5<dO$<]QUO,5<dOOQR,5<f,5<fOOQR,5<h,5<hOOQQ'#Fi'#FiO$<bQUO,5<jO$<gQUO,5<lOOQR,5<l,5<lO$=mQUO,5<nO$>sQUO'#L^O$>{QUO,5<rO$?WQUO,5=[O$?]QUO,5=[O!4{QUO,5<tO$?eQUO,5<tO$?yQUO,5<PO$APQVO,5<PO$CbQUO,5<zOOQR,5<z,5<zOOQR,5<{,5<{O$?]QUO,5<{O$DhQUO,5<{O$DsQUO,5=YO!(}QVO,5=^O!(}QVO,5=fO#NsQUO,5=mOOQQ,5>T,5>TO$FxQUO,5>TO$GSQUO,5>TO$GXQUO,5>TO$G^QUO,5>TO!6qQUO,5>TO$I[QUO'#KaO$IcQUO,5=oO$InQUO,5=aOKnQUO,5=oO$JhQUO,5=sOOQR,5=s,5=sO$JpQUO,5=sO$L{QVO'#H[OOQQ,5=u,5=uO!;`QUO,5=uO%#vQUO'#KqO%#}QUO'#KbO%$cQUO'#KqO%$mQUO'#DyO%%OQUO'#D|O%'{QUO'#KbOOQQ'#Kb'#KbO%)nQUO'#KbO%#}QUO'#KbO%)sQUO'#KbOOQQ,59s,59sOOQQ,5>a,5>aOOQQ,5>b,5>bO%){QUO'#HzO%*TQUO,5>cOOQQ,5>c,5>cO%-oQUO,5>cO%-zQUO,5>hO%1fQVO,5>iO%1mQUO,5>|O# vQVO'#EfO%4sQUO,5>|OOQQ,5>|,5>|O%5dQUO,5?OO%7hQUO,5?RO!<_QUO,5?RO%9dQUO,5?UO%=PQVO,5?UPOOO'#I|'#I|P%=WO!LQO,58{POOO,58{,58{P!Am{,UO,58|P%=c{,UO,58|P%=q{7[O,58|PO{O'#Jw'#JwP%>S{,UO'#LkPOOO'#Lk'#LkP%>Y{,UO'#LkPOOO,58|,58|POOO,5?f,5?fP%>_OSO,5?fOOOO-E<{-E<{OOQR1G.j1G.jO%>fQUO1G.qO%?lQUO1G0mOOQQ1G0m1G0mO%@xQUO'#CpO%CXQbO'#CxO%CdQUO'#CsO%CiQUO'#CsO%CnQUO1G.uO#BWQUO'#CrOOQQ1G.u1G.uO%EqQUO1G4]O%FwQUO1G4^O%HjQUO1G4^O%J]QUO1G4^O%LOQUO1G4^O%MqQUO1G4^O& dQUO1G4^O&#VQUO1G4^O&$xQUO1G4^O&&kQUO1G4^O&(^QUO1G4^O&*PQUO1G4^O&+rQUO'#KVO&,{QUO'#KVO&-TQUO,59UOOQQ,5=P,5=PO&/]QUO,5=PO&/gQUO,5=PO&/lQUO,5=PO&/qQUO,5=PO!6qQUO,5=PO#NsQUO1G3XO&/{QUO1G4mO!<_QUO1G4mO&1wQUO1G4pO&3jQVO1G4pOOQQ1G/O1G/OOOQQ1G.}1G.}OOQQ1G2i1G2iO!JVQ&lO1G3XO&3qQUO'#LVO@[QVO'#EiO&4zQUO'#F]OOQQ'#Jb'#JbO&5PQUO'#FZO&5[QUO'#LVO&5dQUO,5;tO&5iQUO1G.rOOQQ1G.r1G.rOOQR1G/|1G/|O&7[Q!dO'#JQO&7aQbO,59xO&9rQ!eO'#D`O&9yQ!dO'#JSO&:OQbO,5APO&:OQbO,5APOOQR1G/c1G/cO&:ZQbO1G/cO&:`Q&lO'#GeO&;^QbO,59dOOQR1G7b1G7bO#@jQUO1G1VO&;iQUO1G1^OBXQUO1G1VO&=zQUO'#CzO#+VQbO,59dO&AmQUO1G6zOOQR-E<|-E<|O&CPQUO1G0dO#6fQUO1G0dOOQQ-E=V-E=VO#7SQUO1G0dOOQQ1G0l1G0lO&CtQUO,59jOOQQ1G3l1G3lO&D[QUO,59jO&DrQUO,59jO!MmQVO1G4gO!(}QVO'#JZO&E^QUO,5AjOOQQ1G0o1G0oO!(}QVO1G0oO!6qQUO'#JpO&EfQUO,5BOOOQQ1G3p1G3pOOQR1G1V1G1VO&IcQVO'#FOO!MmQVO,5;sOOQQ,5;s,5;sOBXQUO'#JdO&K_QUO,5ApO&KgQVO'#E[OOQR1G1^1G1^O&NUQUO'#LdOOQR1G1n1G1nOOQR-E=h-E=hOOQR1G7e1G7eO#DvQUO1G7eOGYQUO1G7eO#DvQUO1G7gOOQR1G7g1G7gO&N^QUO'#G}O&NfQUO'#L`OOQQ,5=h,5=hO&NtQUO,5=jO&NyQUO,5=kOOQR1G7h1G7hO#EtQVO1G7hO' OQUO1G7hO'!UQVO,5=kOOQR1G1U1G1UO$/UQUO'#E]O'!zQUO'#E]OOQQ'#LQ'#LQO'#eQUO'#LPO'#pQUO,5;UO'#xQUO'#ElO'$]QUO'#ElO'$pQUO'#EtOOQQ'#J]'#J]O'$uQUO,5;cO'%lQUO,5;cO'&gQUO,5;dO''mQVO,5;dOOQQ,5;d,5;dO''wQVO,5;dO''mQVO,5;dO'(OQUO,5;bO'({QUO,5;eO')WQUO'#KwO')`QUO,5:vO')eQUO,5;fOOQQ1G0n1G0nOOQQ'#J^'#J^O'(OQUO,5;bO!4{QUO'#E}OOQQ,5;b,5;bO'*`QUO'#E`O',YQUO'#E{OHuQUO1G0nO',_QUO'#EbOOQQ'#JY'#JYO'-wQUO'#KyOOQQ'#Ky'#KyO'.qQUO1G0eO'/iQUO1G3kO'0oQVO1G3kOOQQ1G3k1G3kO'0yQVO1G3kO'1QQUO'#LgO'2^QUO'#K_O'2lQUO'#K^O'2wQUO,59hO'3PQUO1G/aO'3UQUO'#FPOOQR1G1]1G1]OOQR1G2g1G2gO$?]QUO1G2gO'3`QUO1G2gO'3kQUO1G0ZOOQR'#Ja'#JaO'3pQVO1G1XO'9iQUO'#FTO'9nQUO1G1VO!6qQUO'#JeO'9|QUO,5;|O$0lQUO,5;|OOQQ'#Fc'#FcOOQQ,5;|,5;|O':[QUO1G1fOOQR1G1f1G1fO':dQUO,5<XO$/UQUO'#FWOBXQUO'#FWO':kQUO,5<XO!(}QVO,5<XO':sQUO,5<XO':xQVO1G1qO!0wQVO1G1qOOQR1G1v1G1vO'@hQUO1G1xOOQR1G1{1G1{O'@mQUO1G1|OBXQUO1G2]O'AvQVO1G1|O'D[QUO1G1|O'DaQUO'#GWO8}QUO1G2]OOQR1G2O1G2OOOQR1G2U1G2UOOQR1G2W1G2WOOQR1G2Y1G2YO$?]QUO'#JiO'DfQUO,5AxO'DnQUO1G2^O!4{QUO1G2^OOQR1G2v1G2vO'DvQUO1G2vO$?eQUO1G2`OOQQ'#Cv'#CvO'D{QUO'#G[O'EvQUO'#G[O'E{QUO'#LYO'FZQUO'#G_OOQQ'#LZ'#LZO'FiQUO1G2`O'FnQVO1G1kO'IPQVO'#GUOBXQUO'#FWOOQR'#Jf'#JfO'FnQVO1G1kO'IZQUO'#FvOOQR1G2f1G2fO'I`QUO1G2gO'IeQUO'#JhO'3`QUO1G2gO!(}QVO1G2tO'ImQUO1G2xO'JvQUO1G3QO'K|QUO1G3XOOQQ1G3o1G3oO'LbQUO1G3oOOQR1G3Z1G3ZO'LgQUO'#KaO'3UQUO'#L[OGnQUO'#L_OOQR'#Gy'#GyO#DvQUO'#LaOOQR'#HQ'#HQO'LqQUO'#GvO'$pQUO'#GuOOQR1G2{1G2{O'MnQUO1G2{O'NeQUO1G3ZO'NpQUO1G3_O'NuQUO1G3_OOQR1G3_1G3_O'N}QUO'#H]OOQR'#H]'#H]O(!WQUO'#H]O!(}QVO'#H`O!(}QVO'#H_OOQR'#Lc'#LcO(!]QUO'#LcOOQR'#Jm'#JmO(!bQVO,5=vOOQQ,5=v,5=vO(!iQUO'#H^O(!qQUO'#HZOOQQ1G3a1G3aO(!{QUO,5@|OOQQ,5@|,5@|O%)nQUO,5@|O%)sQUO,5@|O%$mQUO,5:eO(&jQUO'#KrO(&xQUO'#KrOOQQ,5:e,5:eOOQQ'#JT'#JTO('TQUO'#D}O('_QUO'#KxOGnQUO'#L_O((ZQUO'#D}OOQQ'#Hp'#HpOOQQ'#Hr'#HrOOQQ'#Hs'#HsOOQQ'#Ks'#KsOOQQ'#JV'#JVO((eQUO,5:hOOQQ,5:h,5:hO()bQUO'#L_O()oQUO'#HtO(*VQUO,5@|O(*^QUO'#H{O(*iQUO'#LfO(*qQUO,5>fO(*vQUO'#LeOOQQ1G3}1G3}O(.mQUO1G3}O(.tQUO1G3}O(.{QUO1G4TO(0RQUO1G4TO(0WQUO,5BUO!6qQUO1G4hO!(}QVO'#IiOOQQ1G4m1G4mO(0]QUO1G4mO(2`QVO1G4pPOOO-E<z-E<zPOOO1G.g1G.gPOOO1G.h1G.hP!Am{,UO1G.hP(4`QUO'#LmP(4k{7[O1G.hPO{O-E=u-E=uPOOO,5BV,5BVP(4y{,UO,5BVPOOO1G5Q1G5QO!(}QVO7+$]O(5OQUO'#CzOOQQ,59_,59_O(5ZQbO,59dO(5fQbO,59_OOQQ,59^,59^OOQQ7+)w7+)wO!MmQVO'#JvO(5qQUO,5@qOOQQ1G.p1G.pOOQQ1G2k1G2kO(5yQUO1G2kO(6OQUO7+(sOOQQ7+*X7+*XO(8dQUO7+*XO(8kQUO7+*XO(2`QVO7+*[O#NsQUO7+(sO(8xQVO'#JcO(9]QUO,5AqO(9eQUO,5;vOOQQ'#Cp'#CpOOQQ,5;w,5;wO!(}QVO'#F[OOQQ-E=`-E=`O!MmQVO,5;uOOQQ1G1`1G1`OOQQ,5?l,5?lOOQQ-E=O-E=OOOQR'#Dg'#DgOOQR'#Di'#DiOOQR'#Dl'#DlO(:nQ!eO'#KfO(:uQMkO'#KfO(:|Q!eO'#KfOOQR'#Kf'#KfOOQR'#JR'#JRO(;TQ!eO,59zOOQQ,59z,59zO(;[QbO,5?nOOQQ-E=Q-E=QO(;jQbO1G6kOOQR7+$}7+$}OOQR7+&q7+&qOOQR7+&x7+&xO'9nQUO7+&qO(;uQUO7+&OO#6fQUO7+&OO(<jQUO1G/UO(=QQUO1G/UO(=lQUO7+*ROOQQ7+*V7+*VO(?_QUO,5?uOOQQ-E=X-E=XO(@hQUO7+&ZOOQQ,5@[,5@[OOQQ-E=n-E=nO(@mQUO'#LVO@[QVO'#EiO(AyQUO1G1_OOQQ1G1_1G1_O(CSQUO,5@OOOQQ,5@O,5@OOOQQ-E=b-E=bO(ChQUO'#KwOOQR7+-P7+-PO#DvQUO7+-POOQR7+-R7+-RO(CuQUO,5=iO#ERQUO'#JlO(DWQUO,5AzOOQR1G3U1G3UOOQR1G3V1G3VO(DfQUO7+-SOOQR7+-S7+-SO(F^QUO,5:wO(G{QUO'#EwO!(}QVO,5;VO(HnQUO,5:wO(HxQUO'#EpO(IZQUO'#EzOOQQ,5;Z,5;ZO#KkQVO'#ExO(IqQUO,5:wO(IxQUO'#EyO#GuQUO'#J[O(KbQUO,5AkOOQQ1G0p1G0pO(KmQUO,5;WO!<_QUO,5;^O(LWQUO,5;_O(LfQUO,5;WO(NxQUO,5;`OOQQ-E=Z-E=ZO) QQUO1G0}OOQQ1G1O1G1OO) {QUO1G1OO)#RQVO1G1OO)#YQVO1G1OO)#dQUO1G0|OOQQ1G0|1G0|OOQQ1G1P1G1PO)$aQUO'#JqO)$kQUO,5AcOOQQ1G0b1G0bOOQQ-E=[-E=[O)$sQUO,5;iO!<_QUO,5;iO)%pQVO,5:zO)%wQUO,5;gO$ {QUO7+&YOOQQ7+&Y7+&YO!(}QVO'#EfO)&OQUO,5:|OOQQ'#Kz'#KzOOQQ-E=W-E=WOOQQ,5Ae,5AeOOQQ'#Jn'#JnO))sQUO7+&PPOQQ7+&P7+&POOQQ7+)V7+)VO)*kQUO7+)VO)+qQVO7+)VOOQQ,5>m,5>mO$)hQVO'#JuO)+xQUO,5@xOOQQ1G/S1G/SOOQQ7+${7+${O),TQUO7+(RO),YQUO7+(ROOQR7+(R7+(RO$?]QUO7+(ROOQQ7+%u7+%uOOQR-E=_-E=_O!0YQUO,5;oOOQQ,5@P,5@POOQQ-E=c-E=cO$0lQUO1G1hOOQQ1G1h1G1hOOQR7+'Q7+'QOOQR1G1s1G1sOBXQUO,5;rO),vQUO,5<YO),}QUO1G1sO).WQUO1G1sO!0wQVO7+']O).]QVO7+']O)3{QUO7+'dO)4QQVO7+'hO)6fQUO7+'wO)6pQUO7+'hO)7vQVO7+'hOKnQUO7+'wO$?OQUO,5<rOOQQ,5@T,5@TOOQQ-E=g-E=gO!4{QUO7+'xO)7}QUO7+'xOOQR7+(b7+(bO)8SQUO7+'zO)8XQUO,5<vO'D{QUO,5<vO)9PQUO,5<vO'D{QUO,5<vOOQQ,5<w,5<wO)9bQVO,5<xO'FZQUO'#JgO)9lQUO,5AtO)9tQUO,5<yOOQR7+'z7+'zO):PQVO7+'VO)6iQUO'#LUOOQR-E=d-E=dO)<bQVO,5<bOOQQ,5@S,5@SO!6qQUO,5@SOOQQ-E=f-E=fO)>yQUO7+(`O)@PQUO7+(dO)@UQVO7+(dOOQQ7+(l7+(lOOQQ7+)Z7+)ZO)@^QUO'#KqO)@hQUO'#KqOOQR,5=b,5=bO)@uQUO,5=bO!;eQUO,5=bO!;eQUO,5=bO!;eQUO,5=bOOQR7+(g7+(gOOQR7+(u7+(uOOQR7+(y7+(yOOQR,5=w,5=wO)@zQUO,5=zO)BQQUO,5=yOOQR,5A},5A}OOQR-E=k-E=kOOQQ1G3b1G3bO)CWQUO,5=xO)C]QVO'#EfOOQQ1G6h1G6hO%)nQUO1G6hO%)sQUO1G6hOOQQ1G0P1G0POOQQ-E=R-E=RO)EtQUO,5A^O(&jQUO'#JUO)FPQUO,5A^O)FPQUO,5A^O)FXQUO,5:iO8}QUO,5:iOOQQ,5>],5>]O)FcQUO,5AyO)FjQUO'#EVO)GtQUO'#EVO)H_QUO,5:iO)HiQUO'#HlO)HiQUO'#HmOOQQ'#Kv'#KvO)IWQUO'#KvO!(}QVO'#HnOOQQ,5:i,5:iO)IxQUO,5:iO!MmQVO,5:iOOQQ-E=T-E=TOOQQ1G0S1G0SOOQQ,5>`,5>`O)I}QUO1G6hO!(}QVO,5>gO)MlQUO'#JtO)MwQUO,5BQOOQQ1G4Q1G4QO)NPQUO,5BPOOQQ,5BP,5BPOOQQ7+)i7+)iO*#nQUO7+)iOOQQ7+)o7+)oO*(mQVO1G7pO**oQUO7+*SO**tQUO,5?TO*+zQUO7+*[POOO7+$S7+$SP*-mQUO'#LnP*-uQUO,5BXP!Am{,UO7+$SPOOO1G7q1G7qO*-zQUO<<GwOOQQ1G.y1G.yOOQQ'#IT'#ITO*/mQUO,5@bOOQQ,5@b,5@bOOQQ-E=t-E=tOOQQ7+(V7+(VOOQQ<<Ms<<MsO*0vQUO<<MsO*2yQUO<<MvO*4lQUO<<L_O*5QQUO,5?}OOQQ,5?},5?}OOQQ-E=a-E=aOOQQ1G1b1G1bO*6ZQUO,5;vO*7aQUO1G1aOOQQ1G1a1G1aOOQR,5AQ,5AQO*8jQ!eO,5AQO*8qQMkO,5AQO*8xQ!eO,5AQOOQR-E=P-E=POOQQ1G/f1G/fO*9PQ!eO'#DwOOQQ1G5Y1G5YOOQR<<J]<<J]O*9WQUO<<IjO*9{QUO7+$pOOQQ<<Iu<<IuO(8xQVO,5;ROOQR<=!k<=!kOOQQ1G3T1G3TOOQQ,5@W,5@WOOQQ-E=j-E=jOOQR<=!n<=!nO*:xQUO1G0cO*;PQUO'#EzO*;aQUO1G0cO*;hQUO'#JOO*=OQUO1G0qO!(}QVO1G0qOOQQ,5;[,5;[OOQQ,5;],5;]OOQQ,5?v,5?vOOQQ-E=Y-E=YO!<_QUO1G0xO*>_QUO1G0xOOQQ1G0y1G0yO*>pQUO'#ElOOQQ1G0z1G0zOOQQ7+&j7+&jO*?UQUO7+&jO*@[QVO7+&jOOQQ7+&h7+&hOOQQ,5@],5@]OOQQ-E=o-E=oO*AWQUO1G1TO*AbQUO1G1TO*A{QUO1G0fOOQQ1G0f1G0fO*CRQUO'#LSO*CZQUO1G1ROOQQ<<It<<ItOOQQ'#Hb'#HbO',_QUO,5={OOQQ'#Hd'#HdO',_QUO,5=}OOQQ-E=l-E=lPOQQ<<Ik<<IkPOQQ-E=m-E=mOOQQ<<Lq<<LqO*C`QUO'#LiO*DlQUO'#LhOOQQ,5@a,5@aOOQQ-E=s-E=sOOQR<<Km<<KmO$?]QUO<<KmO*DzQUO<<KmOOQR1G1Z1G1ZOOQQ7+'S7+'SO!MmQVO1G1tO*EPQUO1G1tOOQR7+'_7+'_OOQR<<Jw<<JwO!0wQVO<<JwOOQR<<KO<<KOO*E[QUO<<KSO*FbQVO<<KSOKnQUO<<KcO!MmQVO<<KcO*FiQUO<<KSO!0wQVO<<KSO*GrQUO<<KSO*GwQUO<<KcO*HSQUO<<KdOOQR<<Kd<<KdOOQR<<Kf<<KfO*HXQUO1G2bO)8XQUO1G2bO'D{QUO1G2bO*HjQUO1G2dO*IpQVO1G2dOOQQ1G2d1G2dO*IzQVO1G2dO*JRQUO,5@ROOQQ-E=e-E=eOOQQ1G2e1G2eO*JaQUO1G1|O*KjQVO1G1|O*KqQUO1G1|OOQQ1G5n1G5nOOQR<<Kz<<KzOOQR<<LO<<LOO*KvQVO<<LOO*LRQUO<<LOOOQR1G2|1G2|O*LWQUO1G2|O*L_QUO1G3eOOQR1G3d1G3dOOQQ7+,S7+,SO%)nQUO7+,SO*LjQUO1G6xO*LjQUO1G6xO(&jQUO,5?pO*LrQUO,5?pOOQQ-E=S-E=SO*L}QUO1G0TOOQQ1G0T1G0TO*MXQUO1G0TO!MmQVO1G0TO*M^QUO1G0TOOQQ1G3w1G3wO*MhQUO,5:qO)FjQUO,5:qO*NUQUO,5:qO)FjQUO,5:qO$$TQUO,5:uO*NsQVO,5>VO)HiQUO'#JrO*N}QUO1G0TO+ `QVO1G0TOOQQ1G3u1G3uO+ gQUO,5>WO+ rQUO,5>XO+!aQUO,5>YO+#gQUO1G0TO%)sQUO7+,SO+$mQUO1G4ROOQQ,5@`,5@`OOQQ-E=r-E=rOOQQ<<MT<<MTOOQQ<<Mn<<MnO+%vQUO1G4oP+'yQUO'#JxP+(RQUO,5BYPO{O1G7s1G7sPOOO<<Gn<<GnOOQQANC_ANC_OOQR1G6l1G6lO+(ZQ!eO,5:cOOQQ,5:c,5:cO+(bQUO1G0mO+)nQUO7+&]O+*}QUO7+&dO++`QUO,5;WOOQQ<<JU<<JUO++nQUO7+&oOOQQ7+&Q7+&QO!4{QUO'#J_O+,iQUO,5AnOOQQ7+&m7+&mOOQQ1G3g1G3gO+,qQUO1G3iOOQQ,5>n,5>nO+0fQUOANAXOOQRANAXANAXO+0kQUO7+'`OOQRAN@cAN@cO+1wQVOAN@nO+2OQUOAN@nO!0wQVOAN@nO+3XQUOAN@nO+3^QUOAN@}O+3iQUOAN@}O+4oQUOAN@}OOQRAN@nAN@nO!MmQVOAN@}OOQRANAOANAOO+4tQUO7+'|O)8XQUO7+'|OOQQ7+(O7+(OO+5VQUO7+(OO+6]QVO7+(OO+6dQVO7+'hO+6kQUOANAjOOQR7+(h7+(hOOQR7+)P7+)PO+6pQUO7+)PO+6uQUO7+)POOQQ<= n<= nO+6}QUO7+,dO+7VQUO1G5[OOQQ1G5[1G5[O+7bQUO7+%oOOQQ7+%o7+%oO+7sQUO7+%oO+ `QVO7+%oOOQQ7+)a7+)aO+7xQUO7+%oO+9OQUO7+%oO!MmQVO7+%oO+9YQUO1G0]O*MhQUO1G0]O)FjQUO1G0]OOQQ1G0a1G0aO+9wQUO1G3qO+:}QVO1G3qOOQQ1G3q1G3qO+;XQVO1G3qO+;`QUO,5@^OOQQ-E=p-E=pOOQQ1G3r1G3rO%)nQUO<= nOOQQ7+*Z7+*ZPOQQ,5@d,5@dPOQQ-E=v-E=vOOQQ1G/}1G/}OOQQ,5?y,5?yOOQQ-E=]-E=]OOQRG26sG26sO+;wQUOG26YO!0wQVOG26YO+=QQUOG26YOOQRG26YG26YO!MmQVOG26iO!0wQVOG26iO+=VQUOG26iO+>]QUOG26iO+>bQUO<<KhOOQQ<<Kj<<KjOOQRG27UG27UOOQR<<Lk<<LkO+>sQUO<<LkOOQQ7+*v7+*vOOQQ<<IZ<<IZO+>xQUO<<IZO!MmQVO<<IZO+>}QUO<<IZO+@TQUO<<IZO+ `QVO<<IZOOQQ<<L{<<L{O+@fQUO7+%wO*MhQUO7+%wOOQQ7+)]7+)]O+ATQUO7+)]O+BZQVO7+)]OOQQANEYANEYO!0wQVOLD+tOOQRLD+tLD+tO+BbQUOLD,TO+ChQUOLD,TOOQRLD,TLD,TO!0wQVOLD,TOOQRANBVANBVOOQQAN>uAN>uO+CmQUOAN>uO+DsQUOAN>uO!MmQVOAN>uO+DxQUO<<IcOOQQ<<Lw<<LwOOQR!$( `!$( `O!0wQVO!$( oOOQR!$( o!$( oOOQQG24aG24aO+EgQUOG24aO+FmQUOG24aOOQR!)9EZ!)9EZOOQQLD){LD){O+FrQUO'#CgO(gQUO'#CgO+JoQUO'#CzO+M`QUO'#CzO!FZQUO'#CzO+NXQUO'#CzO+NlQUO'#CzO,$_QUO'#CzO,$oQUO'#CzO,$}QUO'#CzO,%[QbO,59dO,%gQbO,59dO,%rQbO,59dO,%}QbO'#CxO,&`QbO'#CxO,&qQbO'#CxO,'SQUO'#CgO,)gQUO'#CgO,)tQUO'#CgO,,lQUO'#CgO,/oQUO'#CgO,0PQUO'#CgO,1uQUO'#CgO,4uQUO'#CgO,5SQUO'#CgO,5^QUO,5:xO#?yQUO,5:xO#?yQUO,5:xO#=iQUO'#LdO,5zQbO'#CxO,6VQbO'#CxO,6bQbO'#CxO,6mQbO'#CxO#7SQUO'#E^O,6xQUO'#E^O,8VQUO'#HgO,8wQbO'#CxO,9SQbO'#CxO,9_QUO'#CwO,9dQUO'#CwO,9iQUO'#CpO,9wQbO,59dO,:SQbO,59dO,:_QbO,59dO,:jQbO,59dO,:uQbO,59dO,;QQbO,59dO,;]QbO,59dO,5^QUO1G0dO,;hQUO1G0dO#?yQUO1G0dO,6xQUO1G0dO,=uQUO'#KaO,>VQUO'#CzO,>eQbO,59dO,5^QUO7+&OO,;hQUO7+&OO,>pQUO'#EwO,?cQUO'#EzO,@SQUO'#E^O,@XQUO'#GcO,@^QUO'#CwO,@cQUO'#CxO,@hQUO'#CxO,@mQUO'#GcO,@rQUO'#CwO,@wQUO'#KaO,AeQUO'#KaO,AoQUO'#CwO,AzQUO'#CwO,BVQUO'#CwO,;hQUO,5:xO,6xQUO,5:xO,6xQUO,5:xO,BbQUO'#KaO,BuQbO'#CxO,CQQUO'#CsO,CVQUO'#E^",
   stateData: ",C{~O(pOSSOSRPQVPQ'ePQ'gPQ'hPQ'iPQ'jPQ'kPQ'lPQ'mPQ(qPQ~O*cOS~OPmO]eOb!]Oe!POmTOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O|#RO!O!_O!TxO!VfO!X!XO!Y!WO!i!YO!opO!r!`O!s!aO!t!aO!u!bO!v!aO!x!cO!{!dO#V#QO#a#VO#b#TO#i#OO#p!xO#t!fO#v!eO$R!gO$T!hO$Y!vO$Z!wO$`!iO$e!jO$g!kO$h!lO$k!mO$m!nO$o!oO$q!pO$s!qO$u!rO$w!sO${!tO$}!uO%U!yO%_#ZO%`#[O%a#YO%c!zO%e#UO%g!{O%l#SO%o!|O%v!}O%|#PO&m!RO&r#WO&s!TO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(xRO)WYO)ZaO)]|O)^{O)`iO)a!ZO)cXO)ocO)pdO~OR#cOV#^O'e#_O'g#`O'h#aO'i#aO'j#bO'k#bO'l#`O'm#`O(q#]O~OX#eO(u#gO(w#eO~O]ZX]jXejXmhXqZXqjXsjXtjXujXvjXwjXxjXyjXzjX!OjX!TjX!VZX!VjX!XZX!YZX![ZX!^ZX!_ZX!aZX!bZX!eZX!fZX!gZX!hZX!rjX!sjX!tjX!ujX!vjX!xjX!{jX%vjX&rjX&sjX(xjX({ZX(|$]X(}ZX)OZX)ZZX)ZjX)[ZX)]ZX)]jX)^ZX)^jX)_ZX)`ZX)aZX)qZX~O)`jX!UZX~P(gO]$PO!V#nO!X#}O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h#kO({#hO(}#mO)O#mO)Z#oO)[#qO)]#pO)^#rO)_#jO)`#lO)a$OO~Oe$TO%Y$UO'[$VO'_$WO)P$QO~Om$XO~O!T$YO])TXe)TXs)TXt)TXu)TXv)TXw)TXx)TXy)TXz)TX!O)TX!V)TX!r)TX!s)TX!t)TX!u)TX!v)TX!x)TX!{)TX%v)TX&r)TX&s)TX(x)TX)Z)TX)])TX)^)TX)`)TX~Om$XO~P.^Om$XO!g$[O)q$[O~OX$]O)d$]O~O!R$^O)V)XP)a)XP~OPmO]$gOb!]Os!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O|#RO!O!_O!TxO!V$hO!X!XO!Y!WO!i!YO!r!aO!s!aO!t!aO!u!aO!v!aO!x!cO#V#QO#a#VO#b#TO#v!eO$Y!vO$Z!wO$`!iO$e!jO$g!kO$h!lO$k!mO$m!nO$o!oO$q!pO$s!qO$u!rO$w!sO%_#ZO%`#[O%a#YO%e#UO%l#SO%v$oO&m!RO&r#WO&s!TO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO)WYO)Z$mO)^$mO)`iO)a!ZO)cXO)ocO)pdO~Om$aO#t$nO(xRO~P0}O](_Xb'zXe(_Xm'zXm(_Xs'zXs(_Xt'zXt(_Xu'zXu(_Xv'zXv(_Xw'zXw(_Xx'zXx(_Xy'zXy(_Xz'zXz(_X|'zX!O'zX!V(_X!o(_X!r'zX!r(_X!s'zX!s(_X!t'zX!t(_X!u'zX!u(_X!v'zX!v(_X!x'zX!x(_X!{(_X#a'zX#b'zX%e'zX%l'zX%o(_X%v(_X&m'zX&r'zX&s'zX(x'zX(x(_X)Z(_X)](_X)^(_X~Ob!TOm$qOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O|#RO!O!_O!r!aO!s!aO!t!aO!u!aO!v!aO!x!cO#a#VO#b#TO%e#UO%l#SO&m!RO&r#WO&s!TO(x$pO~Os!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!O!_O!r!aO!s!aO!t!aO!u!aO!v!aO!x!cO&r#WO&s$yO])hXe)hXm)hX!V)hX!{)hX%v)hX(x)hX)Z)hX)])hX)^)hX~O)`$xO~P:qOPmO]eOe!POs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!VfO!X!XO!Y!WO!i!YO!{!dO#V#QO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO)ZaO)]|O)^{O)a!ZO)cXO)ocO)pdO~Ob%SOm;UO!|%TO(x$zO~P<oO)Z%UO~Ob!]Om$aO|#RO#a#VO#b#TO%e#UO%l#SO&m!RO&r#WO&s!TO(x;XO~P<oOPmO]$gOb%SOm;UO!V$hO!W%aO!X!XO!Y!WO!i!YO#V#QO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)Z$mO)^%_O)a!ZO)cXO)ocO)pdO)q%^O~O]%jOe!POm%dO!V%mO!{!dO%v$oO(x;YO)Z%fO)]%kO)^%kO~O(|%oO~O)`#lO~O(x%pO](zX!V(zX!X(zX!Y(zX![(zX!^(zX!_(zX!a(zX!b(zX!e(zX!f(zX!h(zX({(zX(}(zX)O(zX)Z(zX)[(zX)](zX)^(zX)_(zX)`(zX)a(zX!g(zX)q(zX[(zX!W(zX(|(zX!U(zXQ(zX!d(zX~OP%qO(vQO~PCTO]%jOe!POs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!V%mO!r!aO!s!aO!t!aO!u!aO!v!aO!x!cO!{!dO%o!|O%v!}O)Z;jO)]|O)^|O~Om%tO!o%yO(x$zO~PEbO!TxO#v!eO(|%{O)q&OO])lX!V)lX~O]%jOe!POm%tO!V%mO!{!dO%v!}O(x$zO)Z;jO)]|O)^|O~O!TxO#v!eO)`&RO)q&SO~O!U&VO~P!QO]&[O!TxO!V&YO)Z&XO)]&]O)^&]O~Oq&WO~PHuO]&eO!V&dO~OPmO]eOe!PO!VfO!X!XO!Y!WO!i!YO!{!dO#V#QO%_#ZO%`#[O%a#YO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO)ZaO)]|O)^{O)a!ZO)cXO)ocO)pdO~Ob%SOm;UO%v$oO(x$zO~PIjO]%jOe!POm;fO!V%mO!{!dO%v$oO(x$zO)Z;jO)]|O)^|O~Oq&hO](zX])lX!V(zX!V)lX!X(zX!Y(zX![(zX!^(zX!_(zX!a(zX!b(zX!e(zX!f(zX!h(zX({(zX(}(zX)O(zX)Z(zX)[(zX)](zX)^(zX)_(zX)`(zX)a(zX[(zX[)lX!U(zX~O!g$[O)q$[O~PL`O!g(zX)q(zX~PL`O](zX!V(zX!X(zX!Y(zX![(zX!^(zX!_(zX!a(zX!b(zX!e(zX!f(zX!h(zX({(zX(}(zX)O(zX)Z(zX)[(zX)](zX)^(zX)_(zX)`(zX)a(zX!g(zX)q(zX[(zX!U(zX~O])lX!V)lX[)lX~PNnOb&jO&m!RO]&lXe&lXm&lXs&lXt&lXu&lXv&lXw&lXx&lXy&lXz&lX!O&lX!V&lX!r&lX!s&lX!t&lX!u&lX!v&lX!x&lX!{&lX%v&lX&r&lX&s&lX(x&lX)Z&lX)]&lX)^&lX)`&lX[&lX!T&lX!X&lX!Y&lX![&lX!^&lX!_&lX!a&lX!b&lX!e&lX!f&lX!h&lX({&lX(}&lX)O&lX)[&lX)_&lX)a&lX!g&lX)q&lX!W&lXQ&lX!d&lX(|&lX!U&lX#v&lX~Oq&hOm)TX[)TXQ)TX!d)TX!h)TX)a)TX)q)TX~P.^O!g$[O)q$[O](zX!V(zX!X(zX!Y(zX![(zX!^(zX!_(zX!a(zX!b(zX!e(zX!f(zX!h(zX({(zX(}(zX)O(zX)Z(zX)[(zX)](zX)^(zX)_(zX)`(zX)a(zX[(zX!W(zX(|(zX!U(zXQ(zX!d(zX~OPmO]$gOb%SOm;UO!V$hO!X!XO!Y!WO!i!YO#V#QO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)Z$mO)^$mO)a!ZO)cXO)ocO)pdO~O])TXe)TXm)TXs)TXt)TXu)TXv)TXw)TXx)TXy)TXz)TX!O)TX!V)TX!r)TX!s)TX!t)TX!u)TX!v)TX!x)TX!{)TX%v)TX&r)TX&s)TX(x)TX)Z)TX)])TX)^)TX)`)TX[)TXQ)TX!d)TX!h)TX)a)TX)q)TX~O]$PO~P!*tO]&nO~O])iXb)iXe)iXm)iXs)iXt)iXu)iXv)iXw)iXx)iXy)iXz)iX|)iX!O)iX!V)iX!o)iX!r)iX!s)iX!t)iX!u)iX!v)iX!x)iX!{)iX#a)iX#b)iX%e)iX%l)iX%o)iX%v)iX&m)iX&r)iX&s)iX(x)iX)Z)iX)])iX)^)iX~O(vQO~P!-^O%U&pO~P!-^O]&qO~O]$PO~O!TxO~O$W&yO(x%pO(|&xO~O]&zOx&|O~O]&zO~OPmO]$gOb%SOm;UO!TxO!V$hO!X!XO!Y!WO!i!YO#V#QO#p!xO#v!eO$Y!vO$Z!wO$`!iO$e!jO$g!kO$h!lO$k!mO$m!nO$o!oO$q!pO$s!qO$u!rO$w!sO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x:wO)WYO)Z$mO)^$mO)`iO)a!ZO)cXO)ocO)pdO~O]'RO~O!T$YO)`'TO~P!(}O)`'VO~O)`'WO~O(x'XO~O)`'[O~P!(}Om;hO%U'aO%e'aO(x;ZO~Ob!TOm$qOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O|#RO#a#VO#b#TO%e#UO%l#SO&m!RO&r#WO&s!TO(x$pO~O(|'eO~O)`'gO~P!(}O!TxO(x%pO)q'iO~O(x%pO~O]'lO~O]'mOe%nXm%nX!V%nX!{%nX%v%nX(x%nX)Z%nX)]%nX)^%nX~O]'qO!V'rO!X'oO!g'oO%Z'oO%['oO%]'oO%^'oO%_'sO%`'sO%a'oO)O'pO)q'oO*P'tO~P8}O]%jOb!TOe!POs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O|#RO!O!_O!V%mO!r!aO!s!aO!t!aO!u!aO!v!aO!x!cO!{!dO#a#VO#b#TO%e#UO%l#SO&m!RO&r#WO&s!TO)Z;jO)]|O)^|O~Om;iOq&WO%v$oO(x;[O~P!8mO(x%pO(|'yO)`'zO~O]&eO!T'|O~Om$qO!O!_O!T(TO!l(YO(x$pO(|(SO)WYO~Om$qO|(aO!T(^O#b(aO(x$pO~Ob!TOm$qO|#RO#a#VO#b#TO%e#UO%l#SO&m!RO&r#WO&s!TO(x$pO~O](cO~OPmOb%SOm;UO!V$hO!X!XO!Y!WO!i!YO#V#QO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)Z$mO)^$mO)cXO)ocO)pdO~O](eO)a(fO~P!=XO]$PO~P!<_OPmO]$gOb%SOm;UO!V(lO!X!XO!Y!WO!i!YO#V#QO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)Z$mO)^$mO)a!ZO)cXO)ocO)pdO~O(r(mO(s(mO(t(oO~OY(pO(vQO(x%pO~O'f(pO~OS(vO(q#]O*`(uO~O]$PO(p(yO~Q'nXX#eO(u({O(w#eO~Oe)VOm)QO&r#WO(x)PO~O!Y'Sa!['Sa!^'Sa!_'Sa!a'Sa!b'Sa!e'Sa!f'Sa!h'Sa({'Sa)Z'Sa)['Sa)]'Sa)^'Sa)_'Sa)`'Sa)a'Sa!g'Sa)q'Sa['Sa!W'Sa(|'Sa!U'SaQ'Sa!d'Sa~OPmOb%SOm;UO!i!YO#V#QO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)cXO)ocO)pdO]'Sa!V'Sa!X'Sa(}'Sa)O'Sa~P!BmO!T$YO[(yP~P!(}O]oX]%WXeoXmnXqoXq%WXsoXtoXuoXvoXwoXxoXyoXzoX!OoX!ToX!VoX!V%WX!X%WX!Y%WX![%WX!^%WX!_%WX!a%WX!b%WX!e%WX!f%WX!gnX!h%WX!roX!soX!toX!uoX!voX!xoX!{oX%voX&roX&soX(xoX({%WX(}%WX)O%WX)ZoX)Z%WX)[%WX)]oX)]%WX)^oX)^%WX)_%WX)`%WX)a%WX)qnX[%WX~O)`oX[oX!U%WX~P!FZO])iO!V)jO!X)gO!g)gO%Z)gO%[)gO%])gO%^)gO%_)kO%`)kO%a)gO)O)hO)q)gO*P)lO~P8}OPmO]$gOb%SOm;UO!X!XO!Y!WO!i!YO#V#QO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)Z$mO)^$mO)a!ZO)cXO)ocO)pdO~O!V)qO~P!KVOe)tO%Y)uO)P$QO~O!T$YO!V)wO(})xO!U)yP~P!KVO!T$YO~P!(}O)b*PO~Om*QO]!QX!h!QX)V!QX)a!QX~O]*SO!h*TO)V)XX)a)XX~O)V*WO)a*XO~Oe$TO%Y*YO'[$VO'_$WO)P$QO~Om*ZO~Om*ZO[)TX~P.^Om*ZO!g$[O)q$[O~O)`*[O~P:qOPmO]$gOb!]Om$aOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O|#RO!V$hO!X!XO!Y!WO!i!YO#V#QO#a#VO#b#TO%_#ZO%`#[O%a#YO%e#UO%l#SO%v$oO&m!RO&r#WO&s!TO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x;XO)Z$mO)^$mO)a!ZO)cXO)ocO)pdO~Oq&hO~P!&}Oq&hO!W(zX(|(zXQ(zX!d(zX~PNnO]'qO!V'rO!X'oO!g'oO%Z'oO%['oO%]'oO%^'oO%_'sO%`'sO%a'oO)O'pO)q'oO*P'tO~O]jXejXmhXqjXsjXtjXujXvjXwjXxjXyjXzjX!OjX!VjX!rjX!sjX!tjX!ujX!vjX!xjX!{jX%vjX&rjX&sjX(xjX)ZjX)]jX)^jX!TjX!hjX)ajX)qjX[jX~O!ljX(|jX)`jX!XjX!YjX![jX!^jX!_jX!ajX!bjX!ejX!fjX({jX(}jX)OjX)[jX)_jX!gjX!WjXQjX!djX!UjX#vjX#TjX#VjX#pjXbjX|jX!ojX#ajX#bjX#ijX#tjX${jX%cjX%ejX%kjX%ljX%ojX&mjX)WjX~P#&XO)P*`O~Om*aO~O])TXe)TXs)TXt)TXu)TXv)TXw)TXx)TXy)TXz)TX!O)TX!V)TX!r)TX!s)TX!t)TX!u)TX!v)TX!x)TX!{)TX%v)TX&r)TX&s)TX(x)TX)Z)TX)])TX)^)TX)`)TX!T)TX!X)TX!Y)TX![)TX!^)TX!_)TX!a)TX!b)TX!e)TX!f)TX!h)TX({)TX(})TX)O)TX)[)TX)_)TX)a)TX!g)TX)q)TX[)TX!W)TXQ)TX!d)TX(|)TX!U)TX#v)TX~Om*aO~P#+aOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!O!_O!r!aO!s!aO!t!aO!u!aO!v!aO!x!cO])hae)ham)ha!V)ha!{)ha%v)ha(x)ha)Z)ha)])ha)^)haQ)ha!d)ha!h)ha)a)ha)q)ha[)ha!T)ha(|)ha)`)ha~O&r#WO&s$yO~P#/POq&hOm)TX~P#+aO&r)ha~P#/PO]ZXmhXqZXqjX!TjX!VZX!XZX!YZX![ZX!^ZX!_ZX!aZX!bZX!eZX!fZX!gZX!hZX({ZX(}ZX)OZX)ZZX)[ZX)]ZX)^ZX)_ZX)`ZX)aZX)qZX[ZX~O!WZX(|ZX!UZXQZX!dZX~P#1xO]$PO!V#nO!X#}O(}#mO)O#mO~O!Y&xa![&xa!^&xa!_&xa!a&xa!b&xa!e&xa!f&xa!g&xa!h&xa({&xa)Z&xa)[&xa)]&xa)^&xa)_&xa)`&xa)a&xa)q&xa[&xa!W&xa(|&xa!U&xaQ&xa!d&xa~P#4YOm;rO!T$YO~Os!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O~PKnOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!|%TO~PKnO]&eO!V&dO[#Qa!T#Qa!h#Qa#v#Qa)`#Qa)q#QaQ#Qa!d#Qa(|#Qa~Oq&hO!T$YO~O[*hO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h#kO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO[*hO~O[*jO]&eO!V&dO~O]&[Os!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!V&YO&r#WO&s$yO)Z&XO)]&]O)^&]O~O[rXQrX!drX!hrX)arX)`rX~P#:ZO[*mO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h*nO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!W)rX~P#4YO!W*pO!h*qO~O!W*pO!h*qO~P!(}O!W*pO~Oq&hO!g$[O!h*rO)q$[O](zX!V(zX!W(zX!W*WX!X(zX!Y(zX![(zX!^(zX!_(zX!a(zX!b(zX!e(zX!f(zX({(zX(}(zX)O(zX)Z(zX)[(zX)](zX)^(zX)_(zX)a(zX~O!h(zX~P#=iO!W*tO~Oe$TO%Y*YO)P:|O~Om;uO~Os!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!|%TO~PBXO]*{O!T*vO!V&dO!h*yO#v!eO)q*wO)`)xX~O!h*yO)`)xX~O)`*|O~Oq&hO])lX!T)lX!V)lX!h)lX#v)lX)`)lX)q)lX[)lXQ)lX!d)lX(|)lX~Oq&hO~OP%qO(vQO]%ha!V%ha!X%ha!Y%ha![%ha!^%ha!_%ha!a%ha!b%ha!e%ha!f%ha!h%ha(x%ha({%ha(}%ha)O%ha)Z%ha)[%ha)]%ha)^%ha)_%ha)`%ha)a%ha!g%ha)q%ha[%ha!W%ha(|%ha!U%haQ%ha!d%ha~Oe$TO%Y$UO)P:yO~Om;RO~O!TxO#v!eO)q&OO~Om<fO&r#WO(x;qO~O$Z+YO%`+ZO~O!TxO#v!eO)`+[O)q+]O~OPmO]$gOb%SOm;UO!V$hO!X!XO!Y!WO!i!YO#V#QO$Z+YO%_#ZO%`+_O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)Z$mO)^$mO)a!ZO)cXO)ocO)pdO~O!U+`O~P!QOb!TOm$qOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O|#RO!O!_O!r!aO!s!aO!t!aO!u!aO!v!aO!x!cO#a+fO#b+gO#i+hO%e#UO%l#SO&m!RO&r#WO&s!TO(x$pO)WYO~OQ)sP!d)sP~P#GuO]&[Os!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!V&YO)Z&XO)]&]O)^&]O~O[#kX!T#kX#v#kX)`#kX)q#kXQ#kX!d#kX!h#kX)a#kX!x#kX(|#kX~P#IyOPmO]$gOb%SOm;UOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!V$hO!W+nO!X!XO!Y!WO!i!YO#V#QO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)Z+oO)^$mO)a!ZO)cXO)ocO)pdO~O]&eO!V+pO~O]&[O!V&YO)WYO)Z&XO)]&]O)^&]O)a+sO[)kP~P8}O]&[O!V&YO)Z&XO)]&]O)^&]O~O[#nX!T#nX#v#nX)`#nX)q#nXQ#nX!d#nX!h#nX)a#nX!x#nX(|#nX~P#NsO!TxO])uX!V)uX~Os!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O#T+{O#p+|O)O+yO)]+wO)^+wO~O]#jX!T#jX!V#jX[#jX#v#jX)`#jX)q#jXQ#jX!d#jX!h#jX)a#jX!x#jX(|#jX~P$!WO#V,OO~Os!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!l,PO#T+{O#V,OO#p+|O)O+yO)],PO)^,PO])mP!T)mP!V)mP#v)mP(|)mP)q)mP[)mP!h)mP)`)mP~O!x)mPQ)mP!d)mP~P$$TOPmO]$gOb%SOm;UOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!V$hO!X!XO!Y!WO!i!YO#V#QO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)^$mO)a!ZO)cXO)ocO)pdO~O!W,VO)Z,WO~P$&OO)WYO)a+sO[)kP~P8}O]&eO!V&dO[&Za!T&Za!h&Za#v&Za)`&Za)q&ZaQ&Za!d&Za(|&Za~OPmO]$gOb!]Om;WOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O|#RO!V$hO!X!XO!Y!WO!i!YO#V#QO#a#VO#b#TO%_#ZO%`#[O%a#YO%e#UO%l#SO%v$oO&m!RO&r#WO&s!TO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x;]O)Z$mO)^$mO)a!ZO)cXO)ocO)pdO~OQ)QP!d)QP~P$)hO]$PO!V#nO(}#mO)O#mO!X'Pa!Y'Pa!['Pa!^'Pa!_'Pa!a'Pa!b'Pa!e'Pa!f'Pa!h'Pa({'Pa)Z'Pa)['Pa)]'Pa)^'Pa)_'Pa)`'Pa)a'Pa!g'Pa)q'Pa['Pa!W'Pa(|'Pa!U'PaQ'Pa!d'Pa~O]$PO!V#nO!X#}O(}#mO)O#mO~P!BmO!TxO#t!fO)WYO~P8}O!TxO(x%pO)q,aO~O#x,fO~OQ)hX!d)hX!h)hX)a)hX)q)hX[)hX!T)hX(|)hX)`)hX~P:qO(|,jO(},hO)W$UX)`$UX~O(x,kO~O)WYO)`,nO~OPmO]$gOb!]Om;VOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O|#RO!O!_O!V$hO!X!XO!Y!WO!i!YO!r!aO!s!aO!t!aO!u!aO!v!aO!x!cO#V#QO#a#VO#b#TO%_#ZO%`#[O%a#YO%e#UO%l#SO%v$oO&m!RO&r#WO&s!TO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO)WYO)Z$mO)^$mO)`iO)a!ZO)cXO)ocO)pdO~O(x;^O~P$0yOPmO]$gOb%SOm;UO!TxO!V$hO!X!XO!Y!WO!i!YO#V#QO#v!eO$Y!vO$Z!wO$`!iO$e!jO$g!kO$h!lO$k!mO$m!nO$o!oO$q!pO$s!qO$u!rO$w!sO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x:wO)WYO)Z$mO)^$mO)`iO)a!ZO)cXO)ocO)pdO~O$h,xO~OPmO]$gOb!]Om;VOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O|#RO!O!_O!V$hO!X!XO!Y!WO!i!YO!r!aO!s!aO!t!aO!u!aO!v!aO!x!cO#V#QO#a#VO#b#TO$}!uO%_#ZO%`#[O%a#YO%e#UO%l#SO%v$oO&m!RO&r#WO&s!TO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO)WYO)Z$mO)^$mO)a!ZO)cXO)ocO)pdO~O${-OO(x;XO)`,|O~P$7dO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h#kO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`-QO)a$OO~P#4YO)`-QO~O)`-RO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`-SO)a$OO~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`-TO)a$OO~P#4YO!h-UO)`*QX~Oq&hO)WYO)q-XO~O)`-YO~Om;hO(x;ZO~O]-aO!{!dO&r#WO&s$yO(x-]O)Z-^O~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO(|-dO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!TxO$`!iO$e!jO$g!kO$h!lO$k-iO$m!nO$o!oO$q!pO$s!qO$u!rO$w!sO$}!uO(x:xOe$Xa!o$Xa!{$Xa#i$Xa#p$Xa#t$Xa#v$Xa$R$Xa$T$Xa$Y$Xa$Z$Xa${$Xa%U$Xa%c$Xa%g$Xa%o$Xa%|$Xa(m$Xa)]$Xa!U$Xa$c$Xa~P$0yO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`-jO)a$OO~P#4YOm-lO!TxO)q,aO~O)q-nO~O]&]a!X&]a!Y&]a![&]a!^&]a!_&]a!a&]a!b&]a!e&]a!f&]a!h&]a({&]a(}&]a)O&]a)[&]a)]&]a)^&]a)_&]a)`&]a)a&]a!g&]a)q&]a[&]a!W&]a!T&]a#v&]a(|&]a!U&]aQ&]a!d&]a~O)Z-rO!V&]a~P$DxO[-rO~O!W-rO~O!V-sO)Z&]a~P$DxO])TXe)TXs)TXt)TXu)TXv)TXw)TXx)TXy)TXz)TX!O)TX!V)TX!r)TX!s)TX!t)TX!u)TX!v)TX!x)TX!{)TX%v)TX&r)TX&s)TX(x)TX)Z)TX)])TX)^)TX~Om;xO~P$GhO]&eO!V&dO)`-tO~Om;mO!o-wO#V,OO#i-|O#t!fO${-OO%c!zO%k-{O%o!|O%v!}O(x;aO)WYO~P!8mO!n.QO(x,kO~O)WYO)`.SO~OPmO]$gOb%SOm;UO!T.XO!V$hO!X!XO!Y!WO!i!YO#V.`O#a._O%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)O.WO)Z$mO)^$mO)`.UO)a!ZO)cXO)ocO)pdO~O!U.^O~P$JxO])eXe)eXs)eXt)eXu)eXv)eXw)eXx)eXy)eXz)eX!O)eX!T)eX!V)eX!l)eX!r)eX!s)eX!t)eX!u)eX!v)eX!x)eX!{)eX%v)eX&r)eX&s)eX(x)eX(|)eX)Z)eX)])eX)^)eX)`)eX[)eX!h)eX)a)eX!X)eX!Y)eX![)eX!^)eX!_)eX!a)eX!b)eX!e)eX!f)eX({)eX(})eX)O)eX)[)eX)_)eX!g)eX)q)eX!W)eXQ)eX!d)eX#T)eX#V)eX#p)eX#v)eXb)eX|)eX!o)eX#a)eX#b)eX#i)eX#t)eX${)eX%c)eX%e)eX%k)eX%l)eX%o)eX&m)eX)W)eX!U)eX~Om*aO~P$MSOm$qO!T(TO!l.eO(x$pO(|(SO)WYO~Oq&hOm)eX~P$MSOm$qO!n.jO!o.jO(x$pO)WYO~Om;nO!U.uO!n.wO!o.vO#i-|O${!tO$}!uO%g!{O%k-{O%o!|O%v!}O(x;`O)WYO~P!8mO!T(TO!l.eO(|(SO])UXe)UXm)UXs)UXt)UXu)UXv)UXw)UXx)UXy)UXz)UX!O)UX!V)UX!r)UX!s)UX!t)UX!u)UX!v)UX!x)UX!{)UX%v)UX&r)UX&s)UX(x)UX)Z)UX)])UX)^)UX~O)`)UX[)UX!X)UX!Y)UX![)UX!^)UX!_)UX!a)UX!b)UX!e)UX!f)UX!h)UX({)UX(})UX)O)UX)[)UX)_)UX)a)UX!g)UX)q)UX!W)UXQ)UX!d)UX!U)UX#v)UX~P%%{O!T(TO~O!T(TO(|(SO~O(x%pO!U*YP~O!T(^O(|.|O]&kae&kam&kas&kat&kau&kav&kaw&kax&kay&kaz&ka!O&ka!V&ka!r&ka!s&ka!t&ka!u&ka!v&ka!x&ka!{&ka%v&ka&r&ka&s&ka(x&ka)Z&ka)]&ka)^&ka)`&ka[&ka!X&ka!Y&ka![&ka!^&ka!_&ka!a&ka!b&ka!e&ka!f&ka!h&ka({&ka(}&ka)O&ka)[&ka)_&ka)a&ka!g&ka)q&ka!W&kaQ&ka!d&ka!U&ka#v&ka~Om$qO!T(^O(x$pO~O&r#WO&s$yO]&pae&pam&pas&pat&pau&pav&paw&pax&pay&paz&pa!O&pa!V&pa!r&pa!s&pa!t&pa!u&pa!v&pa!x&pa!{&pa%v&pa(x&pa)Z&pa)]&pa)^&pa)`&pa[&pa!T&pa!X&pa!Y&pa![&pa!^&pa!_&pa!a&pa!b&pa!e&pa!f&pa!h&pa({&pa(}&pa)O&pa)[&pa)_&pa)a&pa!g&pa)q&pa!W&paQ&pa!d&pa(|&pa!U&pa#v&pa~O&s/RO~P!(}O!Y#sO![#tO!f#|O)Z#oO!^'Ua!_'Ua!a'Ua!b'Ua!e'Ua!h'Ua({'Ua)['Ua)]'Ua)^'Ua)_'Ua)`'Ua)a'Ua!g'Ua)q'Ua['Ua!W'Ua(|'Ua!U'UaQ'Ua!d'Ua~P#4YO!V'dX!X'dX!Y'dX!['dX!^'dX!_'dX!a'dX!b'dX!e'dX!f'dX!h'dX({'dX(}'dX)O'dX)Z'dX)['dX)]'dX)^'dX)_'dX)a'dX['dX~O]/TO)`'dX!g'dX)q'dX!W'dX(|'dX!U'dXQ'dX!d'dX~P%3`O!Y#sO![#tO!f#|O)Z#oO!^'Wa!_'Wa!a'Wa!b'Wa!e'Wa!h'Wa({'Wa)['Wa)]'Wa)^'Wa)_'Wa)`'Wa)a'Wa!g'Wa)q'Wa['Wa!W'Wa(|'Wa!U'WaQ'Wa!d'Wa~P#4YO]$PO!T$YO!V/UO&r#WO&s$yO~O!X'Za!Y'Za!['Za!^'Za!_'Za!a'Za!b'Za!e'Za!f'Za!h'Za({'Za(}'Za)O'Za)Z'Za)['Za)]'Za)^'Za)_'Za)`'Za)a'Za!g'Za)q'Za['Za!W'Za(|'Za!U'ZaQ'Za!d'Za~P%7VO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!h'^a)`'^a!g'^a)q'^a['^a!W'^a(|'^a!U'^aQ'^a!d'^a~P#4YOPmO]$gOb%SOm;UO!V$hO!X!XO!Y!WO!i!YO#V#QO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)Z$mO)^%_O)a!ZO)cXO)ocO)pdO)q%^O~O!W/XO~P%;VO(r(mO(s(mO(t/ZO~OS(vO]$PO(q#]O*`(uO~OS(vO]/^O'f/]O(q#]O*`(uO~OS/bO(q#]O*`/aO~O]$PO~Q'na!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO(|/dO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h#kO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO)`#Zi[#Zi~P#4YO]dXmhXqdXqjX!VdX!XdX!YdX![dX!^dX!_dX!adX!bdX!edX!fdX!gdX!hdX({dX(}dX)OdX)ZdX)[dX)]dX)^dX)_dX)`dX)adX)qdX[dX!WdX(|dX!TdX#vdX!UdXQdX!ddX~Oe/fO%Y*YO)P/eO~Om/gO~Om/hO~Oq&hO]ci!Vci!Xci!Yci![ci!^ci!_ci!aci!bci!eci!fci!gci!hci({ci(}ci)Oci)Zci)[ci)]ci)^ci)_ci)`ci)aci)qci[ci!Wci(|ci!UciQci!dci~O!W/jO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO![#tO)Z#oO!Y&zi!^&zi!_&zi!a&zi!b&zi!e&zi!f&zi!h&zi({&zi)[&zi)]&zi)^&zi)_&zi)`&zi)a&zi!g&zi)q&zi[&zi!W&zi(|&zi!U&ziQ&zi!d&zi~P#4YO!Y&zi![&zi!^&zi!_&zi!a&zi!b&zi!e&zi!f&zi!h&zi({&zi)Z&zi)[&zi)]&zi)^&zi)_&zi)`&zi)a&zi!g&zi)q&zi[&zi!W&zi(|&zi!U&ziQ&zi!d&zi~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O)Z#oO)^#rO)_#jO!h&zi({&zi)[&zi)]&zi)`&zi)a&zi!g&zi)q&zi[&zi!W&zi(|&zi!U&ziQ&zi!d&zi~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O)Z#oO)]#pO)^#rO)_#jO!h&zi({&zi)[&zi)`&zi)a&zi!g&zi)q&zi[&zi!W&zi(|&zi!U&ziQ&zi!d&zi~P#4YO!Y#sO![#tO!_#xO!a#zO!b#{O!e#{O!f#|O)Z#oO)^#rO)_#jO!^&zi!h&zi({&zi)[&zi)]&zi)`&zi)a&zi!g&zi)q&zi[&zi!W&zi(|&zi!U&ziQ&zi!d&zi~P#4YO!Y#sO![#tO!a#zO!b#{O!e#{O!f#|O)Z#oO)^#rO)_#jO!^&zi!_&zi!h&zi({&zi)[&zi)]&zi)`&zi)a&zi!g&zi)q&zi[&zi!W&zi(|&zi!U&ziQ&zi!d&zi~P#4YO!Y#sO![#tO!a#zO!b#{O!e#{O!f#|O)Z#oO)_#jO!^&zi!_&zi!h&zi({&zi)[&zi)]&zi)^&zi)`&zi)a&zi!g&zi)q&zi[&zi!W&zi(|&zi!U&ziQ&zi!d&zi~P#4YO!Y#sO![#tO!b#{O!e#{O!f#|O)Z#oO)_#jO!^&zi!_&zi!a&zi!h&zi({&zi)[&zi)]&zi)^&zi)`&zi)a&zi!g&zi)q&zi[&zi!W&zi(|&zi!U&ziQ&zi!d&zi~P#4YO!Y#sO![#tO!f#|O)Z#oO!^&zi!_&zi!a&zi!b&zi!e&zi!h&zi({&zi)[&zi)]&zi)^&zi)_&zi)`&zi)a&zi!g&zi)q&zi[&zi!W&zi(|&zi!U&ziQ&zi!d&zi~P#4YO!Y#sO![#tO)Z#oO!^&zi!_&zi!a&zi!b&zi!e&zi!f&zi!h&zi({&zi)[&zi)]&zi)^&zi)_&zi)`&zi)a&zi!g&zi)q&zi[&zi!W&zi(|&zi!U&ziQ&zi!d&zi~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O)Z#oO)[#qO)]#pO)^#rO)_#jO!h&zi({&zi)`&zi)a&zi!g&zi)q&zi[&zi!W&zi(|&zi!U&ziQ&zi!d&zi~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h/kO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO[(yX~P#4YO!h/kO[(yX~O[/mO~O]%Xaq%Xa!X%Xa!Y%Xa![%Xa!^%Xa!_%Xa!a%Xa!b%Xa!e%Xa!f%Xa!h%Xa({%Xa(}%Xa)O%Xa)[%Xa)]%Xa)^%Xa)_%Xa)`%Xa)a%Xa!g%Xa)q%Xa[%Xa!W%Xa!T%Xa#v%Xa(|%Xa!U%XaQ%Xa!d%Xa~O)Z/nO!V%Xa~P&-YO[/nO~O!W/nO~O!V/oO)Z%Xa~P&-YO!X'Zi!Y'Zi!['Zi!^'Zi!_'Zi!a'Zi!b'Zi!e'Zi!f'Zi!h'Zi({'Zi(}'Zi)O'Zi)Z'Zi)['Zi)]'Zi)^'Zi)_'Zi)`'Zi)a'Zi!g'Zi)q'Zi['Zi!W'Zi(|'Zi!U'ZiQ'Zi!d'Zi~P%7VO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!h'^i)`'^i!g'^i)q'^i['^i!W'^i(|'^i!U'^iQ'^i!d'^i~P#4YO!W/tO~P%;VO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h/vO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!U)yX~P#4YO(x/yO~O!V/{O(})xO)q/}O~O!h/vO!U)yX~O!U0OO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!h`i({`i)``i!g`i)q`i[`i!W`i(|`i!U`iQ`i!d`i~P#4YO!R0PO~Om*QO]!Qa!h!Qa)V!Qa)a!Qa~OP0XO]0WOm0XO!R0XO!T0UO!V0VO!X0XO!Y0XO![0XO!^0XO!_0XO!a0XO!b0XO!e0XO!f0XO!g0XO!h0XO!i0XO(vQO(|0XO(}0XO)O0XO)Z0RO)[0SO)]0SO)^0TO)_#jO)`0XO)a0XO)cXO~O[0[O~P&7rO!R$^O~O!h*TO)V)Xa)a)Xa~O)V0`O~O])iO!V)jO!X)gO!g)gO%Z)gO%[)gO%])gO%^)gO%_)kO%`)kO%a)gO)O)hO)q)gO*P)lO~Oe)tO%Y*YO)P$QO~O)`0bO~O]oXeoXmnXqoXsoXtoXuoXvoXwoXxoXyoXzoX!OoX!VoX!roX!soX!toX!uoX!voX!xoX!{oX%voX&roX&soX(xoX)ZoX)]oX)^oX!ToX!hoX)aoX[oXQoX!doX~O!loX(|oX)`oX!XoX!YoX![oX!^oX!_oX!aoX!boX!eoX!foX({oX(}oX)OoX)[oX)_oX!goX)qoX!WoX!UoX#voX#ToX#VoX#poXboX|oX!ooX#aoX#boX#ioX#toX${oX%coX%eoX%koX%loX%ooX&moX)WoX~P&;nOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!O!_O!r!aO!s!aO!t!aO!u!aO!v!aO!x!cO~O])hie)him)hi!V)hi!{)hi%v)hi(x)hi)Z)hi)])hi)^)hiQ)hi!d)hi!h)hi)a)hi)q)hi[)hi!T)hi&r)hi(|)hi)`)hi~P&@lO]&eO!V&dO[#Qi!T#Qi!h#Qi#v#Qi)`#Qi)q#QiQ#Qi!d#Qi(|#Qi~O[raQra!dra!hra)ara)`ra~P#:ZO[raQra!dra!hra)ara)`ra~P#IyO]&eO!V+pO[raQra!dra!hra)ara)`ra~O!h*nO!W)ra~O!h*rO!W*Wa~OPmOb!]Os!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O|#RO!O!_O!X!XO!Y!WO!i!YO!s!aO!t!aO!v!aO!x!cO#V#QO#a#VO#b#TO#v!eO$Y!vO$Z!wO$`!iO$e!jO$g!kO$h!lO$k!mO$m!nO$o!oO$q!pO$s!qO$u!rO$w!sO%_#ZO%`#[O%a#YO%e#UO%l#SO&m!RO&r#WO&s!TO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO)WYO)`iO)a!ZO)cXO)ocO)pdO~O]eOe!POmTO!T*vO!U&VO!V0pO!opO!r!`O!u!bO!{!dO#i#OO#p!xO#t!fO$R!gO$T!hO${!tO$}!uO%U!yO%c!zO%g!{O%o!|O%v!}O%|#PO(xRO(})xO)ZaO)]|O)^{O~P&EnO!h*yO)`)xa~OPmO]$gOb!]Om;WO|#RO!T$YO!V$hO!X!XO!Y!WO!i!YO#V#QO#a#VO#b#TO%_#ZO%`#[O%a#YO%e#UO%l#SO%v$oO&m!RO&r#WO&s!TO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x;_O)WYO)Z$mO)^$mO)a0vO)cXO)ocO)pdO[(yP[)kP~P&@lO!h*rO!W*WX~O]$PO!T$YO~O!h0{O!T*SX#v*SX)q*SX~O)`0}O~O)`1OO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`1QO)a$OO~P#4YO)`1OO~P!?ZO]1[Oe!POm%dO!V1YO!{!dO%v$oO(x$zO)Z1SO)a1VO~O)]1WO)^1WO)q1TOQ#PX!d#PX!h#PX[#PX~P'!]O!h1]OQ)sX!d)sX~OQ1_O!d1_O~O)a1bO)q1aOQ#`X!d#`X!h#`X~P!<_O)a1bO)q1aOQ#`X!d#`X!h#`X~P!;eOq&WO~O[#ka!T#ka#v#ka)`#ka)q#kaQ#ka!d#ka!h#ka)a#ka!x#ka(|#ka~P#IyO]&eO!V+pO[#ka!T#ka#v#ka)`#ka)q#kaQ#ka!d#ka!h#ka)a#ka!x#ka(|#ka~O!W1gO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!W1gO)Z1iO~P$&OO!W1gO~P!(}O]#ja!T#ja!V#ja[#ja#v#ja)`#ja)q#jaQ#ja!d#ja!h#ja)a#ja!x#ja(|#ja~P$!WO[1mO]&eO!V+pO~O!h1nO[)kX~O[1pO~O]&eO!V+pO[#na!T#na#v#na)`#na)q#naQ#na!d#na!h#na)a#na!x#na(|#na~O]1tOs#SXt#SXu#SXv#SXw#SXx#SXy#SXz#SX!T#SX!V#SX#T#SX#p#SX)O#SX)]#SX)^#SX!l#SX!x#SX#V#SX#v#SX(|#SX)q#SX[#SX!h#SX)`#SXQ#SX!d#SX)a#SX~O]1uO~O]1xOm$qO!V$hO#V#QO(x$pO)ocO)pdO~Os!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!l,PO#T+{O#V,OO#p+|O)O+yO)],PO)^,PO~O])mX!T)mX!V)mX!x)mX#v)mX(|)mX)q)mX[)mX!h)mX)`)mXQ)mX!d)mX~P',vO!x!cO]#Ri!T#Ri!V#Ri#v#Ri(|#Ri)q#Ri[#Ri!h#Ri)`#RiQ#Ri!d#Ri~O!W2QO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!W2QO)Z2SO~P$&OO!W2QO~P!(}O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OOQ*ZX!d*ZX!h*ZX~P#4YO)a2TOQ)RX!d)RX!h)RX~O!h2UOQ)QX!d)QX~OQ2WO!d2WO~O[2XO~O#t$nO)WYO~P8}Om-lO!TxO)q2]O~O[2^O~O#x,fOP#ui]#uib#uie#uim#uis#uit#uiu#uiv#uiw#uix#uiy#uiz#ui|#ui!O#ui!T#ui!V#ui!X#ui!Y#ui!i#ui!o#ui!r#ui!s#ui!t#ui!u#ui!v#ui!x#ui!{#ui#V#ui#a#ui#b#ui#i#ui#p#ui#t#ui#v#ui$R#ui$T#ui$Y#ui$Z#ui$`#ui$e#ui$g#ui$h#ui$k#ui$m#ui$o#ui$q#ui$s#ui$u#ui$w#ui${#ui$}#ui%U#ui%_#ui%`#ui%a#ui%c#ui%e#ui%g#ui%l#ui%o#ui%v#ui%|#ui&m#ui&r#ui&s#ui'Q#ui'R#ui'V#ui'Y#ui'a#ui'b#ui(m#ui(v#ui(x#ui)W#ui)Z#ui)]#ui)^#ui)`#ui)a#ui)c#ui)o#ui)p#ui!U#ui$c#ui!n#ui%k#ui~O]&eO~O]&eO!TxO!V&dO#v!eO~O(|2cO(},hO)W$Ua)`$Ua~O)WYO)`2eO~O[2fO~P,`O[2fO)`#lO~O[2fO~O$c2kOP$_i]$_ib$_ie$_im$_is$_it$_iu$_iv$_iw$_ix$_iy$_iz$_i|$_i!O$_i!T$_i!V$_i!X$_i!Y$_i!i$_i!o$_i!r$_i!s$_i!t$_i!u$_i!v$_i!x$_i!{$_i#V$_i#a$_i#b$_i#i$_i#p$_i#t$_i#v$_i$R$_i$T$_i$Y$_i$Z$_i$`$_i$e$_i$g$_i$h$_i$k$_i$m$_i$o$_i$q$_i$s$_i$u$_i$w$_i${$_i$}$_i%U$_i%_$_i%`$_i%a$_i%c$_i%e$_i%g$_i%l$_i%o$_i%v$_i%|$_i&m$_i&r$_i&s$_i'Q$_i'R$_i'V$_i'Y$_i'a$_i'b$_i(m$_i(v$_i(x$_i)W$_i)Z$_i)]$_i)^$_i)`$_i)a$_i)c$_i)o$_i)p$_i!U$_i~O]1xO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h#kO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`2nO)a$OO~P#4YOPmO]$gOb!]Om;VO|#RO!V$hO!X!XO!Y!WO!i!YO#V#QO#a#VO#b#TO%_#ZO%`#[O%a#YO%e#UO%l#SO%v$oO&m!RO&r#WO&s!TO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x;XO)Z$mO)^$mO)`2qO)a!ZO)cXO)ocO)pdO~P&@lO)`2nO~O(x-]O~O!h-UO)`*Qa~O)WYO)q2vO~O)`2xO~O]-aOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!{!dO!|%TO(x-]O)Z-^O~O)Z2}O~O]&eO!V3PO!h3QO)`)|X~O]-aO!{!dO(x-]O)Z-^O~O)`3TO~O!TxO$`!iO$e!jO$g!kO$h!lO$k-iO$m!nO$o!oO$q!pO$s!qO$u!rO$w!sO$}!uO(x:xOe$Xi!o$Xi!{$Xi#i$Xi#p$Xi#t$Xi#v$Xi$R$Xi$T$Xi$Y$Xi$Z$Xi${$Xi%U$Xi%c$Xi%g$Xi%o$Xi%|$Xi(m$Xi)]$Xi!U$Xi$c$Xi~P$0yOm;VO(x:xO~P0}O]3XO~O)`2[O~O!u3ZO(x%pO~O[3^O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h3_O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO[3`O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO]&eO!V+pO!T%ui#v%ui)`%ui)q%ui~O!W3aO~Om;TO)`)TX~P$GhOb!TOm$qO|3gO#a#VO#b3fO#t!fO%e#UO%l3hO&m!RO&r#WO&s!TO(x$pO)WYO~P&@lOm;mO!o-wO#i-|O#t!fO${-OO%c!zO%k-{O%o!|O%v!}O(x;aO)WYO~P!8mO]&eO!V&dO)`3jO~O)`3kO~O)WYO)`3kO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h#kO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`3lO)a$OO~P#4YO)`3lO~O)`3oO~O!U3qO~P$JxOm$qO(x$pO~O]3sO!T'|O~P',bO!T(TO!l3vO(|(SO])Uae)Uam)Uas)Uat)Uau)Uav)Uaw)Uax)Uay)Uaz)Ua!O)Ua!V)Ua!r)Ua!s)Ua!t)Ua!u)Ua!v)Ua!x)Ua!{)Ua%v)Ua&r)Ua&s)Ua(x)Ua)Z)Ua)])Ua)^)Ua)`)Ua[)Ua!X)Ua!Y)Ua![)Ua!^)Ua!_)Ua!a)Ua!b)Ua!e)Ua!f)Ua!h)Ua({)Ua(})Ua)O)Ua)[)Ua)_)Ua)a)Ua!g)Ua)q)Ua!W)UaQ)Ua!d)Ua!U)Ua#v)Ua~Om$qO!n.jO!o.jO(x$pO~O!h3zO)a3|O!T)fX~O!o4OO)WYO~P8}O)`4PO~PGYO]4UOm)QO!T$YO!{!dO%v$oO&r#WO(x)PO(|4YO)Z4RO)]4VO)^4VO~O)`4ZO)q4]O~P('fOm;nO!U4_O!n.wO!o.vO#i-|O${!tO$}!uO%g!{O%k-{O%o!|O%v!}O(x;`O)WYO~P!8mOm;nO%v!}O(x;`O~P!8mO(|4`O~Om$qO!T(TO(x$pO(|(SO)WYO~O!l3vO~P()tO)q4bO!U&oX!h&oX~O!h4cO!U*YX~O!U4eO~Ob4gOm$qO&m!RO(x$pO~O!T(^O]&kie&kim&kis&kit&kiu&kiv&kiw&kix&kiy&kiz&ki!O&ki!V&ki!r&ki!s&ki!t&ki!u&ki!v&ki!x&ki!{&ki%v&ki&r&ki&s&ki(x&ki)Z&ki)]&ki)^&ki)`&ki[&ki!X&ki!Y&ki![&ki!^&ki!_&ki!a&ki!b&ki!e&ki!f&ki!h&ki({&ki(}&ki)O&ki)[&ki)_&ki)a&ki!g&ki)q&ki!W&kiQ&ki!d&ki!U&ki#v&ki~O(|&ki~P(+UO(|.|O~P(+UO[4jO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO[4jO~O[4kO~O]$PO!T$YO!V'Zi!X'Zi!Y'Zi!['Zi!^'Zi!_'Zi!a'Zi!b'Zi!e'Zi!f'Zi!h'Zi({'Zi(}'Zi)O'Zi)Z'Zi)['Zi)]'Zi)^'Zi)_'Zi)`'Zi)a'Zi!g'Zi)q'Zi['Zi!W'Zi(|'Zi!U'ZiQ'Zi!d'Zi~OPmOb%SOm;UO!X!XO!Y!WO!i!YO#V#QO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)a!ZO)cXO)ocO)pdO]#]aq#]a!T#]a!V#]a)Z#]a)]#]a)^#]a~O(x%pO)a4pO[*bP~OS(vO'f4rO(q#]O*`(uO~O*`4sO~OmnXqoXq&wX~Oe4uO%Y*YO)P/eO~Oe4uO%Y*YO)P4vO~O!h/kO[(ya~O!W4zO~O]&eO!V+pO!T%uq#v%uq)`%uq)q%uq~O]$PO!T$YO!X'Zq!Y'Zq!['Zq!^'Zq!_'Zq!a'Zq!b'Zq!e'Zq!f'Zq!h'Zq({'Zq(}'Zq)O'Zq)Z'Zq)['Zq)]'Zq)^'Zq)_'Zq)`'Zq)a'Zq!g'Zq)q'Zq['Zq!W'Zq(|'Zq!U'ZqQ'Zq!d'Zq~O!V'Zq~P(6dO!V/UO&r#WO&s$yO~P(6dO!T$YO!V)wO(})xO!U(VX!h(VX~P!KVO!h/vO!U)ya~O!W5SO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h*nO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!U5WO~P&7rO!W5WO~P&7rO[5WO~P&7rO[5]O~P&7rO]5^O!h'va)V'va)a'va~O!h*TO)V)Xi)a)Xi~O]&eO!V&dO[#Qq!T#Qq!h#Qq#v#Qq)`#Qq)q#QqQ#Qq!d#Qq(|#Qq~O[riQri!dri!hri)ari)`ri~P#IyO]&eO!V+pO[riQri!dri!hri)ari)`ri~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!h'Tq)`'Tq!g'Tq)q'Tq['Tq!W'Tq(|'Tq!U'TqQ'Tq!d'Tq~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!W'}a!h'}a~P#4YO!W5cO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h5dO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`#lO)a$OO!U)yX~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!h#{i)`#{i~P#4YO]*{O!T$YO!V&dO)q*wO!h(Wa)`(Wa~O!h1nO[)kX]'dX~P%3`O)a5fO!T%qa!h%qa#v%qa)q%qa~O!h0{O!T*Sa#v*Sa)q*Sa~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`5iO)a$OO~P#4YO]1[Oe!POm;fO!V1YO!{!dO%v$oO(x$zO)Z<SO)]5kO)^5kO~OQ#Pa!d#Pa!h#Pa[#Pa~P(ElO]1[Oe!POs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!V1YO!{!dO!|%TO%v$oO(x$zOQ#kX!d#kX!h#kX[#kX~Om%dO)Z1SO)]<TO)^<TO~P(FnO]&eOQ#Pa!d#Pa!h#Pa[#Pa~O!V&dO)q5oO~P(H]O(x%pOQ#dX!d#dX!h#dX[#dX~O)]<TO)^<TOQ#nX!d#nX!h#nX[#nX~P'!]O!V+pO~P(H]O]1[Ob!TOe!POm;gO|#RO!V1YO!{!dO#a#VO#b#TO%e#UO%l#SO%v$oO&m!RO&r#WO&s!TO(x;[O)WYO)Z<SO)]5kO)^5kO)a+sO[)kP~P&@lO!h1]OQ)sa!d)sa~Oq&hO)q5tOQ#`am)TX!d#`a!h#`a)a)TX~P$GhO(x-]OQ#ga!d#ga!h#ga~Oq&hO)q5tOQ#`a])eXe)eXm)eXs)eXt)eXu)eXv)eXw)eXx)eXy)eXz)eX!O)eX!T)eX!V)eX!d#`a!h#`a!l)eX!r)eX!s)eX!t)eX!u)eX!v)eX!x)eX!{)eX%v)eX&r)eX&s)eX(x)eX(|)eX)Z)eX)])eX)^)eX)a)eX~O#a5wO#b5wO~O]&eO!V+pO[#ki!T#ki#v#ki)`#ki)q#kiQ#ki!d#ki!h#ki)a#ki!x#ki(|#ki~O!W5yO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!W5yO~P!(}O!W5yO)Z5{O~P$&OO]#ji!T#ji!V#ji[#ji#v#ji)`#ji)q#jiQ#ji!d#ji!h#ji)a#ji!x#ji(|#ji~P$!WO)WYO)a5}O~P8}O!h1nO[)ka~O&r#WO&s$yO!T#qa!x#qa#v#qa(|#qa)q#qa[#qa!h#qa)`#qaQ#qa!d#qa)a#qa~P#NsO[6SO~P!(}O[)vP~P!4{O)[6YO)]6WO]#Ua!T#Ua!V#Ua)Z#Ua)^#Uas#Uat#Uau#Uav#Uaw#Uax#Uay#Uaz#Ua!l#Ua!x#Ua#T#Ua#V#Ua#p#Ua#v#Ua(|#Ua)O#Ua)q#Uab#Uae#Uam#Ua|#Ua!O#Ua!o#Ua!r#Ua!s#Ua!t#Ua!u#Ua!v#Ua!{#Ua#a#Ua#b#Ua#i#Ua#t#Ua${#Ua%c#Ua%e#Ua%k#Ua%l#Ua%o#Ua%v#Ua&m#Ua&r#Ua&s#Ua(x#Ua)W#Ua)`#Ua[#Ua!h#UaQ#Ua!d#Ua~O!x!cO]#Rq!T#Rq!V#Rq#v#Rq(|#Rq)q#Rq[#Rq!h#Rq)`#RqQ#Rq!d#Rq~O!W6_O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!W6_O~P!(}O!h2UOQ)Qa!d)Qa~O)`6dO~Om-lO!TxO)q6eO~O]*{O!T$YO!V&dO!h*yO)`)xX~O)q6iO~P),eO[6kO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h#kO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO[6kO~O$c6mOP$_q]$_qb$_qe$_qm$_qs$_qt$_qu$_qv$_qw$_qx$_qy$_qz$_q|$_q!O$_q!T$_q!V$_q!X$_q!Y$_q!i$_q!o$_q!r$_q!s$_q!t$_q!u$_q!v$_q!x$_q!{$_q#V$_q#a$_q#b$_q#i$_q#p$_q#t$_q#v$_q$R$_q$T$_q$Y$_q$Z$_q$`$_q$e$_q$g$_q$h$_q$k$_q$m$_q$o$_q$q$_q$s$_q$u$_q$w$_q${$_q$}$_q%U$_q%_$_q%`$_q%a$_q%c$_q%e$_q%g$_q%l$_q%o$_q%v$_q%|$_q&m$_q&r$_q&s$_q'Q$_q'R$_q'V$_q'Y$_q'a$_q'b$_q(m$_q(v$_q(x$_q)W$_q)Z$_q)]$_q)^$_q)`$_q)a$_q)c$_q)o$_q)p$_q!U$_q~O)`6nO~OPmO]$gOb!]Om;VO|#RO!V$hO!X!XO!Y!WO!i!YO#V#QO#a#VO#b#TO%_#ZO%`#[O%a#YO%e#UO%l#SO%v$oO&m!RO&r#WO&s!TO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x;XO)Z$mO)^$mO)`6pO)a!ZO)cXO)ocO)pdO~P&@lO(|6rO)q*wO~P),eO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`6pO)a$OO~P#4YO[6tO~P!(}O)`6xO~O)`6yO~O]-aOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!{!dO(x-]O)Z-^O~O]&eO!V3PO!h%Oa)`%Oa[%Oa~O!W7PO)Z7QO~P$&OO!h3QO)`)|a~O[7TO]&eO!V3PO~O!TxO$`!iO$e!jO$g!kO$h!lO$k-iO$m!nO$o!oO$q!pO$s!qO$u!rO$w!sO$}!uO(x:xOe$Xq!o$Xq!{$Xq#i$Xq#p$Xq#t$Xq#v$Xq$R$Xq$T$Xq$Y$Xq$Z$Xq${$Xq%U$Xq%c$Xq%g$Xq%o$Xq%|$Xq(m$Xq)]$Xq!U$Xq$c$Xq~P$0yOPmO]$gOb!]Om;VO|#RO!V$hO!X!XO!Y!WO!i!YO#V#QO#a#VO#b#TO%_#ZO%`#[O%a#YO%e#UO%l#SO%v$oO&m!RO&r#WO&s!TO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x;XO)WYO)Z$mO)^$mO)`7VO)a!ZO)cXO)ocO)pdO~P&@lO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`7YO)a$OO~P#4YO)`7ZO~OP7[O(vQO~Om*aO)`)eX~P$GhOq&hOm)TX)`)eX~P$GhO)`7^O~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO)`&Sa~P#4YO!U7`O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO)`7aO~OPmO]$gOb!]Om;WO|#RO!V$hO!X!XO!Y!WO!i!YO#V#QO#a#VO#b#TO%_#ZO%`#[O%a#YO%e#UO%l#SO%v$oO&m!RO&r#WO&s!TO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x;_O)WYO)Z$mO)^$mO)a0vO)cXO)ocO)pdO[)kP~P&@lO!h3zO)a7eO!T)fa~O!h3zO!T)fa~O)`7jO)q7lO~P('fO)`7nO~PGYO]4UOm)QOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!{!dO!|%TO%v$oO&r#WO(x)PO)Z4RO)]4VO)^4VO~O)Z7rO~O]&eO!T*vO!V7tO!h7uO#v!eO(|4YO~O)`7jO)q7wO~P)GyO]4UOm)QO!{!dO%v$oO&r#WO(x)PO)Z4RO)]4VO)^4VO~Oq&hO])jX!T)jX!V)jX!h)jX#v)jX(|)jX)`)jX)q)jX[)jX~O)`7jO~O!T(TO!l7}O(|(SO])Uie)Uim)Uis)Uit)Uiu)Uiv)Uiw)Uix)Uiy)Uiz)Ui!O)Ui!V)Ui!r)Ui!s)Ui!t)Ui!u)Ui!v)Ui!x)Ui!{)Ui%v)Ui&r)Ui&s)Ui(x)Ui)Z)Ui)])Ui)^)Ui)`)Ui[)Ui!X)Ui!Y)Ui![)Ui!^)Ui!_)Ui!a)Ui!b)Ui!e)Ui!f)Ui!h)Ui({)Ui(})Ui)O)Ui)[)Ui)_)Ui)a)Ui!g)Ui)q)Ui!W)UiQ)Ui!d)Ui!U)Ui#v)Ui~O(x%pO!U(hX!h(hX~O!h4cO!U*Ya~Oq&hO]*Xae*Xam*Xas*Xat*Xau*Xav*Xaw*Xax*Xay*Xaz*Xa!O*Xa!T*Xa!V*Xa!r*Xa!s*Xa!t*Xa!u*Xa!v*Xa!x*Xa!{*Xa%v*Xa&r*Xa&s*Xa(x*Xa)Z*Xa)]*Xa)^*Xa)`*Xa[*Xa!X*Xa!Y*Xa![*Xa!^*Xa!_*Xa!a*Xa!b*Xa!e*Xa!f*Xa!h*Xa({*Xa(}*Xa)O*Xa)[*Xa)_*Xa)a*Xa!g*Xa)q*Xa!W*XaQ*Xa!d*Xa(|*Xa!U*Xa#v*Xa~O!T(^O]&kqe&kqm&kqs&kqt&kqu&kqv&kqw&kqx&kqy&kqz&kq!O&kq!V&kq!r&kq!s&kq!t&kq!u&kq!v&kq!x&kq!{&kq%v&kq&r&kq&s&kq(x&kq)Z&kq)]&kq)^&kq)`&kq[&kq!X&kq!Y&kq![&kq!^&kq!_&kq!a&kq!b&kq!e&kq!f&kq!h&kq({&kq(}&kq)O&kq)[&kq)_&kq)a&kq!g&kq)q&kq!W&kqQ&kq!d&kq(|&kq!U&kq#v&kq~OPmOb%SOm;UO!T$YO!i!YO#V#QO%_#ZO%`#[O%a#YO%v$oO'Q!WO'R!WO'V#XO'Y![O'a![O'b![O(vQO(x$zO)cXO)ocO)pdO~O]*^i!V*^i!X*^i!Y*^i![*^i!^*^i!_*^i!a*^i!b*^i!e*^i!f*^i!h*^i({*^i(}*^i)O*^i)Z*^i)[*^i)]*^i)^*^i)_*^i)`*^i)a*^i!g*^i)q*^i[*^i!W*^i(|*^i!U*^iQ*^i!d*^i~P*'YO[8SO~O!W8TO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!h'^q)`'^q!g'^q)q'^q['^q!W'^q(|'^q!U'^qQ'^q!d'^q~P#4YO!h8UO[*bX~O[8WO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!h_y)`_y!g_y)q_y[_y!W_y(|_y!U_yQ_y!d_y~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO[(ja!h(ja~P#4YO]$PO!T$YO!V'Zy!X'Zy!Y'Zy!['Zy!^'Zy!_'Zy!a'Zy!b'Zy!e'Zy!f'Zy!h'Zy({'Zy(}'Zy)O'Zy)Z'Zy)['Zy)]'Zy)^'Zy)_'Zy)`'Zy)a'Zy!g'Zy)q'Zy['Zy!W'Zy(|'Zy!U'ZyQ'Zy!d'Zy~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!h'^y)`'^y!g'^y)q'^y['^y!W'^y(|'^y!U'^yQ'^y!d'^y~P#4YO]&eO!V+pO!T%uy#v%uy)`%uy)q%uy~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!U(Va!h(Va~P#4YO!W5SO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!U#}i!h#}i~P#4YO!U8ZO~P&7rO!W8ZO~P&7rO[8ZO~P&7rO[8]O~P&7rO]&eO!V&dO[#Qy!T#Qy!h#Qy#v#Qy)`#Qy)q#QyQ#Qy!d#Qy(|#Qy~O]&eO!V+pO[rqQrq!drq!hrq)arq)`rq~O]&eOQ#Pi!d#Pi!h#Pi[#Pi~O!V+pO~P*:gOQ#nX!d#nX!h#nX[#nX~P(ElO!V&dO~P*:gOQ(PX](PXe'rXm'rXs(PXt(PXu(PXv(PXw(PXx(PXy(PXz(PX!V(PX!d(PX!h(PX!{'rX%v'rX(x'rX)Z(PX)](PX)^(PX[(PX~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OOQ#_i!d#_i!h#_i[#_i~P#4YO&r#WO&s$yOQ#fi!d#fi!h#fi~O(x-]O)a1bO)q1aOQ#`X!d#`X!h#`X~O!W8bO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!W8bO~P!(}O!T#qi!x#qi#v#qi(|#qi)q#qi[#qi!h#qi)`#qiQ#qi!d#qi)a#qi~O]&eO!V+pO~P*@cO]&[O!V&YO&r#WO&s$yO)Z&XO)]&]O)^&]O~P*@cO[8dO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!h8eO[)vX~O[8gO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OOQ*]X!d*]X!h*]X~P#4YO)a8jOQ*[X!d*[X!h*[X~O)`8lO~O[$bi!h#{a)`#{a~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`8oO)a$OO~P#4YO[8qO~P!(}O[8qO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h#kO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO[8qO~O]&eO!V&dO(|8wO~O)`8xO~O]&eO!V3PO!h%Oi)`%Oi[%Oi~O!W8{O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!W8{O)Z8}O~P$&OO!W8{O~P!(}O]&eO!V3PO!h(Za)`(Za~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h#kO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`9OO)a$OO~P#4YO)`2qO~P!(}O)`9OO~OP%qO[9PO(vQO~O[9PO~O)`9QO~P%%{O#T9TO)O.WO)`9RO~O!h3zO!T)fi~O)a9XO!T'xa!h'xa~O)`9ZO)q9]O~P)GyO)`9ZO~O)`9ZO)q9aO~P('fOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O~P)HiO]&eO!V7tO!T!ya!h!ya#v!ya(|!ya)`!ya)q!ya[!ya~O!W9hO)Z9iO~P$&OO!T$YO!h7uO(|4YO)`9ZO)q9aO~O!T$YO~P#EtO[9lO]&eO!V7tO~O]&eO!V7tO!T&aa!h&aa#v&aa(|&aa)`&aa)q&aa[&aa~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO)`&ba~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`9ZO)a$OO~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!U&oi!h&oi~P#4YO!V/UO]']i!T']i!X']i!Y']i![']i!^']i!_']i!a']i!b']i!e']i!f']i!h']i({']i(}']i)O']i)Z']i)[']i)]']i)^']i)_']i)`']i)a']i!g']i)q']i[']i!W']i(|']i!U']iQ']i!d']i~O(x%pO)a9oO~O!h8UO[*ba~O[9qO~P&7rO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h#kO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO!U(Va)`#Zi~P#4YO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OOQ#_q!d#_q!h#_q[#_q~P#4YO&r#WO&s$yOQ#fq!d#fq!h#fq~O)q5tOQ#`a!d#`a!h#`a~O]&eO!V+pO!T#qq!x#qq#v#qq(|#qq)q#qq[#qq!h#qq)`#qqQ#qq!d#qq)a#qq~O!h8eO[)va~O)]6WO]&Vi!T&Vi!V&Vi)Z&Vi)[&Vi)^&Vis&Vit&Viu&Viv&Viw&Vix&Viy&Viz&Vi!l&Vi!x&Vi#T&Vi#V&Vi#p&Vi#v&Vi(|&Vi)O&Vi)q&Vib&Vie&Vim&Vi|&Vi!O&Vi!o&Vi!r&Vi!s&Vi!t&Vi!u&Vi!v&Vi!{&Vi#a&Vi#b&Vi#i&Vi#t&Vi${&Vi%c&Vi%e&Vi%k&Vi%l&Vi%o&Vi%v&Vi&m&Vi&r&Vi&s&Vi(x&Vi)W&Vi)`&Vi[&Vi!h&ViQ&Vi!d&Vi~O)`9tO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO[$bq!h#{i)`#{i~P#4YO[9vO~P!(}O[9vO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h#kO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO[9vO~O]&eO!V&dO(|9yO~O[9zO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO[9zO~O]&eO!V3PO!h%Oq)`%Oq[%Oq~O!W:OO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!W:OO~P!(}O)`6pO~P!(}O)`:PO~O)`:QO~O)O.WO)`:QO~O!h3zO!T)fq~O)a:SO!T'xi!h'xi~O!T$YO!h7uO(|4YO)`:TO)q:VO~O)`:TO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`:TO)a$OO~P#4YO)`:TO)q:YO~P)GyO]&eO!V7tO!T!yi!h!yi#v!yi(|!yi)`!yi)q!yi[!yi~O!W:^O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!W:^O)Z:`O~P$&OO!W:^O~P!(}O]&eO!V7tO!T(fa!h(fa(|(fa)`(fa)q(fa~O[:bO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O!h#kO({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO[:bO~O[:gO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO[:gO~O]&eO!V3PO!h%Oy)`%Oy[%Oy~O)`:hO~O)`:iO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`:iO)a$OO~P#4YO!T$YO!h7uO(|4YO)`:iO)q:lO~O]&eO!V7tO!T!yq!h!yq#v!yq(|!yq)`!yq)q!yq[!yq~O!W:nO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO!W:nO~P!(}O[:pO!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)a$OO~P#4YO[:pO~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`:rO)a$OO~P#4YO)`:rO~O]&eO!V7tO!T!yy!h!yy#v!yy(|!yy)`!yy)q!yy[!yy~O!Y#sO![#tO!^#wO!_#xO!a#zO!b#{O!e#{O!f#|O({#hO)Z#oO)[#qO)]#pO)^#rO)_#jO)`:vO)a$OO~P#4YO)`:vO~O]ZXmhXqZXqjX!TjX!VZX!XZX!YZX![ZX!^ZX!_ZX!aZX!bZX!eZX!fZX!gZX!hZX({ZX(|$]X(}ZX)OZX)ZZX)[ZX)]ZX)^ZX)_ZX)`ZX)aZX)qZX~O]%WXmnXqoXq%WX!ToX!V%WX!X%WX!Y%WX![%WX!^%WX!_%WX!a%WX!b%WX!e%WX!f%WX!gnX!h%WX({%WX(}%WX)O%WX)Z%WX)[%WX)]%WX)^%WX)_%WX)a%WX)qnX[%WXQ%WX!d%WX~O)`%WX!W%WX(|%WX!U%WX~P+HoO]oX]%WXeoXmnXqoXq%WXsoXtoXuoXvoXwoXxoXyoXzoX!OoX!VoX!V%WX!roX!soX!toX!uoX!voX!xoX!{oX%voX&roX&soX(xoX)ZoX)]oX)^oX[oX[%WX!hoX)aoX~O)`oX)qoX~P+KPO]%WXmnXqoXq%WX!V%WX!h%WXQ%WX!d%WX[%WX~O!T%WX#v%WX)`%WX)q%WX(|%WX~P+MjOQoXQ%WX!ToX!X%WX!Y%WX![%WX!^%WX!_%WX!a%WX!b%WX!doX!d%WX!e%WX!f%WX!gnX!h%WX({%WX(}%WX)O%WX)Z%WX)[%WX)]%WX)^%WX)_%WX)a%WX)qnX~P+KPO]oX]%WXmnXqoXq%WXsoXtoXuoXvoXwoXxoXyoXzoX!OoX!V%WX!roX!soX!toX!uoX!voX!xoX!{oX%voX&roX&soX(xoX)ZoX)]oX)^oX~O!ToX(|oX)`oX)qoX~P,!bOmnXqoX!h%WX)`%WX~OeoX!VoX)`%WX~P,!bOe)tO%Y)uO)P:yO~Oe)tO%Y)uO)P;OO~Oe)tO%Y)uO)P:zO~Oe$TO%Y*YO'[$VO'_$WO)P:yO~Oe$TO%Y*YO'[$VO'_$WO)P:{O~Oe$TO%Y*YO'[$VO'_$WO)P:}O~O[jX]jXsjXtjXujXvjXwjXxjXyjXzjX!VjX&rjX&sjX)ZjX)]jX)^jXejX!OjX!rjX!sjX!tjX!ujX!vjX!xjX!{jX%vjX(xjX~P#1xO]ZXmhXqZXqjX!VZX!hZX)`ZX)qZX~O!TZX#vZX(|ZX~P,({OmhXqjX!hZX)WjX)`ZX)qjX~O]ZX]jXejXmhXqZXqjXsjXtjXujXvjXwjXxjXyjXzjX!OjX!VZX!VjX!rjX!sjX!tjX!ujX!vjX!xjX!{jX%vjX&rjX&sjX(xjX)ZjX)]jX)^jX[ZX[jX!hjX)ajX)qjX~O)`ZX~P,*YO]ZX]jXmhXqZXqjXsjXtjXujXvjXwjXxjXyjXzjX!TjX!VZX!VjX!XZX!YZX![ZX!^ZX!_ZX!aZX!bZX!eZX!fZX!gZX!hZX!hjX&rjX&sjX({ZX(}ZX)OZX)ZZX)ZjX)[ZX)]ZX)]jX)^ZX)^jX)_ZX)aZX)ajX)qZX~OQZXQjX!dZX!djX~P,,sO]jXejXsjXtjXujXvjXwjXxjXyjXzjX!OjX!VjX!rjX!sjX!tjX!ujX!vjX!xjX!{jX%vjX&rjX&sjX(xjX)ZjX)]jX)^jX~P#1xO[ZX[jXejX!OjX!rjX!sjX!tjX!ujX!vjX!xjX!{jX%vjX(xjX)qjX~P,,sO]ZX]jXmhXqZXqjXsjXtjXujXvjXwjXxjXyjXzjX!OjX!VZX!rjX!sjX!tjX!ujX!vjX!xjX!{jX%vjX&rjX&sjX(xjX)ZjX)]jX)^jX)`jX~O!TjX(|jX)qjX~P,2uOejX!VjX~P,2uOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O~PBXOe$TO%Y*YO)P:yO~Oe$TO%Y*YO)P:zO~Oe$TO%Y*YO)P;PO~Oe$TO%Y*YO)P;QO~O]%jOe!POm%dOs!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O!V%mO!{!dO!|%TO%v$oO(x$zO)Z;kO)];lO)^;lO~O]%jOe!POm%dO!V%mO!{!dO%v$oO(x$zO)Z;kO)];lO)^;lO~Oe$TO%Y$UO)P:zO~Oe$TO%Y$UO)P;OO~Om;TO~Om;SO~O]dXmhXqjX!TdX~Oe)tO%Y*YO)P:yO~Oe)tO%Y*YO)P:zO~Oe)tO%Y*YO)P:{O~Oe)tO%Y*YO)P:|O~Oe)tO%Y*YO)P:}O~Oe)tO%Y*YO)P;PO~Oe)tO%Y*YO)P;QO~Os!^Ot!^Ou!^Ov!^Ow!^Ox!^Oy!^Oz!^O~P,8VO])TXs)TXt)TXu)TXv)TXw)TXx)TXy)TXz)TX!O)TX!r)TX!s)TX!t)TX!u)TX!v)TX!x)TX!{)TX%v)TX&r)TX&s)TX(x)TX)Z)TX)])TX)^)TX)q)TX~Om;SO!T)TX(|)TX)`)TX~P,<UO]&wXmnXqoX!T&wX~Oe4uO%Y*YO)P<OO~Om;fO)Z<SO)]5kO)^5kO~P(FnOe!POm%dO!{!dO%v$oO(x$zO~O]1[O!V1YO)Z1SO)]<TO)^<TOQ#nX!d#nX!h#nX[#nX~P,?QO)Z;dO~Om;rO~Om;sO~Om;tO~Om;vO~Om;wO~Om;xO~Om;vO!T$YOQ)TX!d)TX!h)TX)a)TX[)TX)q)TX~P$GhOm;tO!T$YO~P$GhOm;rO!g$[O)q$[O~Om;tO!g$[O)q$[O~Om;vO!g$[O)q$[O~Om;sO[)TX!h)TX)a)TX)q)TX~P$GhOe/fO%Y*YO)P<OO~Om<PO~O)Z<dO~OV'e'h'i'g(v)c!R(xS(q%Z!Y!['je%[!i'R!f]'f*c'k(}!^!_'l'm'l~",
@@ -23269,7 +23310,7 @@ var parser3 = LRParser.deserialize({
 // node_modules/@codemirror/lang-cpp/dist/index.js
 var cppLanguage = /* @__PURE__ */ LRLanguage.define({
   name: "cpp",
-  parser: /* @__PURE__ */ parser3.configure({
+  parser: /* @__PURE__ */ parser4.configure({
     props: [
       /* @__PURE__ */ indentNodeProp.add({
         IfStatement: /* @__PURE__ */ continuedIndent({ except: /^\s*({|else\b)/ }),
@@ -23888,7 +23929,7 @@ var htmlHighlighting = styleTags({
   ProcessingInst: tags.processingInstruction,
   DoctypeDecl: tags.documentMeta
 });
-var parser4 = LRParser.deserialize({
+var parser5 = LRParser.deserialize({
   version: 14,
   states: ",xOVO!rOOO!ZQ#tO'#CrO!`Q#tO'#C{O!eQ#tO'#DOO!jQ#tO'#DRO!oQ#tO'#DTO!tOaO'#CqO#PObO'#CqO#[OdO'#CqO$kO!rO'#CqOOO`'#Cq'#CqO$rO$fO'#DUO$zQ#tO'#DWO%PQ#tO'#DXOOO`'#Dl'#DlOOO`'#DZ'#DZQVO!rOOO%UQ&rO,59^O%aQ&rO,59gO%lQ&rO,59jO%wQ&rO,59mO&SQ&rO,59oOOOa'#D_'#D_O&_OaO'#CyO&jOaO,59]OOOb'#D`'#D`O&rObO'#C|O&}ObO,59]OOOd'#Da'#DaO'VOdO'#DPO'bOdO,59]OOO`'#Db'#DbO'jO!rO,59]O'qQ#tO'#DSOOO`,59],59]OOOp'#Dc'#DcO'vO$fO,59pOOO`,59p,59pO(OQ#|O,59rO(TQ#|O,59sOOO`-E7X-E7XO(YQ&rO'#CtOOQW'#D['#D[O(hQ&rO1G.xOOOa1G.x1G.xOOO`1G/Z1G/ZO(sQ&rO1G/ROOOb1G/R1G/RO)OQ&rO1G/UOOOd1G/U1G/UO)ZQ&rO1G/XOOO`1G/X1G/XO)fQ&rO1G/ZOOOa-E7]-E7]O)qQ#tO'#CzOOO`1G.w1G.wOOOb-E7^-E7^O)vQ#tO'#C}OOOd-E7_-E7_O){Q#tO'#DQOOO`-E7`-E7`O*QQ#|O,59nOOOp-E7a-E7aOOO`1G/[1G/[OOO`1G/^1G/^OOO`1G/_1G/_O*VQ,UO,59`OOQW-E7Y-E7YOOOa7+$d7+$dOOO`7+$u7+$uOOOb7+$m7+$mOOOd7+$p7+$pOOO`7+$s7+$sO*bQ#|O,59fO*gQ#|O,59iO*lQ#|O,59lOOO`1G/Y1G/YO*qO7[O'#CwO+SOMhO'#CwOOQW1G.z1G.zOOO`1G/Q1G/QOOO`1G/T1G/TOOO`1G/W1G/WOOOO'#D]'#D]O+eO7[O,59cOOQW,59c,59cOOOO'#D^'#D^O+vOMhO,59cOOOO-E7Z-E7ZOOQW1G.}1G.}OOOO-E7[-E7[",
   stateData: ",c~O!_OS~OUSOVPOWQOXROYTO[]O][O^^O_^Oa^Ob^Oc^Od^Oy^O|_O!eZO~OgaO~OgbO~OgcO~OgdO~OgeO~O!XfOPmP![mP~O!YiOQpP![pP~O!ZlORsP![sP~OUSOVPOWQOXROYTOZqO[]O][O^^O_^Oa^Ob^Oc^Od^Oy^O!eZO~O![rO~P#gO!]sO!fuO~OgvO~OgwO~OS|OT}OiyO~OS!POT}OiyO~OS!ROT}OiyO~OS!TOT}OiyO~OS}OT}OiyO~O!XfOPmX![mX~OP!WO![!XO~O!YiOQpX![pX~OQ!ZO![!XO~O!ZlORsX![sX~OR!]O![!XO~O![!XO~P#gOg!_O~O!]sO!f!aO~OS!bO~OS!cO~Oj!dOShXThXihX~OS!fOT!gOiyO~OS!hOT!gOiyO~OS!iOT!gOiyO~OS!jOT!gOiyO~OS!gOT!gOiyO~Og!kO~Og!lO~Og!mO~OS!nO~Ol!qO!a!oO!c!pO~OS!rO~OS!sO~OS!tO~Ob!uOc!uOd!uO!a!wO!b!uO~Ob!xOc!xOd!xO!c!wO!d!xO~Ob!uOc!uOd!uO!a!{O!b!uO~Ob!xOc!xOd!xO!c!{O!d!xO~OT~cbd!ey|!e~",
@@ -24132,7 +24173,7 @@ var spec_queryIdentifier = { __proto__: null, or: 102, and: 102, not: 112, only:
 var spec_QueryCallee = { __proto__: null, selector: 118, style: 124, layer: 208 };
 var spec_AtKeyword = { __proto__: null, "@import": 204, "@media": 216, "@charset": 220, "@namespace": 224, "@keyframes": 230, "@supports": 242, "@scope": 246, "@font-feature-values": 252 };
 var spec_identifier3 = { __proto__: null, to: 249 };
-var parser5 = LRParser.deserialize({
+var parser6 = LRParser.deserialize({
   version: 14,
   states: "MrQYQdOOO$TQdOOP$[O`OOO%XQaO'#CfOOQP'#Ce'#CeO%`QdO'#CgO%eQ`O'#CgO%jQaO'#FrO&eQdO'#CkO'XQaO'#CcO'cQdO'#CnOOQP'#ES'#ESOOQP'#ER'#ERO'nQdO'#ETO'yQdO'#E[O'yQdO'#E_OOQP'#Fr'#FrO)`QhO'#FQOOQS'#Fq'#FqOOQS'#FT'#FTQYQdOOO)gQdO'#EeO*vQhO'#EkO)gQdO'#EmO*}QdO'#EoO+YQdO'#ErO*[QhO'#ExO+bQdO'#EzO+mQdO'#E}O+rQaO'#CfO+yQ`O'#EbO,OQ`O'#GPO,ZQdO'#GPQOQ`OOP,eO&jO'#CaPOOO)CAa)CAaOOQP'#Ci'#CiOOQP,59R,59RO%`QdO,59ROOQP'#Cm'#CmOOQP,59V,59VO&eQdO,59VO,pQdO,59YOOQP,5:m,5:mO'nQdO,5:oO'yQdO,5:vO'yQdO,5:xO'yQdO,5:yO'yQdO'#F[O,{Q`O,58}O-TQdO'#EaOOQS,58},58}OOQP'#Cq'#CqOOQO'#EP'#EPOOQP,59Y,59YO-[Q`O,59YO-aQ`O,59YO-fQpO'#EUO-qQdO'#EVO-vQ`O'#EVO-{QpO,5:oO.iQaO,5:vO/PQaO,5:yOOQW'#D]'#D]O0OQhO'#DgO0cQhO,5;lO*[QhO'#DeO0pQ`O'#DnO0uQhO'#D{OOQW'#Fx'#FxOOQS,5;l,5;lO0zQ`O'#DhO1PQ`O'#DkOOQS-E9R-E9ROOQ['#Cv'#CvO1UQdO'#CwO1iQdO'#C|O1|QdO'#DPOOQ['#DQ'#DQO2aQ!pO'#DRO4jQ!jO,5;POOQO'#DW'#DWO-aQ`O'#DVO4zQ!nO'#FuO6}Q`O'#DXO7SQ`O'#D|OOQ['#Fu'#FuO7XQhO'#GSO7gQ`O,5;VO7lQ!bO,5;XOOQS'#Eq'#EqO7tQ`O,5;ZO7yQdO,5;ZOOQO'#Et'#EtO8RQ`O,5;^O8WQhO,5;dO'yQdO'#DjOOQS,5;f,5;fO0zQ`O,5;fO8`QdO,5;fOOQS'#Fc'#FcO8hQdO'#FPO7gQ`O,5;iO8pQdO,5:|O9QQdO'#F^O9_Q`O,5<kO9_Q`O,5<kPOOO'#FS'#FSP9jO&jO,58{POOO,58{,58{OOQP1G.m1G.mOOQP1G.q1G.qOOQP1G.t1G.tO-[Q`O1G.tO-aQ`O1G.tO9uQpO1G0ZO9}QaO1G0bO:eQaO1G0dO:{QaO1G0eO;cQaO,5;vOOQO-E9Y-E9YOOQS1G.i1G.iO;mQ`O,5:{O;rQdO'#EQO;yQdO'#CuOOQO'#EX'#EXOOQO,5:q,5:qO-qQdO,5:qOOQP1G0Z1G0ZO)gQdO1G0ZO<QQ!jO'#D]O<`Q!bO,59xO<hQhO,5:ROOQO'#Dc'#DcOOQO'#Fy'#FyO<cQ!bO,59|O<pQhO'#FdO*[QhO,59zO*[QhO'#FdO=hQhO1G1WOOQS1G1W1G1WO=rQhO,5:PO>mQhO'#DoOOQW,5:Y,5:YOOQW,5:g,5:gOOQW,5:S,5:SO>wQhO,5:VO?cQ!fO'#FvOOQS'#Fv'#FvOOQS'#FV'#FVO@pQdO,59cOOQ[,59c,59cOATQdO,59hOOQ[,59h,59hOAhQdO,59kOOQ[,59k,59kOOQ[,59m,59mO)gQdO,59oOA{QhO'#EgOOQW'#Eg'#EgOBjQ`O1G0kO4sQhO1G0kOOQ[,59q,59qO*[QhO'#DZOOQ[,59s,59sOBoQ#tO,5:hOBzQhO'#F`OCXQ`O,5<nOOQS1G0q1G0qOOQS1G0s1G0sOOQS1G0u1G0uOCdQ`O1G0uOCiQdO'#EuOOQS1G0x1G0xOOQS1G1O1G1OOCtQaO,5:UO7gQ`O1G1QOOQS1G1Q1G1QO0zQ`O1G1QOOQS-E9a-E9aOOQS1G1T1G1TOC{Q!fO1G0hODcQ`O'#EdOOQO1G0h1G0hOOQO,5;x,5;xODhQdO,5;xOOQO-E9[-E9[ODuQ`O1G2VPOOO-E9Q-E9QPOOO1G.g1G.gOOQP7+$`7+$`OOQP7+%u7+%uO)gQdO7+%uOOQS1G0g1G0gOEQQaO'#F}OE[Q`O,5:lOEaQ!fO'#FUOF_QdO'#FtOFiQ`O,59aOOQO1G0]1G0]OFnQ!bO7+%uO)gQdO1G/dOFyQhO1G/hOOQW1G/m1G/mOOQW1G/f1G/fOG[QhO,5<OOOQW-E9b-E9bOOQS7+&r7+&rOHSQhO'#D]OHbQhO'#F|OHmQ`O'#F|OHrQ`O,5:ZOHwQ!bO'#D_O>wQhO'#DmOISQhO'#DsOI[QhO'#DuOIaQ!jO'#F{OOQO'#F{'#F{OIlQ`O'#DxOItQ!bO'#DzOOQO'#Fz'#FzOIyQ`O1G/qOOQS-E9T-E9TOOQ[1G.}1G.}OOQ[1G/S1G/SOOQ[1G/V1G/VOOQ[1G/Z1G/ZOJOQdO,5;ROOQS7+&V7+&VOJTQ`O7+&VOJYQhO'#D[OJbQ`O,59uO*[QhO,59uOOQ[1G0S1G0SOJjQ`O1G0SOJoQhO,5;zOOQO-E9^-E9^OOQS7+&a7+&aOJ}QbO'#DROOQO'#Ew'#EwOK]Q`O'#EvOOQO'#Ev'#EvOKhQ`O'#FaOKpQdO,5;aOOQS,5;a,5;aOOQ[1G/p1G/pOOQS7+&l7+&lO7gQ`O7+&lOK{Q!fO'#F]O)gQdO'#F]OMSQdO7+&SOOQO7+&S7+&SOOQO,5;O,5;OOOQO1G1d1G1dOMgQ!bO<<IaOMrQdO'#FZOM|Q`O,5<iOOQP1G0W1G0WOOQS-E9S-E9SONUQdO'#FYON`Q`O,5<`OOQ]1G.{1G.{OOQP<<Ia<<IaONhQ`O<<IaONmQdO7+%OOOQO'#D_'#D_ONtQ!bO7+%SON|QhO'#FXO! ZQ`O,5<hO)gQdO,5<hOOQW1G/u1G/uO! cQ`O,5:XO>wQhO'#DtOOQO,5:_,5:_O! hQhO,5:aO! pQhO,5:fO)gQdO,5:dOOQW7+%]7+%]OOQO'#Ei'#EiO! wQ`O1G0mOOQS<<Iq<<IqO)gQdO,59vO!!kQhO1G/aOOQ[1G/a1G/aO!!rQ`O1G/aOOQW-E9U-E9UOOQ[7+%n7+%nOOQO,5;b,5;bOClQdO'#FbOKhQ`O,5;{OOQS,5;{,5;{OOQS-E9_-E9_OOQS1G0{1G0{OOQS<<JW<<JWO!!zQ!fO,5;wOOQS-E9Z-E9ZOOQO<<In<<InOOQPAN>{AN>{O!$RQ`OAN>{O!$WQaO,5;uOOQO-E9X-E9XO!$bQdO,5;tOOQO-E9W-E9WOOQW<<Hj<<HjOOQW<<Hn<<HnO!$lQhO<<HnO!$}QhO'#D]O!%]QhO,5;sO!%hQ`O,5;sOOQO-E9V-E9VO!%mQdO1G2SO!%wQhO1G/sO!&PQ`O,5:`O>wQhO'#DwOOQO1G/{1G/{O!&UQ!bO1G0QO!&^QdO1G0OOJOQdO'#F_O!&eQ`O7+&XOOQW7+&X7+&XO!&mQ!bO1G/bOOQ[7+${7+${O!&xQhO7+${P!'PQ`O'#FWOOQO,5;|,5;|OOQO-E9`-E9`OOQS1G1g1G1gOOQPG24gG24gO!'UQ`OAN>YO)gQdO1G1_O!'ZQ`O7+'nOOQO1G/z1G/zO!'cQ`O,5:cO!'hQhO7+%lOOQO,5;y,5;yOOQO-E9]-E9]OOQW<<Is<<IsOOQ[<<Hg<<HgPOQW,5;r,5;rOOQWG23tG23tO!'oQdO7+&yOOQO1G/}1G/}OOQO<<IW<<IW",
   stateData: "!(S~O$`OS$aQQ~OWVO^`O`WOcYOdYOlaOo]O#P^O#S_O#YeO#`fO#bgO#dhO#giO#mjO#okO#rlO$ZRO$^ZO$gTO$rZO~OQnOWVO^`O`WOcYOdYOlaOo]O#P^O#S_O#YeO#`fO#bgO#dhO#giO#mjO#okO#rlO$ZmO$^ZO$gTO$rZO~O$X$sP~P!mO$arO~O`YXcYXdYXoYXrYX!eYX#PYX#SYX$YYX$^YX$g[X$rYX~OgYX~P$aO$ZtO~O$gvO~O$gvO`$fXc$fXd$fXo$fXr$fX!e$fX#P$fX#S$fX$Y$fX$^$fX$r$fXg$fX~O$ZwO~O`yOczOdzOo|O#P}O#S!PO$Y!OO$^ZO$rZO~Or!SO!e!QO~P&jOf!YO$Z!UO$[!VO~OW!]O$Z!ZO$g![O~OWVO^`O`WOcYOdYOo]O#P^O#S_O$ZRO$^ZO$gTO$rZO~OS!eOc!fOd!fOh!bOr!SO!Y!dO!]!iO!`!jO$]!aO~Om!hO~P(qOQ!uOh!mOo!nOr!oOv!xO|!vO!q!wO$Z!lO$[!sO$^!pO$k!qO~OS!eOc!fOd!fOh!bO!Y!dO!]!iO!`!jO$]!aO~Or$vP~P*[Ov!}O!q!wO$Z!|O~Ov#PO$Z#PO~Oh#SOr!SO#p#UO~O$Z#WO~Oc#VX~P$aOc#ZO~Om#[O$X$sXq$sX~O$X$sXq$sX~P!mO$b#_O$c#_O$d#aO~Of#fO$Z!UO$[!VO~Or!SO!e!QO~Oq$sP~P!mOh#oO~Oh#pO~On!xX!|!xX$g!zX~O$Z#qO~O$g#sO~On#tO!|#uO~O`yOczOdzOo|O$^ZO$rZO~Or#Oa!e#Oa#P#Oa#S#Oa$Y#Oag#Oa~P.TOr#Ra!e#Ra#P#Ra#S#Ra$Y#Rag#Ra~P.TOS!eOc!fOd!fOh!bO!Y!dO!]!iO!`!jO~OR#zOv#zO$]#vO$^#yO$k!qO~P/gOm$QO!T#}O!e$OO~P(qOh$SO~O$]$UO~Oh#SO~Oh$WO~O`$YOc$YOg$]Ol$YOm$YO~P)gO`$YOc$YOl$YOm$YOn$_O~P)gO`$YOc$YOl$YOm$YOq$aO~P)gOP$bOSuXcuXduXhuXmuXxuX!YuX!]uX!`uX#[uX#^uX$]uX!WuXQuX`uXguXluXouXruXvuX|uX!quX$ZuX$[uX$^uX$kuXnuXquX!euX$XuX$uuX!}uX~Ox$cO#[$dO#^$eOm$vP~P*[Oh#pOS$iXc$iXd$iXm$iXx$iX!Y$iX!]$iX!`$iX#[$iX#^$iX$]$iXQ$iX`$iXg$iXl$iXo$iXr$iXv$iX|$iX!q$iX$Z$iX$[$iX$^$iX$k$iXn$iXq$iX!e$iX$X$iX$u$iX!}$iX~Oh$iO~Oh$kO~O!T#}O!e$lOr$vXm$vX~Or!SO~Om$oOx$cO~Om$pO~Ov$qO!q!wO~Or$rO~Or!SO!T#}O~Or!SO#p$xO~O$Z#WOr#sX~O$u$|Om#Ua$X#Uaq#Ua~P)gOm$QX$X$QXq$QX~P!mOm#[O$X$saq$sa~O$b#_O$c#_O$d%TO~On%VO!|%WO~Or#Oi!e#Oi#P#Oi#S#Oi$Y#Oig#Oi~P.TOr#Qi!e#Qi#P#Qi#S#Qi$Y#Qig#Qi~P.TOr#Ri!e#Ri#P#Ri#S#Ri$Y#Rig#Ri~P.TOr$Oa!e$Oa~P&jOq%XO~Og$qP~P'yOg$hP~P)gOc!RXg!PX!T!PX!W!RX~Oc%aO!W%bO~Og%cO!T#}O~O!T#}OS$WXc$WXd$WXh$WXm$WXr$WX!Y$WX!]$WX!`$WX!e$WX$]$WX~Om%gO!e$OO~P(qO!T#}OS!Xac!Xad!Xah!Xam!Xar!Xa!Y!Xa!]!Xa!`!Xa!e!Xa$]!Xag!Xa~O$]%hOg$pP~P/gOR#zOS!eOh%mOv#zO!Y%nO$]%lO$^#yO$k!qO~Ox$cOQ$jX`$jXc$jXg$jXh$jXl$jXm$jXo$jXr$jXv$jX|$jX!q$jX$Z$jX$[$jX$^$jX$k$jXn$jXq$jX~O`$YOc$YOg%wOl$YOm$YO~P)gO`$YOc$YOl$YOm$YOn%xO~P)gO`$YOc$YOl$YOm$YOq%yO~P)gOh%{OS#ZXc#ZXd#ZXm#ZX!Y#ZX!]#ZX!`#ZX$]#ZX~Om%|O~Og&ROv&SO!r&SO~Or$SX!e$SXm$SX~P*[O!e$lOr$vam$va~Om&VO~Oq&^O$Z&XO$k&WO~Og&_O~P&jOx$cO!e&cO$u$|Om#Ui$X#Uiq#Ui~P)gO$t&fO~Om$Qa$X$Qaq$Qa~P!mOm#[O$X$siq$si~O!e&iOg$qX~P&jOg&kO~Ox$cOQ#xXg#xXh#xXo#xXr#xXv#xX|#xX!e#xX!q#xX$Z#xX$[#xX$^#xX$k#xX~O!e&mOg$hX~P)gOg&oO~On&pOx$cO!}&qO~OR#zOv#zO$]&sO$^#yO$k!qO~O!T#}OS$Wac$Wad$Wah$Wam$War$Wa!Y$Wa!]$Wa!`$Wa!e$Wa$]$Wa~Oc!dXg!PX!T!PX!e!PX~O!T#}O!e&uOg$pX~Oc&wO~Og&xO~Oc!mXg!mX!W!RX~OS!eOh&zO~O!T&|O~O!T&|O!W&}Og$oX~Oc'OOg!lX~O!W&}O~Og'PO~O$Z'QO~Om'SO~Oc'TO!T#}O~Og'VOm'UO~Og'YO~O!T#}Or$Sa!e$Sam$Sa~OP$bOruX!euXguX~O$k&WOr#jX!e#jX~Or!SO!e'[O~Oq'`O$Z&XO$k&WO~Ox$cOQ$PXh$PXm$PXo$PXr$PXv$PX|$PX!e$PX!q$PX$X$PX$Z$PX$[$PX$^$PX$k$PX$u$PXq$PX~O!e&cO$u$|Om#Uq$X#Uqq#Uq~P)gOn'eOx$cO!}'fO~Og#}X!e#}X~P'yO!e&iOg$qa~Og#|X!e#|X~P)gO!e&mOg$ha~On'eO~Og'kO~P)gOg'lO!W'mO~O$]'nOg#{X!e#{X~P/gO!e&uOg$pa~Og'sO~OS!eOh'uO~OS!eO~PFyO`'yOg'{O~OS#zac#zad#zah#za!Y#za!]#za!`#za$]#za~Og'}O~P!!POg'}Om(OO~Ox$cOQ$Pah$Pam$Pao$Par$Pav$Pa|$Pa!e$Pa!q$Pa$X$Pa$Z$Pa$[$Pa$^$Pa$k$Pa$u$Paq$Pa~On(TO~Og#}a!e#}a~P&jOg#|a!e#|a~P)gOR#zOv#zO$]&sO$^#yO$k&WO~Oc!fXg!PX!T!PX!e!PX~O!T#}Og#{a!e#{a~Oc(VO~O!e&uOg$pi~P)gOg!ai!T!ji~Og(XO~O!W(ZOg!ni~Og!li~P)gO`'yOg(^O~Ox$cOg!Oim!Oi~Og(_O~P!!POm(`O~Og(aO~O!e&uOg$pq~Og(cO~OS!eO~P!$lOg#{q!e#{q~P)gO$`!r$a$k`$kx#S~",
@@ -24996,7 +25037,7 @@ var defineCSSCompletionSource = (isVariable) => (context) => {
 var cssCompletionSource = /* @__PURE__ */ defineCSSCompletionSource((n) => n.name == "VariableName");
 var cssLanguage = /* @__PURE__ */ LRLanguage.define({
   name: "css",
-  parser: /* @__PURE__ */ parser5.configure({
+  parser: /* @__PURE__ */ parser6.configure({
     props: [
       /* @__PURE__ */ indentNodeProp.add({
         Declaration: /* @__PURE__ */ continuedIndent()
@@ -25202,7 +25243,7 @@ var jsHighlight = styleTags({
 var spec_identifier4 = { __proto__: null, export: 20, as: 25, from: 33, default: 36, async: 41, function: 42, in: 52, out: 55, const: 56, extends: 60, this: 64, true: 72, false: 72, null: 84, void: 88, typeof: 92, super: 108, new: 142, delete: 154, yield: 163, await: 167, class: 172, public: 237, private: 237, protected: 237, readonly: 239, instanceof: 258, satisfies: 261, import: 294, keyof: 351, unique: 355, infer: 361, asserts: 397, is: 399, abstract: 419, implements: 421, type: 423, let: 426, var: 428, using: 431, interface: 437, enum: 441, namespace: 447, module: 449, declare: 453, global: 457, defer: 473, for: 478, of: 487, while: 490, with: 494, do: 498, if: 502, else: 504, switch: 508, case: 514, try: 520, catch: 524, finally: 528, return: 532, throw: 536, break: 540, continue: 544, debugger: 548 };
 var spec_word = { __proto__: null, async: 129, get: 131, set: 133, declare: 195, public: 197, private: 197, protected: 197, static: 199, abstract: 201, override: 203, readonly: 209, accessor: 211, new: 403 };
 var spec_LessThan = { __proto__: null, "<": 193 };
-var parser6 = LRParser.deserialize({
+var parser7 = LRParser.deserialize({
   version: 14,
   states: "$FvQ%TQlOOO%[QlOOO'_QpOOP(lO`OOO*zQ!0MxO'#CiO+RO#tO'#CjO+aO&jO'#CjO+oO#@ItO'#DaO.QQlO'#DgO.bQlO'#DrO%[QlO'#DzO0fQlO'#ESOOQ!0Lf'#E['#E[O1PQ`O'#EXOOQO'#Ep'#EpOOQO'#Im'#ImO1XQ`O'#GtO1dQ`O'#EoO1iQ`O'#EoO3hQ!0MxO'#JsO6[Q!0MxO'#JtO6uQ`O'#F^O6zQ,UO'#FuOOQ!0Lf'#Fg'#FgO7VO7dO'#FgO9XQMhO'#F}O9`Q`O'#F|OOQ!0Lf'#Jt'#JtOOQ!0Lb'#Js'#JsO9eQ`O'#GxOOQ['#K`'#K`O9pQ`O'#IZO9uQ!0LrO'#I[OOQ['#Ja'#JaOOQ['#I`'#I`Q`QlOOQ`QlOOO9}Q!L^O'#DvO:UQlO'#EOO:]QlO'#EQO9kQ`O'#GtO:dQMhO'#CoO:rQ`O'#EnO:}Q`O'#EzO;hQMhO'#FfO;xQ`O'#GtOOQO'#Ka'#KaO;}Q`O'#KaO<]Q`O'#G|O<]Q`O'#G}O<]Q`O'#HPO9kQ`O'#HSO=SQ`O'#HVO>kQ`O'#CeO>{Q`O'#HdO?TQ`O'#HjO?TQ`O'#HlO`QlO'#HnO?TQ`O'#HpO?TQ`O'#HsO?YQ`O'#HyO?_Q!0LsO'#IPO%[QlO'#IRO?jQ!0LsO'#ITO?uQ!0LsO'#IVO9uQ!0LrO'#IXO@QQ!0MxO'#CiOASQpO'#DlQOQ`OOO%[QlO'#EQOAjQ`O'#ETO:dQMhO'#EnOAuQ`O'#EnOBQQ!bO'#FfOOQ['#Cg'#CgOOQ!0Lb'#Dq'#DqOOQ!0Lb'#Jw'#JwO%[QlO'#JwOOQO'#Jz'#JzOOQO'#Ii'#IiOCQQpO'#EgOOQ!0Lb'#Ef'#EfOOQ!0Lb'#KO'#KOOC|Q!0MSO'#EgODWQpO'#EWOOQO'#Jy'#JyODlQpO'#JzOEyQpO'#EWODWQpO'#EgPFWO&2DjO'#CbPOOO)CEO)CEOOOOO'#Ia'#IaOFcO#tO,59UOOQ!0Lh,59U,59UOOOO'#Ib'#IbOFqO&jO,59UOGPQ!L^O'#DcOOOO'#Id'#IdOGWO#@ItO,59{OOQ!0Lf,59{,59{OGfQlO'#IeOGyQ`O'#JuOIxQ!fO'#JuO+}QlO'#JuOJPQ`O,5:ROJgQ`O'#EpOJtQ`O'#KUOKPQ`O'#KTOKPQ`O'#KTOKXQ`O,5;^OK^Q`O'#KSOOQ!0Ln,5:^,5:^OKeQlO,5:^OMcQ!0MxO,5:fONSQ`O,5:nONmQ!0LrO'#KRONtQ`O'#KQO9eQ`O'#KQO! YQ`O'#KQO! bQ`O,5;]O! gQ`O'#KQO!#lQ!fO'#JtOOQ!0Lh'#Ci'#CiO%[QlO'#ESO!$[Q!fO,5:sOOQS'#J{'#J{OOQO-E<k-E<kO9kQ`O,5=`O!$rQ`O,5=`O!$wQlO,5;ZO!&zQMhO'#EkO!(eQ`O,5;ZO!(jQlO'#DyO!(tQpO,5;eO!(|QpO,5;eO%[QlO,5;eOOQ['#FU'#FUOOQ['#FW'#FWO%[QlO,5;fO%[QlO,5;fO%[QlO,5;fO%[QlO,5;fO%[QlO,5;fO%[QlO,5;fO%[QlO,5;fO%[QlO,5;fO%[QlO,5;fO%[QlO,5;fOOQ['#F['#F[O!)[QlO,5;uOOQ!0Lf,5;z,5;zOOQ!0Lf,5;{,5;{OOQ!0Lf,5;},5;}O%[QlO'#IqO!+_Q!0LrO,5<jO%[QlO,5;fO!&zQMhO,5;fO!+|QMhO,5;fO!-nQMhO'#E^O%[QlO,5;xOOQ!0Lf,5;|,5;|O!-uQ,UO'#FkO!.rQ,UO'#KYO!.^Q,UO'#KYO!.yQ,UO'#KYOOQO'#KY'#KYO!/_Q,UO,5<TOOOW,5<a,5<aO!/pQlO'#FwOOOW'#Ip'#IpO7VO7dO,5<RO!/wQ,UO'#FyOOQ!0Lf,5<R,5<RO!0hQ$IUO'#CyOOQ!0Lh'#C}'#C}O!0{O#@ItO'#DRO!1iQMjO,5<fO!1pQ`O,5<iO!3YQ(CWO'#GYO!3jQ`O'#GZO!3oQ`O'#GZO!5_Q(CWO'#G_O!6dQpO'#GcOOQO'#Go'#GoO!,TQMhO'#GnOOQO'#Gq'#GqO!,TQMhO'#GpO!7VQ$IUO'#JmOOQ!0Lh'#Jm'#JmO!7aQ`O'#JlO!7oQ`O'#JkO!7wQ`O'#CuOOQ!0Lh'#C{'#C{O!8YQ`O'#C}OOQ!0Lh'#DV'#DVOOQ!0Lh'#DX'#DXO!8_Q`O,5<fO1SQ`O'#DZO!,TQMhO'#GQO!,TQMhO'#GSO!8gQ`O'#GUO!8lQ`O'#GVO!3oQ`O'#G]O!,TQMhO'#GbO<]Q`O'#JlO!8qQ`O'#EqO!9`Q`O,5<hOOQ!0Lb'#Cr'#CrO!9hQ`O'#ErO!:bQpO'#EsOOQ!0Lb'#KS'#KSO!:iQ!0LrO'#KbO9uQ!0LrO,5=dO`QlO,5>uOOQ['#Ji'#JiOOQ[,5>v,5>vOOQ[-E<^-E<^O!<hQ!0MxO,5:bO!=[QpO,5:`O!?WQ!0MxO,5:jO%[QlO,5:jO!AnQ!0MxO,5:lOOQO,5@{,5@{O!B_QMhO,5=`O!BmQ!0LrO'#JjO9`Q`O'#JjO!COQ!0LrO,59ZO!CZQpO,59ZO!CcQMhO,59ZO:dQMhO,59ZO!CnQ`O,5;ZO!CvQ`O'#HcO!D[Q`O'#KeO%[QlO,5<OO!=[QpO,5<QO!DdQ`O,5={O!DiQ`O,5={O!DnQ`O,5={O!D|Q`O,5={O9uQ!0LrO,5={O<]Q`O,5=kOOQO'#Cy'#CyO!ETQpO,5=hO!E]QMhO,5=iO!EhQ`O,5=kO!EmQ!bO,5=nO!EuQ`O'#KaO?YQ`O'#HXO9kQ`O'#HZO!EzQ`O'#HZO:dQMhO'#H]O!FPQ`O'#H]OOQ[,5=q,5=qO!FUQ`O'#H^O!FgQ`O'#CoO!FlQ`O,59PO!FvQ`O,59PO!H{QlO,59POOQ[,59P,59PO!I]Q!0LrO,59PO%[QlO,59PO!KhQlO'#HfOOQ['#Hg'#HgOOQ['#Hh'#HhO`QlO,5>OO!LOQ`O,5>OO`QlO,5>UO`QlO,5>WO!LTQ`O,5>YO`QlO,5>[O!LYQ`O,5>_O!L_QlO,5>eOOQ[,5>k,5>kO%[QlO,5>kO9uQ!0LrO,5>mOOQ[,5>o,5>oO#!iQ`O,5>oOOQ[,5>q,5>qO#!iQ`O,5>qOOQ[,5>s,5>sO##SQpO'#D_O%[QlO'#JwO##^QpO'#JwO##xQpO'#DmO#$ZQpO'#DmO#&lQlO'#DmO#&sQ`O'#JvO#&{Q`O,5:WOOQO'#Et'#EtO#'QQ`O'#EtO#'VQ`O'#KVO#'_Q`O,5;_O#'dQpO'#DmO#'qQpO'#EVOOQ!0Lf,5:o,5:oO%[QlO,5:oO#'xQ`O,5:oO?YQ`O,5;YO!CZQpO,5;YO!CcQMhO,5;YO:dQMhO,5;YO#(QQ`O,5@cO#(VQ07dO,5:sOOQO-E<g-E<gO#)]Q!0MSO,5;RODWQpO,5:rO#)gQpO,5:rODWQpO,5;RO!COQ!0LrO,5:rOOQ!0Lb'#Ej'#EjOOQO,5;R,5;RO%[QlO,5;RO#)tQ!0LrO,5;RO#*PQ!0LrO,5;RO!CZQpO,5:rOOQO,5;X,5;XO#*_Q!0LrO,5;RPOOO'#I_'#I_P#*sO&2DjO,58|POOO,58|,58|OOOO-E<_-E<_OOQ!0Lh1G.p1G.pOOOO-E<`-E<`OOOO,59},59}O#+OQ!bO,59}OOOO-E<b-E<bOOQ!0Lf1G/g1G/gO#+TQ!fO,5?PO+}QlO,5?POOQO,5?V,5?VO#+_QlO'#IeOOQO-E<c-E<cO#+lQ`O,5@aO#+tQ!fO,5@aO#+{Q`O,5@oOOQ!0Lf1G/m1G/mO%[QlO,5@pO#,TQ`O'#IkOOQO-E<i-E<iO#+{Q`O,5@oOOQ!0Lb1G0x1G0xOOQ!0Ln1G/x1G/xOOQ!0Ln1G0Y1G0YO%[QlO,5@mO#,iQ!0LrO,5@mO#,zQ!0LrO,5@mO#-RQ`O,5@lO9eQ`O,5@lO#-ZQ`O,5@lO#-iQ`O'#InO#-RQ`O,5@lOOQ!0Lb1G0w1G0wO!(tQpO,5:uO!)PQpO,5:uOOQS,5:w,5:wO#.ZQdO,5:wO#.cQMhO1G2zO9kQ`O1G2zOOQ!0Lf1G0u1G0uO#.qQ!0MxO1G0uO#/vQ!0MvO,5;VOOQ!0Lh'#GX'#GXO#0dQ!0MzO'#JmO!$wQlO1G0uO#2oQ!fO'#JxO%[QlO'#JxO#2yQ`O,5:eOOQ!0Lh'#D_'#D_OOQ!0Lf1G1P1G1PO%[QlO1G1POOQ!0Lf1G1g1G1gO#3OQ`O1G1PO#5dQ!0MxO1G1QO#5kQ!0MxO1G1QO#8RQ!0MxO1G1QO#8YQ!0MxO1G1QO#:pQ!0MxO1G1QO#=WQ!0MxO1G1QO#=_Q!0MxO1G1QO#=fQ!0MxO1G1QO#?|Q!0MxO1G1QO#@TQ!0MxO1G1QO#BbQ?MtO'#CiO#D]Q?MtO1G1aO#DdQ?MtO'#JtO#DwQ!0MxO,5?]OOQ!0Lb-E<o-E<oO#GUQ!0MxO1G1QO#HRQ!0MzO1G1QOOQ!0Lf1G1Q1G1QO#IUQMjO'#J}O#I`Q`O,5:xO#IeQ!0MxO1G1dO#JXQ,UO,5<XO#JaQ,UO,5<YO#JiQ,UO'#FpO#KQQ`O'#FoOOQO'#KZ'#KZOOQO'#Io'#IoO#KVQ,UO1G1oOOQ!0Lf1G1o1G1oOOOW1G1z1G1zO#KhQ?MtO'#JsO#KrQ`O,5<cO!)[QlO,5<cOOOW-E<n-E<nOOQ!0Lf1G1m1G1mO#KwQpO'#KYOOQ!0Lf,5<e,5<eO#LPQpO,5<eO#LUQMhO'#DTOOOO'#Ic'#IcO#L]O#@ItO,59mOOQ!0Lh,59m,59mO%[QlO1G2QO!8lQ`O'#IsO#LhQ`O,5<{OOQ!0Lh,5<x,5<xO!,TQMhO'#IvO#MUQMjO,5=YO!,TQMhO'#IxO#MwQMjO,5=[O!&zQMhO,5=^OOQO1G2T1G2TO#NRQ!dO'#CrO#NfQ(CWO'#ErO$ nQpO'#GcO$!UQ!dO,5<tO$!]Q`O'#K]O9eQ`O'#K]O$!kQ`O,5<vO$#RQ!dO'#C{O!,TQMhO,5<uO$#]Q`O'#G[O$#qQ`O,5<uO$#vQ!dO'#GXO$$TQ!dO'#K^O$$_Q`O'#K^O!&zQMhO'#K^O$$dQ`O,5<yO$$iQlO'#JwO$$sQpO'#GdO#$ZQpO'#GdO$%UQ`O'#GhO!3oQ`O'#GlO$%ZQ!0LrO'#IuO$%fQpO,5<}OOQ!0Lp,5<},5<}O$%mQpO'#GdO$%zQpO'#GeO$&]QpO'#GeO$&bQMjO,5=YO$&rQMjO,5=[OOQ!0Lh,5=_,5=_O!,TQMhO,5@WO!,TQMhO,5@WO$'SQ`O'#IzO$'hQ`O,5@VO$'pQ`O,59aOOQ!0Lh,59i,59iO$'uQ`O,5@WO$(uQ$IYO,59uOOQ!0Lh'#Jq'#JqO$)hQMjO,5<lO$*ZQMjO,5<nO@zQ`O,5<pOOQ!0Lh,5<q,5<qO$*eQ`O,5<wO$*jQMjO,5<|O$*zQ`O'#KQO!$wQlO1G2SO$+PQ`O1G2SO9eQ`O'#KTO$+UQ`O'#D_O9eQ`O'#EtO%[QlO'#EtO9eQ`O'#I|O$+aQ!0LrO,5@|OOQ[1G3O1G3OOOQ[1G4a1G4aOOQ!0Lf1G/|1G/|OOQ!0Lf1G/z1G/zO$-cQ!0MxO1G0UOOQ[1G2z1G2zO!&zQMhO1G2zO%[QlO1G2zO#.fQ`O1G2zO$/gQMhO'#EkOOQ!0Lb,5@U,5@UO$/tQ!0LrO,5@UOOQ[1G.u1G.uO!COQ!0LrO1G.uO!CZQpO1G.uO!CcQMhO1G.uO$0VQ`O1G0uO$0[Q`O'#CiO$0gQ`O'#KfO$0oQ`O,5=}O$0tQ`O'#KfO$0yQ`O'#KfO$1XQ`O'#JSO$1gQ`O,5APO$1oQ!fO1G1jOOQ!0Lf1G1l1G1lO9kQ`O1G3gO@zQ`O1G3gO$1vQ`O1G3gO$1{Q`O1G3gO!DnQ`O1G3gO9uQ!0LrO1G3gOOQ[1G3g1G3gO!EhQ`O1G3VO!&zQMhO1G3SO$2QQ`O1G3SOOQ[1G3T1G3TO!&zQMhO1G3TO$2VQ`O1G3TO$2_QpO'#HROOQ[1G3V1G3VO!6_QpO'#JOO!EmQ!bO1G3YOOQ[1G3Y1G3YOOQ[,5=s,5=sO$2gQMhO,5=uO9kQ`O,5=uO$%UQ`O,5=wO9`Q`O,5=wO!CZQpO,5=wO!CcQMhO,5=wO:dQMhO,5=wO$2uQ`O'#KdO$3QQ`O,5=xOOQ[1G.k1G.kO$3VQ!0LrO1G.kO@zQ`O1G.kO$3bQ`O1G.kO9uQ!0LrO1G.kO$5jQ!fO,5ARO$5wQ`O,5ARO9eQ`O,5ARO$6SQlO,5>QO$6ZQ`O,5>QOOQ[1G3j1G3jO`QlO1G3jOOQ[1G3p1G3pOOQ[1G3r1G3rO?TQ`O1G3tO$6`QlO1G3vO$:dQlO'#HuOOQ[1G3y1G3yO$:qQ`O'#H{O?YQ`O'#H}OOQ[1G4P1G4PO$:yQlO1G4PO9uQ!0LrO1G4VOOQ[1G4X1G4XOOQ!0Lb'#G`'#G`O9uQ!0LrO1G4ZO9uQ!0LrO1G4]O$?QQ`O,5@cO9eQ`O,5;`O?YQ`O,5:XO!)[QlO,5:XO!CZQpO,5:XO$?VQ?MtO,5:XOOQO,5;`,5;`O$?aQpO'#IfO$?wQ`O,5@bOOQ!0Lf1G/r1G/rO$@PQpO'#IlO$@ZQ`O,5@qOOQ!0Lb1G0y1G0yO#$ZQpO,5:XOOQO'#Ih'#IhO$@cQpO,5:qOOQ!0Ln,5:q,5:qO#'{Q`O1G0ZOOQ!0Lf1G0Z1G0ZO%[QlO1G0ZOOQ!0Lf1G0t1G0tO?YQ`O1G0tO!CZQpO1G0tO!CcQMhO1G0tOOQ!0Lb1G5}1G5}O!COQ!0LrO1G0^OOQO1G0m1G0mO%[QlO1G0mO$@jQ!0LrO1G0mO$@uQ!0LrO1G0mO!CZQpO1G0^ODWQpO1G0^O$ATQ!0LrO1G0mOOQO1G0^1G0^O$AiQ!0MxO1G0mPOOO-E<]-E<]POOO1G.h1G.hOOOO1G/i1G/iO$AsQ!bO,5<jO$A{Q!fO1G4kOOQO1G4q1G4qO%[QlO,5?PO$BVQ`O1G5{O$B_Q`O1G6ZO$BgQ!fO1G6[O9eQ`O,5?VO$BqQ!0MxO1G6XO%[QlO1G6XO$CRQ!0LrO1G6XO$CdQ`O1G6WO$CdQ`O1G6WO9eQ`O1G6WO$ClQ`O,5?YO9eQ`O,5?YOOQO,5?Y,5?YO$DQQ`O,5?YO$*zQ`O,5?YOOQO-E<l-E<lOOQS1G0a1G0aOOQS1G0c1G0cO#.^Q`O1G0cOOQ[7+(f7+(fO!&zQMhO7+(fO%[QlO7+(fO$D`Q`O7+(fO$DkQMhO7+(fO$DyQ!0MzO,5=YO$GUQ!0MzO,5=[O$IaQ!0MzO,5=YO$KrQ!0MzO,5=[O$NTQ!0MzO,59uO%!YQ!0MzO,5<lO%$eQ!0MzO,5<nO%&pQ!0MzO,5<|OOQ!0Lf7+&a7+&aO%)RQ!0MxO7+&aO%)uQlO'#IgO%*SQ`O,5@dO%*[Q!fO,5@dOOQ!0Lf1G0P1G0PO%*fQ`O7+&kOOQ!0Lf7+&k7+&kO%*kQ?MtO,5:fO%[QlO7+&{O%*uQ?MtO,5:bO%+SQ?MtO,5:jO%+^Q?MtO,5:lO%+hQMhO'#IjO%+rQ`O,5@iOOQ!0Lh1G0d1G0dOOQO1G1s1G1sOOQO1G1t1G1tO%+zQ!jO,5<[O!)[QlO,5<ZOOQO-E<m-E<mOOQ!0Lf7+'Z7+'ZOOOW7+'f7+'fOOOW1G1}1G1}O%,VQ`O1G1}OOQ!0Lf1G2P1G2POOOO,59o,59oO%,[Q!dO,59oOOOO-E<a-E<aOOQ!0Lh1G/X1G/XO%,cQ!0MxO7+'lOOQ!0Lh,5?_,5?_O%-VQMhO1G2gP%-^Q`O'#IsPOQ!0Lh-E<q-E<qO%-zQMjO,5?bOOQ!0Lh-E<t-E<tO%.mQMjO,5?dOOQ!0Lh-E<v-E<vO%.wQ!dO1G2xO%/OQ!dO'#CrO%/fQMhO'#KTO$$iQlO'#JwOOQ!0Lh1G2`1G2`O%/pQ`O'#IrO%0XQ`O,5@wO%0XQ`O,5@wO%0aQ`O,5@wO%0lQ`O,5@wOOQO1G2b1G2bO%0zQMjO1G2aO$*zQ`O'#K]O!,TQMhO1G2aO%1[Q(CWO'#ItO%1iQ`O,5@xO!&zQMhO,5@xO%1qQ!dO,5@xOOQ!0Lh1G2e1G2eO%4RQ!fO'#CiO%4]Q`O,5=QOOQ!0Lb,5=O,5=OO%4eQpO,5=OOOQ!0Lb,5=P,5=POCwQ`O,5=OO%4pQpO,5=OOOQ!0Lb,5=S,5=SO$*zQ`O,5=WOOQO,5?a,5?aOOQO-E<s-E<sOOQ!0Lp1G2i1G2iO#$ZQpO,5=OO$$iQlO,5=QO%5OQ`O,5=PO%5ZQpO,5=PO!,TQMhO'#IvO%6TQMjO1G2tO!,TQMhO'#IxO%6vQMjO1G2vO%7QQMjO1G5rO%7[QMjO1G5rOOQO,5?f,5?fOOQO-E<x-E<xOOQO1G.{1G.{O!,TQMhO1G5rO!,TQMhO1G5rO!=[QpO,59wO%[QlO,59wOOQ!0Lh,5<k,5<kO%7iQ`O1G2[O!,TQMhO1G2cO%7nQ!0MxO7+'nOOQ!0Lf7+'n7+'nO!$wQlO7+'nO%8bQ`O,5;`OOQ!0Lb,5?h,5?hOOQ!0Lb-E<z-E<zO%8gQ!dO'#K_O#'{Q`O7+(fO4UQ!fO7+(fO$DcQ`O7+(fO%8qQ!0MvO'#CiO%9UQ!0MvO,5=TO%9iQ`O,5=TO%9qQ`O,5=TOOQ!0Lb1G5p1G5pOOQ[7+$a7+$aO!COQ!0LrO7+$aO!CZQpO7+$aO!$wQlO7+&aO%9vQ`O'#JRO%:_Q`O,5AQOOQO1G3i1G3iO9kQ`O,5AQO%:_Q`O,5AQO%:gQ`O,5AQOOQO,5?n,5?nOOQO-E=Q-E=QOOQ!0Lf7+'U7+'UO%:lQ`O7+)RO9uQ!0LrO7+)RO9kQ`O7+)RO@zQ`O7+)RO%:qQ`O7+)ROOQ[7+)R7+)ROOQ[7+(q7+(qO%:vQ!0MvO7+(nO!&zQMhO7+(nO!EcQ`O7+(oOOQ[7+(o7+(oO!&zQMhO7+(oO%;QQ`O'#KcO%;]Q`O,5=mOOQO,5?j,5?jOOQO-E<|-E<|OOQ[7+(t7+(tO%<oQpO'#H[OOQ[1G3a1G3aO!&zQMhO1G3aO%[QlO1G3aO%<vQ`O1G3aO%=RQMhO1G3aO9uQ!0LrO1G3cO$%UQ`O1G3cO9`Q`O1G3cO!CZQpO1G3cO!CcQMhO1G3cO%=aQ`O'#JQO%=uQ`O,5AOO%=}QpO,5AOOOQ!0Lb1G3d1G3dOOQ[7+$V7+$VO@zQ`O7+$VO9uQ!0LrO7+$VO%>YQ`O7+$VO%[QlO1G6mO%[QlO1G6nO%>_Q!0LrO1G6mO%>iQlO1G3lO%>pQ`O1G3lO%>uQlO1G3lOOQ[7+)U7+)UO9uQ!0LrO7+)`O`QlO7+)bOOQ['#Ki'#KiOOQ['#JT'#JTO%>|QlO,5>aOOQ[,5>a,5>aO%[QlO'#HvO%?ZQ`O'#HxOOQ[,5>g,5>gO9eQ`O,5>gOOQ[,5>i,5>iOOQ[7+)k7+)kOOQ[7+)q7+)qOOQ[7+)u7+)uOOQ[7+)w7+)wO%?`QpO1G5}O%?zQ`O1G0zOOQO1G/s1G/sO%@VQ?MtO1G/sO?YQ`O1G/sO!)[QlO'#DmOOQO,5?Q,5?QOOQO-E<d-E<dOOQO,5?W,5?WOOQO-E<j-E<jO!CZQpO1G/sOOQO-E<f-E<fOOQ!0Ln1G0]1G0]OOQ!0Lf7+%u7+%uO#'{Q`O7+%uOOQ!0Lf7+&`7+&`O?YQ`O7+&`O!CZQpO7+&`OOQO7+%x7+%xO$AiQ!0MxO7+&XOOQO7+&X7+&XO%[QlO7+&XO%@aQ!0LrO7+&XO!COQ!0LrO7+%xO!CZQpO7+%xO%@lQ!0LrO7+&XO%@zQ!0MxO7++sO%[QlO7++sO%A[Q`O7++rO%A[Q`O7++rOOQO1G4t1G4tO9eQ`O1G4tO%AdQ`O1G4tOOQS7+%}7+%}O#'{Q`O<<LQO4UQ!fO<<LQO%ArQ`O<<LQOOQ[<<LQ<<LQO!&zQMhO<<LQO%[QlO<<LQO%AzQ`O<<LQO%BVQ!0MzO,5?bO%DbQ!0MzO,5?dO%FmQ!0MzO1G2aO%IOQ!0MzO1G2tO%KZQ!0MzO1G2vO%MfQ!fO,5?RO%[QlO,5?ROOQO-E<e-E<eO%MpQ`O1G6OOOQ!0Lf<<JV<<JVO%MxQ?MtO1G0uO&!PQ?MtO1G1QO&!WQ?MtO1G1QO&$XQ?MtO1G1QO&$`Q?MtO1G1QO&&aQ?MtO1G1QO&(bQ?MtO1G1QO&(iQ?MtO1G1QO&(pQ?MtO1G1QO&*qQ?MtO1G1QO&*xQ?MtO1G1QO&+PQ!0MxO<<JgO&,wQ?MtO1G1QO&-tQ?MvO1G1QO&.wQ?MvO'#JmO&0}Q?MtO1G1dO&1[Q?MtO1G0UO&1fQMjO,5?UOOQO-E<h-E<hO!)[QlO'#FrOOQO'#K['#K[OOQO1G1v1G1vO&1pQ`O1G1uO&1uQ?MtO,5?]OOOW7+'i7+'iOOOO1G/Z1G/ZO&2PQ!dO1G4yOOQ!0Lh7+(R7+(RP!&zQMhO,5?_O!,TQMhO7+(dO&2WQ`O,5?^O9eQ`O,5?^O$*zQ`O,5?^OOQO-E<p-E<pO&2fQ`O1G6cO&2fQ`O1G6cO&2nQ`O1G6cO&2yQMjO7+'{O&3ZQ!dO,5?`O&3eQ`O,5?`O!&zQMhO,5?`OOQO-E<r-E<rO&3jQ!dO1G6dO&3tQ`O1G6dO&3|Q`O1G2lO!&zQMhO1G2lOOQ!0Lb1G2j1G2jOOQ!0Lb1G2k1G2kO%4eQpO1G2jO!CZQpO1G2jOCwQ`O1G2jOOQ!0Lb1G2r1G2rO&4RQpO1G2jO&4aQ`O1G2lO$*zQ`O1G2kOCwQ`O1G2kO$$iQlO1G2lO&4iQ`O1G2kO&5]QMjO,5?bOOQ!0Lh-E<u-E<uO&6OQMjO,5?dOOQ!0Lh-E<w-E<wO!,TQMhO7++^O&6YQMjO7++^O&6dQMjO7++^OOQ!0Lh1G/c1G/cO&6qQ`O1G/cOOQ!0Lh7+'v7+'vO&6vQMjO7+'}O&7WQ!0MxO<<KYOOQ!0Lf<<KY<<KYO&7zQ`O1G0zO!&zQMhO'#I{O&8PQ`O,5@yO&:RQ!fO<<LQO!&zQMhO1G2oO&:YQ!0LrO1G2oOOQ[<<G{<<G{O!COQ!0LrO<<G{O&:kQ!0MxO<<I{OOQ!0Lf<<I{<<I{OOQO,5?m,5?mO&;_Q`O,5?mO&;dQ`O,5?mOOQO-E=P-E=PO&;rQ`O1G6lO&;rQ`O1G6lO9kQ`O1G6lO@zQ`O<<LmOOQ[<<Lm<<LmO&;zQ`O<<LmO9uQ!0LrO<<LmO9kQ`O<<LmOOQ[<<LY<<LYO%:vQ!0MvO<<LYOOQ[<<LZ<<LZO!EcQ`O<<LZO&<PQpO'#I}O&<[Q`O,5@}O!)[QlO,5@}OOQ[1G3X1G3XOOQO'#JP'#JPO9uQ!0LrO'#JPO&<dQpO,5=vOOQ[,5=v,5=vO&<kQpO'#EgO&<rQpO'#GfO&<wQ`O7+({O&<|Q`O7+({OOQ[7+({7+({O!&zQMhO7+({O%[QlO7+({O&=UQ`O7+({OOQ[7+(}7+(}O9uQ!0LrO7+(}O$%UQ`O7+(}O9`Q`O7+(}O!CZQpO7+(}O&=aQ`O,5?lOOQO-E=O-E=OOOQO'#H_'#H_O&=lQ`O1G6jO9uQ!0LrO<<GqOOQ[<<Gq<<GqO@zQ`O<<GqO&=tQ`O7+,XO&=yQ`O7+,YO%[QlO7+,XO%[QlO7+,YOOQ[7+)W7+)WO&>OQ`O7+)WO&>TQlO7+)WO&>[Q`O7+)WOOQ[<<Lz<<LzOOQ[<<L|<<L|OOQ[-E=R-E=ROOQ[1G3{1G3{O&>aQ`O,5>bOOQ[,5>d,5>dO&>fQ`O1G4RO9eQ`O7+&fO!)[QlO7+&fOOQO7+%_7+%_O&>kQ?MtO1G6[O?YQ`O7+%_OOQ!0Lf<<Ia<<IaOOQ!0Lf<<Iz<<IzO?YQ`O<<IzOOQO<<Is<<IsO$AiQ!0MxO<<IsO%[QlO<<IsOOQO<<Id<<IdO!COQ!0LrO<<IdO&>uQ!0LrO<<IsO&?QQ!0MxO<= _O&?bQ`O<= ^OOQO7+*`7+*`O9eQ`O7+*`OOQ[ANAlANAlO&?jQ!fOANAlO!&zQMhOANAlO#'{Q`OANAlO4UQ!fOANAlO&?qQ`OANAlO%[QlOANAlO&?yQ!0MzO7+'{O&B[Q!0MzO,5?bO&DgQ!0MzO,5?dO&FrQ!0MzO7+'}O&ITQ!fO1G4mO&I_Q?MtO7+&aO&KcQ?MvO,5=YO&MjQ?MvO,5=[O&MzQ?MvO,5=YO&N[Q?MvO,5=[O&NlQ?MvO,59uO'!rQ?MvO,5<lO'$uQ?MvO,5<nO''ZQ?MvO,5<|O')PQ?MtO7+'lO')^Q?MtO7+'nO')kQ`O,5<^OOQO7+'a7+'aOOQ!0Lh7+*e7+*eO')pQMjO<<LOOOQO1G4x1G4xO')wQ`O1G4xO'*SQ`O1G4xO'*bQ`O7++}O'*bQ`O7++}O!&zQMhO1G4zO'*jQ!dO1G4zO'*tQ`O7+,OO'*|Q`O7+(WO'+XQ!dO7+(WOOQ!0Lb7+(U7+(UOOQ!0Lb7+(V7+(VO!CZQpO7+(UOCwQ`O7+(UO'+cQ`O7+(WO!&zQMhO7+(WO$*zQ`O7+(VO'+hQ`O7+(WOCwQ`O7+(VO'+pQMjO<<NxO!,TQMhO<<NxOOQ!0Lh7+$}7+$}O'+zQ!dO,5?gOOQO-E<y-E<yO',UQ!0MvO7+(ZO!&zQMhO7+(ZOOQ[AN=gAN=gO9kQ`O1G5XOOQO1G5X1G5XO',fQ`O1G5XO',kQ`O7+,WO',kQ`O7+,WO9uQ!0LrOANBXO@zQ`OANBXOOQ[ANBXANBXO',sQ`OANBXOOQ[ANAtANAtOOQ[ANAuANAuO',xQ`O,5?iOOQO-E<{-E<{O'-TQ?MtO1G6iOOQO,5?k,5?kOOQO-E<}-E<}OOQ[1G3b1G3bO'-_Q`O,5=QOOQ[<<Lg<<LgO!&zQMhO<<LgO&<wQ`O<<LgO'-dQ`O<<LgO%[QlO<<LgOOQ[<<Li<<LiO9uQ!0LrO<<LiO$%UQ`O<<LiO9`Q`O<<LiO'-lQpO1G5WO'-wQ`O7+,UOOQ[AN=]AN=]O9uQ!0LrOAN=]OOQ[<= s<= sOOQ[<= t<= tO'.PQ`O<= sO'.UQ`O<= tOOQ[<<Lr<<LrO'.ZQ`O<<LrO'.`QlO<<LrOOQ[1G3|1G3|O?YQ`O7+)mO'.gQ`O<<JQO'.rQ?MtO<<JQOOQO<<Hy<<HyOOQ!0LfAN?fAN?fOOQOAN?_AN?_O$AiQ!0MxOAN?_OOQOAN?OAN?OO%[QlOAN?_OOQO<<Mz<<MzOOQ[G27WG27WO!&zQMhOG27WO#'{Q`OG27WO'.|Q!fOG27WO4UQ!fOG27WO'/TQ`OG27WO'/]Q?MtO<<JgO'/jQ?MvO1G2aO'1`Q?MvO,5?bO'3cQ?MvO,5?dO'5fQ?MvO1G2tO'7iQ?MvO1G2vO'9lQ?MtO<<KYO'9yQ?MtO<<I{OOQO1G1x1G1xO!,TQMhOANAjOOQO7+*d7+*dO':WQ`O7+*dO':cQ`O<= iO':kQ!dO7+*fOOQ!0Lb<<Kr<<KrO$*zQ`O<<KrOCwQ`O<<KrO':uQ`O<<KrO!&zQMhO<<KrOOQ!0Lb<<Kp<<KpO!CZQpO<<KpO';QQ!dO<<KrOOQ!0Lb<<Kq<<KqO';[Q`O<<KrO!&zQMhO<<KrO$*zQ`O<<KqO';aQMjOANDdO';kQ!0MvO<<KuOOQO7+*s7+*sO9kQ`O7+*sO';{Q`O<= rOOQ[G27sG27sO9uQ!0LrOG27sO@zQ`OG27sO!)[QlO1G5TO'<TQ`O7+,TO'<]Q`O1G2lO&<wQ`OANBROOQ[ANBRANBRO!&zQMhOANBRO'<bQ`OANBROOQ[ANBTANBTO9uQ!0LrOANBTO$%UQ`OANBTOOQO'#H`'#H`OOQO7+*r7+*rOOQ[G22wG22wOOQ[ANE_ANE_OOQ[ANE`ANE`OOQ[ANB^ANB^O'<jQ`OANB^OOQ[<<MX<<MXO!)[QlOAN?lOOQOG24yG24yO$AiQ!0MxOG24yO#'{Q`OLD,rOOQ[LD,rLD,rO!&zQMhOLD,rO'<oQ!fOLD,rO'<vQ?MvO7+'{O'>lQ?MvO,5?bO'@oQ?MvO,5?dO'BrQ?MvO7+'}O'DhQMjOG27UOOQO<<NO<<NOOOQ!0LbANA^ANA^O$*zQ`OANA^OCwQ`OANA^O'DxQ!dOANA^OOQ!0LbANA[ANA[O'EPQ`OANA^O!&zQMhOANA^O'E[Q!dOANA^OOQ!0LbANA]ANA]OOQO<<N_<<N_OOQ[LD-_LD-_O9uQ!0LrOLD-_O'EfQ?MtO7+*oOOQO'#Gg'#GgOOQ[G27mG27mO&<wQ`OG27mO!&zQMhOG27mOOQ[G27oG27oO9uQ!0LrOG27oOOQ[G27xG27xO'EpQ?MtOG25WOOQOLD*eLD*eOOQ[!$(!^!$(!^O#'{Q`O!$(!^O!&zQMhO!$(!^O'EzQ!0MzOG27UOOQ!0LbG26xG26xO$*zQ`OG26xO'H]Q`OG26xOCwQ`OG26xO'HhQ!dOG26xO!&zQMhOG26xOOQ[!$(!y!$(!yOOQ[LD-XLD-XO&<wQ`OLD-XOOQ[LD-ZLD-ZOOQ[!)9Ex!)9ExO#'{Q`O!)9ExOOQ!0LbLD,dLD,dO$*zQ`OLD,dOCwQ`OLD,dO'HoQ`OLD,dO'HzQ!dOLD,dOOQ[!$(!s!$(!sOOQ[!.K;d!.K;dO'IRQ?MvOG27UOOQ!0Lb!$(!O!$(!OO$*zQ`O!$(!OOCwQ`O!$(!OO'JwQ`O!$(!OOOQ!0Lb!)9Ej!)9EjO$*zQ`O!)9EjOCwQ`O!)9EjOOQ!0Lb!.K;U!.K;UO$*zQ`O!.K;UOOQ!0Lb!4/0p!4/0pO!)[QlO'#DzO1PQ`O'#EXO'KSQ!fO'#JsO'KZQ!L^O'#DvO'KbQlO'#EOO'KiQ!fO'#CiO'NPQ!fO'#CiO!)[QlO'#EQO'NaQlO,5;ZO!)[QlO,5;fO!)[QlO,5;fO!)[QlO,5;fO!)[QlO,5;fO!)[QlO,5;fO!)[QlO,5;fO!)[QlO,5;fO!)[QlO,5;fO!)[QlO,5;fO!)[QlO,5;fO!)[QlO'#IqO(!dQ`O,5<jO!)[QlO,5;fO(!lQMhO,5;fO($VQMhO,5;fO!)[QlO,5;xO!&zQMhO'#GnO(!lQMhO'#GnO!&zQMhO'#GpO(!lQMhO'#GpO1SQ`O'#DZO1SQ`O'#DZO!&zQMhO'#GQO(!lQMhO'#GQO!&zQMhO'#GSO(!lQMhO'#GSO!&zQMhO'#GbO(!lQMhO'#GbO!)[QlO,5:jO($^QpO'#D_O!)[QlO,5@pO'NaQlO1G0uO($hQ?MtO'#CiO!)[QlO1G2QO!&zQMhO'#IvO(!lQMhO'#IvO!&zQMhO'#IxO(!lQMhO'#IxO($rQ!dO'#CrO!&zQMhO,5<uO(!lQMhO,5<uO'NaQlO1G2SO!)[QlO7+&{O!&zQMhO1G2aO(!lQMhO1G2aO!&zQMhO'#IvO(!lQMhO'#IvO!&zQMhO'#IxO(!lQMhO'#IxO!&zQMhO1G2cO(!lQMhO1G2cO'NaQlO7+'nO'NaQlO7+&aO!&zQMhOANAjO(!lQMhOANAjO(%VQ`O'#EoO(%[Q`O'#EoO(%dQ`O'#F^O(%iQ`O'#EzO(%nQ`O'#KUO(%yQ`O'#KSO(&UQ`O,5;ZO(&ZQMjO,5<fO(&bQ`O'#GZO(&gQ`O'#GZO(&lQ`O,5<fO(&tQ`O,5<hO(&|Q`O,5;ZO('UQ?MtO1G1aO(']Q`O,5<uO('bQ`O,5<uO('gQ`O,5<wO('lQ`O,5<wO('qQ`O1G2SO('vQ`O1G0uO('{QMjO<<LOO((SQMjO<<LOO((ZQMhO'#F}O9`Q`O'#F|OAuQ`O'#EnO!)[QlO,5;uO!3oQ`O'#GZO!3oQ`O'#GZO!3oQ`O'#G]O!3oQ`O'#G]O!,TQMhO7+(dO!,TQMhO7+(dO%.wQ!dO1G2xO%.wQ!dO1G2xO!&zQMhO,5=^O!&zQMhO,5=^",
   stateData: "()a~O'}OS(OOSTOS(PRQ~OPYOQYOSfOY!VOaqOdzOeyOl!POpkOrYOskOtkOzkO|YO!OYO!SWO!WkO!XkO!_XO!iuO!lZO!oYO!pYO!qYO!svO!uwO!xxO!|]O$X|O$oiO%i}O%k!QO%m!OO%n!OO%o!OO%r!RO%t!SO%w!TO%x!TO%z!UO&X!WO&_!XO&a!YO&c!ZO&e![O&h!]O&n!^O&t!_O&v!`O&x!aO&z!bO&|!cO(USO(WTO(ZUO(bVO(p[O~OWtO~P`OPYOQYOSfOd!jOe!iOpkOrYOskOtkOzkO|YO!OYO!SWO!WkO!XkO!_!eO!iuO!lZO!oYO!pYO!qYO!svO!u!gO!x!hO$X!kO$oiO(U!dO(WTO(ZUO(bVO(p[O~Oa!wOs!nO!S!oO!b!yO!c!vO!d!vO!|<VO#T!pO#U!pO#V!xO#W!pO#X!pO#[!zO#]!zO(V!lO(WTO(ZUO(f!mO(p!sO~O(P!{O~OP]XR]X[]Xa]Xj]Xr]X!Q]X!S]X!]]X!l]X!p]X#R]X#S]X#`]X#lfX#o]X#p]X#q]X#r]X#s]X#t]X#u]X#v]X#w]X#y]X#{]X#|]X$R]X'{]X(b]X(s]X(z]X({]X~O!g%SX~P(qO_!}O(W#PO(X!}O(Y#PO~O_#QO(Y#PO(Z#PO([#QO~Ox#SO!U#TO(c#TO(d#VO~OPYOQYOSfOd!jOe!iOpkOrYOskOtkOzkO|YO!OYO!SWO!WkO!XkO!_!eO!iuO!lZO!oYO!pYO!qYO!svO!u!gO!x!hO$X!kO$oiO(U<ZO(WTO(ZUO(bVO(p[O~O![#ZO!]#WO!Y(iP!Y(wP~P+}O!^#cO~P`OPYOQYOSfOd!jOe!iOrYOskOtkOzkO|YO!OYO!SWO!WkO!XkO!_!eO!iuO!lZO!oYO!pYO!qYO!svO!u!gO!x!hO$X!kO$oiO(WTO(ZUO(bVO(p[O~Op#mO![#iO!|]O#j#lO#k#iO(U<[O!k(tP~P.iO!l#oO(U#nO~O!x#sO!|]O%i#tO~O#l#uO~O!g#vO#l#uO~OP$[OR#zO[$cOj$ROr$aO!Q#yO!S#{O!]$_O!l#xO!p$[O#R$RO#o$OO#p$PO#q$PO#r$PO#s$QO#t$RO#u$RO#v$bO#w$SO#y$UO#{$WO#|$XO(bVO(s$YO(z#|O({#}O~Oa(gX'{(gX'x(gX!k(gX!Y(gX!_(gX%j(gX!g(gX~P1qO#S$dO#`$eO$R$eOP(hXR(hX[(hXj(hXr(hX!Q(hX!S(hX!](hX!l(hX!p(hX#R(hX#o(hX#p(hX#q(hX#r(hX#s(hX#t(hX#u(hX#v(hX#w(hX#y(hX#{(hX#|(hX(b(hX(s(hX(z(hX({(hX!_(hX%j(hX~Oa(hX'{(hX'x(hX!Y(hX!k(hXv(hX!g(hX~P4UO#`$eO~O$^$hO$`$gO$g$mO~OSfO!_$nO$j$oO$l$qO~Oh%VOj%dOk%dOp%WOr%XOs$tOt$tOz%YO|%ZO!O%]O!S${O!_$|O!i%bO!l$xO#k%cO$X%`O$u%^O$w%_O$z%aO(U$sO(WTO(ZUO(b$uO(z$}O({%POg(_P~Ol%[O~P7eO!l%eO~O!S%hO!_%iO(U%gO~O!g%mO~Oa%nO'{%nO~O!Q%rO~P%[O(V!lO~P%[O%o%vO~P%[Oh%VO!l%eO(U%gO(V!lO~Oe%}O!l%eO(U%gO~Oj$RO~O!_&PO(U%gO(V!lO(WTO(ZUO`)XP~O!Q&SO!l&RO%k&VO&U&WO~P;SO!x#sO~O%t&YO!S)TX!_)TX(U)TX~O(U&ZO~Ol!PO!u&`O%k!QO%m!OO%n!OO%o!OO%r!RO%t!SO%w!TO%x!TO~Od&eOe&dO!x&bO%i&cO%|&aO~P<bOd&hOeyOl!PO!_&gO!u&`O!xxO!|]O%i}O%m!OO%n!OO%o!OO%r!RO%t!SO%w!TO%x!TO%z!UO~Ob&kO#`&nO%k&iO(V!lO~P=gO!l&oO!u&sO~O!l#oO~O!_XO~Oa%nO'y&{O'{%nO~Oa%nO'y'OO'{%nO~Oa%nO'y'QO'{%nO~O'x]X!Y]Xv]X!k]X&]]X!_]X%j]X!g]X~P(qO!b'`O!c'WO!d'WO(V!lO(WTO(ZUO~Os'UO!S'TO!['XO(f'SO!^(jP!^(yP~P@nOn'cO!_'aO(U%gO~Oe'hO!l%eO(U%gO~O!Q&SO!l&RO~Os!nO!S!oO!|<VO#T!pO#U!pO#W!pO#X!pO(V!lO(WTO(ZUO(f!mO(p!sO~O!b'nO!c'mO!d'mO#V!pO#['oO#]'oO~PBYOa%nOh%VO!g#vO!l%eO'{%nO(s'qO~O!p'uO#`'sO~PChOs!nO!S!oO(WTO(ZUO(f!mO(p!sO~O!_XOs(nX!S(nX!b(nX!c(nX!d(nX!|(nX#T(nX#U(nX#V(nX#W(nX#X(nX#[(nX#](nX(V(nX(W(nX(Z(nX(f(nX(p(nX~O!c'mO!d'mO(V!lO~PDWO(Q'yO(R'yO(S'{O~O_!}O(W'}O(X!}O(Y'}O~O_#QO(Y'}O(Z'}O([#QO~Ov(PO~P%[Ox#SO!U#TO(c#TO(d(SO~O![(UO!Y'XX!Y'_X!]'XX!]'_X~P+}O!](WO!Y(iX~OP$[OR#zO[$cOj$ROr$aO!Q#yO!S#{O!](WO!l#xO!p$[O#R$RO#o$OO#p$PO#q$PO#r$PO#s$QO#t$RO#u$RO#v$bO#w$SO#y$UO#{$WO#|$XO(bVO(s$YO(z#|O({#}O~O!Y(iX~PHRO!Y(]O~O!Y(vX!](vX!g(vX!k(vX(s(vX~O#`(vX#l#dX!^(vX~PJUO#`(^O!Y(xX!](xX~O!](_O!Y(wX~O!Y(bO~O#`$eO~PJUO!^(cO~P`OR#zO!Q#yO!S#{O!l#xO(bVOP!na[!naj!nar!na!]!na!p!na#R!na#o!na#p!na#q!na#r!na#s!na#t!na#u!na#v!na#w!na#y!na#{!na#|!na(s!na(z!na({!na~Oa!na'{!na'x!na!Y!na!k!nav!na!_!na%j!na!g!na~PKlO!k(dO~O!g#vO#`(eO(s'qO!](uXa(uX'{(uX~O!k(uX~PNXO!S%hO!_%iO!|]O#j(jO#k(iO(U%gO~O!](kO!k(tX~O!k(mO~O!S%hO!_%iO#k(iO(U%gO~OP(hXR(hX[(hXj(hXr(hX!Q(hX!S(hX!](hX!l(hX!p(hX#R(hX#o(hX#p(hX#q(hX#r(hX#s(hX#t(hX#u(hX#v(hX#w(hX#y(hX#{(hX#|(hX(b(hX(s(hX(z(hX({(hX~O!g#vO!k(hX~P! uOR(oO!Q(nO!l#xO#S$dO!|!{a!S!{a~O!x!{a%i!{a!_!{a#j!{a#k!{a(U!{a~P!#vO!x(sO~OPYOQYOSfOd!jOe!iOpkOrYOskOtkOzkO|YO!OYO!SWO!WkO!XkO!_XO!iuO!lZO!oYO!pYO!qYO!svO!u!gO!x!hO$X!kO$oiO(U!dO(WTO(ZUO(bVO(p[O~Oh%VOp%WOr%XOs$tOt$tOz%YO|%ZO!O<sO!S${O!_$|O!i>UO!l$xO#k<yO$X%`O$u<uO$w<wO$z%aO(U(wO(WTO(ZUO(b$uO(z$}O({%PO~O#l(yO~O![({O!k(lP~P%[O(f(}O(p[O~O!S)PO!l#xO(f(}O(p[O~OP<UOQ<UOSfOd>QOe!iOpkOr<UOskOtkOzkO|<UO!O<UO!SWO!WkO!XkO!_!eO!i<XO!lZO!o<UO!p<UO!q<UO!s<YO!u<]O!x!hO$X!kO$o>OO(U)^O(WTO(ZUO(bVO(p[O~O!]$_Oa$ra'{$ra'x$ra!k$ra!Y$ra!_$ra%j$ra!g$ra~Ol)eO~P!&zOh%VOp%WOr%XOs$tOt$tOz%YO|%ZO!O%]O!S${O!_$|O!i%bO!l$xO#k%cO$X%`O$u%^O$w%_O$z%aO(U(wO(WTO(ZUO(b$uO(z$}O({%PO~Og(qP~P!,TO!Q)jO!g)iO!_$_X$[$_X$^$_X$`$_X$g$_X~O!g)iO!_(|X$[(|X$^(|X$`(|X$g(|X~O!Q)jO~P!.^O!Q)jO!_(|X$[(|X$^(|X$`(|X$g(|X~O!_)lO$[)pO$^)kO$`)kO$g)qO~O![)tO~P!)[O$^$hO$`$gO$g)xO~On${X!Q${X#S${X'z${X(z${X({${X~OgmXg${XnmX!]mX#`mX~P!0SOx)zO(c){O(d)}O~On*WO!Q*PO'z*QO(z$}O({%PO~Og*OO~P!1WOg*XO~Oh%VOr%XOs$tOt$tOz%YO|%ZO!O<sO!S*ZO!_*[O!i>UO!l$xO#k<yO$X%`O$u<uO$w<wO$z%aO(WTO(ZUO(b$uO(z$}O({%PO~Op*aO![*_O(U*YO!k)PP~P!1uO#l*bO~O!l*cO~Oh%VOp%WOr%XOs$tOt$tOz%YO|%ZO!O<sO!S${O!_$|O!i>UO!l$xO#k<yO$X%`O$u<uO$w<wO$z%aO(U*eO(WTO(ZUO(b$uO(z$}O({%PO~O![*hO!Y)QP~P!3tOr*tOs!nO!S*jO!b*rO!c*lO!d*lO!l*cO#[*sO%a*nO(V!lO(WTO(ZUO(f!mO~O!^*qO~P!5iO#S$dOn(aX!Q(aX'z(aX(z(aX({(aX!](aX#`(aX~Og(aX$P(aX~P!6kOn*yO#`*xOg(`X!](`X~O!]*zOg(_X~Oj%dOk%dOl%dO(U&ZOg(_P~Os*}O~Og*OO(U&ZO~O!l+TO~O(U(wO~Op+XO!S%hO![#iO!_%iO!|]O#j#lO#k#iO(U%gO!k(tP~O!g#vO#l+YO~O!S%hO![+[O!](_O!_%iO(U%gO!Y(wP~Os']O!S+_O![+^O(WTO(ZUO(f+]O~O!^(yP~P!9|O!]+`Oa)UX'{)UX~OP$[OR#zO[$cOj$ROr$aO!Q#yO!S#{O!l#xO!p$[O#R$RO#o$OO#p$PO#q$PO#r$PO#s$QO#t$RO#u$RO#v$bO#w$SO#y$UO#{$WO#|$XO(bVO(s$YO(z#|O({#}O~Oa!ja!]!ja'{!ja'x!ja!Y!ja!k!jav!ja!_!ja%j!ja!g!ja~P!:tO(f(}O~OR#zO!Q#yO!S#{O!l#xO(bVOP!ra[!raj!rar!ra!]!ra!p!ra#R!ra#o!ra#p!ra#q!ra#r!ra#s!ra#t!ra#u!ra#v!ra#w!ra#y!ra#{!ra#|!ra(s!ra(z!ra({!ra~Oa!ra'{!ra'x!ra!Y!ra!k!rav!ra!_!ra%j!ra!g!ra~P!=aOR#zO!Q#yO!S#{O!l#xO(bVOP!ta[!taj!tar!ta!]!ta!p!ta#R!ta#o!ta#p!ta#q!ta#r!ta#s!ta#t!ta#u!ta#v!ta#w!ta#y!ta#{!ta#|!ta(s!ta(z!ta({!ta~Oa!ta'{!ta'x!ta!Y!ta!k!tav!ta!_!ta%j!ta!g!ta~P!?wOh%VOn+iO!_'aO%j+hO~O!g+kOa(^X!_(^X'{(^X!](^X~Oa%nO!_XO'{%nO~Oh%VO!l%eO~Oh%VO!l%eO(U%gO~O!g#vO#l(yO~Ob+vO%k+wO(U+sO(WTO(ZUO!^)YP~O!]+xO`)XX~O[+|O~O`+}O~O!_&PO(U%gO(V!lO`)XP~O%k,QO~P;SOh%VO#`,UO~Oh%VOn,XO!_$|O~O!_,ZO~O!Q,]O!_XO~O%o%vO~O!x,bO~Oe,gO~Ob,hO(U#nO(WTO(ZUO!^)WP~Oe%}O~O%k!QO(U&ZO~P=gO[,mO`,lO~OPYOQYOSfOdzOeyOpkOrYOskOtkOzkO|YO!OYO!SWO!WkO!XkO!iuO!lZO!oYO!pYO!qYO!svO!xxO!|]O$oiO%i}O(WTO(ZUO(bVO(p[O~O!_!eO!u!gO$X!kO(U!dO~P!GOO`,lOa%nO'{%nO~OPYOQYOSfOd!jOe!iOpkOrYOskOtkOzkO|YO!OYO!SWO!WkO!XkO!_!eO!iuO!lZO!oYO!pYO!qYO!svO!x!hO$X!kO$oiO(U!dO(WTO(ZUO(bVO(p[O~Oa,rOl!OO!uwO%m!OO%n!OO%o!OO~P!IhO!l&oO~O&_,xO~O!_,zO~O&p,|O&r,}OP&maQ&maS&maY&maa&mad&mae&mal&map&mar&mas&mat&maz&ma|&ma!O&ma!S&ma!W&ma!X&ma!_&ma!i&ma!l&ma!o&ma!p&ma!q&ma!s&ma!u&ma!x&ma!|&ma$X&ma$o&ma%i&ma%k&ma%m&ma%n&ma%o&ma%r&ma%t&ma%w&ma%x&ma%z&ma&X&ma&_&ma&a&ma&c&ma&e&ma&h&ma&n&ma&t&ma&v&ma&x&ma&z&ma&|&ma'x&ma(U&ma(W&ma(Z&ma(b&ma(p&ma!^&ma&f&mab&ma&k&ma~O(U-SO~Oh!eX!]#iX!^#iX!g!RX!g!eX!l!eX~O!]!eX!^!eX~P#!nO!g-WOh(kX!](kX!^(kX!g(kX!l(kXr(kX(s(kX~Oh%VO!g-YO!l%eO!]!aX!^!aX~Os!nO!S!oO(WTO(ZUO(f!mO~OP<UOQ<UOSfOd>QOe!iOpkOr<UOskOtkOzkO|<UO!O<UO!SWO!WkO!XkO!_!eO!i<XO!lZO!o<UO!p<UO!q<UO!s<YO!u<]O!x!hO$X!kO$o>OO(WTO(ZUO(bVO(p[O~O(U=PO~P#$lO!]-^O!^(jX~O!^-`O~O!g-WO~O!]-aO!^(yX~O!^-cO~O!c-dO!d-dO(V!lO~P#$ZO!^-gO~P'_On-jO!_'aO~O!Y-oO~Os!{a!b!{a!c!{a!d!{a#T!{a#U!{a#V!{a#W!{a#X!{a#[!{a#]!{a(V!{a(W!{a(Z!{a(f!{a(p!{a~P!#vO!p-tO#`-rO~PChO!c-vO!d-vO(V!lO~PDWOa%nO#`-rO'{%nO~Oa%nO!g#vO#`-rO'{%nO~Oa%nO!g#vO!p-tO#`-rO'{%nO(s'qO~O(Q'yO(R'yO(S-{O~Ov-|O~O!Y'Xa!]'Xa~P!:tO![.QO!Y'XX!]'XX~P%[O!](WO!Y(ia~O!Y(ia~PHRO!](_O!Y(wa~O!S%hO![.UO!_%iO(U%gO!Y'_X!]'_X~O#`.WO!](ua!k(uaa(ua'{(ua~O!g#vO~P#,iO!](kO!k(ta~O!S%hO!_%iO#k.[O(U%gO~Op.aO!S%hO![.^O!_%iO!|]O#j.`O#k.^O(U%gO!]'bX!k'bX~OR.eO!l#xO~Oh%VOn.hO!_'aO%j.gO~Oa#ci!]#ci'{#ci'x#ci!Y#ci!k#civ#ci!_#ci%j#ci!g#ci~P!:tOn>[O!Q*PO'z*QO(z$}O({%PO~O#l#_aa#_a#`#_a'{#_a!]#_a!k#_a!_#_a!Y#_a~P#/eO#l(aXP(aXR(aX[(aXa(aXj(aXr(aX!S(aX!l(aX!p(aX#R(aX#o(aX#p(aX#q(aX#r(aX#s(aX#t(aX#u(aX#v(aX#w(aX#y(aX#{(aX#|(aX'{(aX(b(aX(s(aX!k(aX!Y(aX'x(aXv(aX!_(aX%j(aX!g(aX~P!6kO!].uO!k(lX~P!:tO!k.xO~O!Y.zO~OP$[OR#zO!Q#yO!S#{O!l#xO!p$[O(bVO[#nia#nij#nir#ni!]#ni#R#ni#p#ni#q#ni#r#ni#s#ni#t#ni#u#ni#v#ni#w#ni#y#ni#{#ni#|#ni'{#ni(s#ni(z#ni({#ni'x#ni!Y#ni!k#niv#ni!_#ni%j#ni!g#ni~O#o#ni~P#3TO#o$OO~P#3TOP$[OR#zOr$aO!Q#yO!S#{O!l#xO!p$[O#o$OO#p$PO#q$PO#r$PO(bVO[#nia#nij#ni!]#ni#R#ni#t#ni#u#ni#v#ni#w#ni#y#ni#{#ni#|#ni'{#ni(s#ni(z#ni({#ni'x#ni!Y#ni!k#niv#ni!_#ni%j#ni!g#ni~O#s#ni~P#5rO#s$QO~P#5rOP$[OR#zO[$cOj$ROr$aO!Q#yO!S#{O!l#xO!p$[O#R$RO#o$OO#p$PO#q$PO#r$PO#s$QO#t$RO#u$RO#v$bO(bVOa#ni!]#ni#y#ni#{#ni#|#ni'{#ni(s#ni(z#ni({#ni'x#ni!Y#ni!k#niv#ni!_#ni%j#ni!g#ni~O#w#ni~P#8aOP$[OR#zO[$cOj$ROr$aO!Q#yO!S#{O!l#xO!p$[O#R$RO#o$OO#p$PO#q$PO#r$PO#s$QO#t$RO#u$RO#v$bO#w$SO(bVO({#}Oa#ni!]#ni#{#ni#|#ni'{#ni(s#ni(z#ni'x#ni!Y#ni!k#niv#ni!_#ni%j#ni!g#ni~O#y$UO~P#:wO#y#ni~P#:wO#w$SO~P#8aOP$[OR#zO[$cOj$ROr$aO!Q#yO!S#{O!l#xO!p$[O#R$RO#o$OO#p$PO#q$PO#r$PO#s$QO#t$RO#u$RO#v$bO#w$SO#y$UO(bVO(z#|O({#}Oa#ni!]#ni#|#ni'{#ni(s#ni'x#ni!Y#ni!k#niv#ni!_#ni%j#ni!g#ni~O#{#ni~P#=mO#{$WO~P#=mOP]XR]X[]Xj]Xr]X!Q]X!S]X!l]X!p]X#R]X#S]X#`]X#lfX#o]X#p]X#q]X#r]X#s]X#t]X#u]X#v]X#w]X#y]X#{]X#|]X$R]X(b]X(s]X(z]X({]X!]]X!^]X~O$P]X~P#@[OP$[OR#zO[<mOj<bOr<kO!Q#yO!S#{O!l#xO!p$[O#R<bO#o<_O#p<`O#q<`O#r<`O#s<aO#t<bO#u<bO#v<lO#w<cO#y<eO#{<gO#|<hO(bVO(s$YO(z#|O({#}O~O$P.|O~P#BiO#S$dO#`<nO$R<nO$P(hX!^(hX~P! uOa'ea!]'ea'{'ea'x'ea!k'ea!Y'eav'ea!_'ea%j'ea!g'ea~P!:tO[#nia#nij#nir#ni!]#ni#R#ni#s#ni#t#ni#u#ni#v#ni#w#ni#y#ni#{#ni#|#ni'{#ni(s#ni'x#ni!Y#ni!k#niv#ni!_#ni%j#ni!g#ni~OP$[OR#zO!Q#yO!S#{O!l#xO!p$[O#o$OO#p$PO#q$PO#r$PO(bVO(z#ni({#ni~P#EkOn>[O!Q*PO'z*QO(z$}O({%POP#niR#ni!S#ni!l#ni!p#ni#o#ni#p#ni#q#ni#r#ni(b#ni~P#EkO!]/QOg(qX~P!1WOg/SO~Oa$Qi!]$Qi'{$Qi'x$Qi!Y$Qi!k$Qiv$Qi!_$Qi%j$Qi!g$Qi~P!:tO$^/TO$`/TO~O$^/UO$`/UO~O!g)iO#`/VO!_$dX$[$dX$^$dX$`$dX$g$dX~O![/WO~O!_)lO$[/YO$^)kO$`)kO$g/ZO~O!]<iO!^(gX~P#BiO!^/[O~O!g)iO$g(|X~O$g/^O~Ov/_O~P!&zOx)zO(c){O(d/bO~O!S/eO~O(z$}On%ba!Q%ba'z%ba({%ba!]%ba#`%ba~Og%ba$P%ba~P#LmO({%POn%da!Q%da'z%da(z%da!]%da#`%da~Og%da$P%da~P#M`O!]fX!gfX!kfX!k${X(sfX~P!0SOp%WO![/nO!](_O(U/mO!Y(wP!Y)QP~P!1uOr*tO!b*rO!c*lO!d*lO!l*cO#[*sO%a*nO(V!lO(WTO(ZUO~Os'UO!S/oO![+^O!^*qO(f<|O!^(yP~P#N|O!k/pO~P#/eO!]/qO!g#vO(s'qO!k)PX~O!k/vO~OnoX!QoX'zoX(zoX({oX~O!g#vO!koX~P$!pOp/xO!S%hO![*_O!_%iO(U%gO!k)PP~O#l/yO~O!Y${X!]${X!g%SX~P!0SO!]/zO!Y)QX~P#/eO!g/|O~O!Y0OO~OpkO(U0PO~P.iOh%VOr0UO!g#vO!l%eO(s'qO~O!g+kO~Oa%nO!]0YO'{%nO~O!^0[O~P!5iO!c0]O!d0]O(V!lO~P#$ZOs!nO!S0^O(WTO(ZUO(f!mO~O#[0`O~Og%ba!]%ba#`%ba$P%ba~P!1WOg%da!]%da#`%da$P%da~P!1WOj%dOk%dOl%dO(U&ZOg'nX!]'nX~O!]*zOg(_a~Og0iO~On0kO#`0jOg(`a!](`a~OR0lO!Q0lO!S0mO#S$dOn}a'z}a(z}a({}a!]}a#`}a~Og}a$P}a~P$(TO!Q*PO'z*QOn$ta(z$ta({$ta!]$ta#`$ta~Og$ta$P$ta~P$)PO!Q*PO'z*QOn$va(z$va({$va!]$va#`$va~Og$va$P$va~P$)rO#l0pO~Og%Ua!]%Ua#`%Ua$P%Ua~P!1WO!g#vO~O#l0sO~O!]#iX!^#iX!g!RX~O!]+`Oa)Ua'{)Ua~OR#zO!Q#yO!S#{O!l#xO(bVOP!ri[!rij!rir!ri!]!ri!p!ri#R!ri#o!ri#p!ri#q!ri#r!ri#s!ri#t!ri#u!ri#v!ri#w!ri#y!ri#{!ri#|!ri(s!ri(z!ri({!ri~Oa!ri'{!ri'x!ri!Y!ri!k!riv!ri!_!ri%j!ri!g!ri~P$+lOh%VOr%XOs$tOt$tOz%YO|%ZO!O<sO!S${O!_$|O!i>UO!l$xO#k<yO$X%`O$u<uO$w<wO$z%aO(WTO(ZUO(b$uO(z$}O({%PO~Op0|O%^0}O(U0{O~P$.SO!g+kOa(^a!_(^a'{(^a!](^a~O#l1TO~O[]X!]fX!^fX~O!]1UO!^)YX~O!^1WO~O[1XO~Ob1ZO(U+sO(WTO(ZUO~O!_&PO(U%gO`'vX!]'vX~O!]+xO`)Xa~O!k1^O~P!:tO[1aO~O`1bO~O#`1gO~On1jO!_$|O~O(f(}O!^)VP~Oh%VOn1sO!_1pO%j1rO~O[1}O!]1{O!^)WX~O!^2OO~O`2QOa%nO'{%nO~O(U#nO(WTO(ZUO~O#S$dO#`$eO$R$eOP(hXR(hX[(hXr(hX!Q(hX!S(hX!](hX!l(hX!p(hX#R(hX#o(hX#p(hX#q(hX#r(hX#s(hX#t(hX#u(hX#v(hX#w(hX#y(hX#{(hX#|(hX(b(hX(s(hX(z(hX({(hX~Oj2TO&]2UOa(hX~P$3mOj2TO#`$eO&]2UO~Oa2WO~P%[Oa2YO~O&f2]OP&diQ&diS&diY&dia&did&die&dil&dip&dir&dis&dit&diz&di|&di!O&di!S&di!W&di!X&di!_&di!i&di!l&di!o&di!p&di!q&di!s&di!u&di!x&di!|&di$X&di$o&di%i&di%k&di%m&di%n&di%o&di%r&di%t&di%w&di%x&di%z&di&X&di&_&di&a&di&c&di&e&di&h&di&n&di&t&di&v&di&x&di&z&di&|&di'x&di(U&di(W&di(Z&di(b&di(p&di!^&dib&di&k&di~Ob2cO!^2aO&k2bO~P`O!_XO!l2eO~O&r,}OP&miQ&miS&miY&mia&mid&mie&mil&mip&mir&mis&mit&miz&mi|&mi!O&mi!S&mi!W&mi!X&mi!_&mi!i&mi!l&mi!o&mi!p&mi!q&mi!s&mi!u&mi!x&mi!|&mi$X&mi$o&mi%i&mi%k&mi%m&mi%n&mi%o&mi%r&mi%t&mi%w&mi%x&mi%z&mi&X&mi&_&mi&a&mi&c&mi&e&mi&h&mi&n&mi&t&mi&v&mi&x&mi&z&mi&|&mi'x&mi(U&mi(W&mi(Z&mi(b&mi(p&mi!^&mi&f&mib&mi&k&mi~O!Y2kO~O!]!aa!^!aa~P#BiOs!nO!S!oO![2pO(f!mO!]'YX!^'YX~P@nO!]-^O!^(ja~O!]'`X!^'`X~P!9|O!]-aO!^(ya~O!^2wO~P'_Oa%nO#`3QO'{%nO~Oa%nO!g#vO#`3QO'{%nO~Oa%nO!g#vO!p3UO#`3QO'{%nO(s'qO~Oa%nO'{%nO~P!:tO!]$_Ov$ra~O!Y'Xi!]'Xi~P!:tO!](WO!Y(ii~O!](_O!Y(wi~O!Y(xi!](xi~P!:tO!](ui!k(uia(ui'{(ui~P!:tO#`3WO!](ui!k(uia(ui'{(ui~O!](kO!k(ti~O!S%hO!_%iO!|]O#j3]O#k3[O(U%gO~O!S%hO!_%iO#k3[O(U%gO~On3dO!_'aO%j3cO~Oh%VOn3dO!_'aO%j3cO~O#l%baP%baR%ba[%baa%baj%bar%ba!S%ba!l%ba!p%ba#R%ba#o%ba#p%ba#q%ba#r%ba#s%ba#t%ba#u%ba#v%ba#w%ba#y%ba#{%ba#|%ba'{%ba(b%ba(s%ba!k%ba!Y%ba'x%bav%ba!_%ba%j%ba!g%ba~P#LmO#l%daP%daR%da[%daa%daj%dar%da!S%da!l%da!p%da#R%da#o%da#p%da#q%da#r%da#s%da#t%da#u%da#v%da#w%da#y%da#{%da#|%da'{%da(b%da(s%da!k%da!Y%da'x%dav%da!_%da%j%da!g%da~P#M`O#l%baP%baR%ba[%baa%baj%bar%ba!S%ba!]%ba!l%ba!p%ba#R%ba#o%ba#p%ba#q%ba#r%ba#s%ba#t%ba#u%ba#v%ba#w%ba#y%ba#{%ba#|%ba'{%ba(b%ba(s%ba!k%ba!Y%ba'x%ba#`%bav%ba!_%ba%j%ba!g%ba~P#/eO#l%daP%daR%da[%daa%daj%dar%da!S%da!]%da!l%da!p%da#R%da#o%da#p%da#q%da#r%da#s%da#t%da#u%da#v%da#w%da#y%da#{%da#|%da'{%da(b%da(s%da!k%da!Y%da'x%da#`%dav%da!_%da%j%da!g%da~P#/eO#l}aP}a[}aa}aj}ar}a!l}a!p}a#R}a#o}a#p}a#q}a#r}a#s}a#t}a#u}a#v}a#w}a#y}a#{}a#|}a'{}a(b}a(s}a!k}a!Y}a'x}av}a!_}a%j}a!g}a~P$(TO#l$taP$taR$ta[$taa$taj$tar$ta!S$ta!l$ta!p$ta#R$ta#o$ta#p$ta#q$ta#r$ta#s$ta#t$ta#u$ta#v$ta#w$ta#y$ta#{$ta#|$ta'{$ta(b$ta(s$ta!k$ta!Y$ta'x$tav$ta!_$ta%j$ta!g$ta~P$)PO#l$vaP$vaR$va[$vaa$vaj$var$va!S$va!l$va!p$va#R$va#o$va#p$va#q$va#r$va#s$va#t$va#u$va#v$va#w$va#y$va#{$va#|$va'{$va(b$va(s$va!k$va!Y$va'x$vav$va!_$va%j$va!g$va~P$)rO#l%UaP%UaR%Ua[%Uaa%Uaj%Uar%Ua!S%Ua!]%Ua!l%Ua!p%Ua#R%Ua#o%Ua#p%Ua#q%Ua#r%Ua#s%Ua#t%Ua#u%Ua#v%Ua#w%Ua#y%Ua#{%Ua#|%Ua'{%Ua(b%Ua(s%Ua!k%Ua!Y%Ua'x%Ua#`%Uav%Ua!_%Ua%j%Ua!g%Ua~P#/eOa#cq!]#cq'{#cq'x#cq!Y#cq!k#cqv#cq!_#cq%j#cq!g#cq~P!:tO![3lO!]'ZX!k'ZX~P%[O!].uO!k(la~O!].uO!k(la~P!:tO!Y3oO~O$P!na!^!na~PKlO$P!ja!]!ja!^!ja~P#BiO$P!ra!^!ra~P!=aO$P!ta!^!ta~P!?wOg'^X!]'^X~P!,TO!]/QOg(qa~OSfO!_4TO$e4UO~O!^4YO~Ov4ZO~P#/eOa$nq!]$nq'{$nq'x$nq!Y$nq!k$nqv$nq!_$nq%j$nq!g$nq~P!:tO!Y4]O~P!&zO!S4^O~O!Q*PO'z*QO({%POn'ja(z'ja!]'ja#`'ja~Og'ja$P'ja~P%-cO!Q*PO'z*QOn'la(z'la({'la!]'la#`'la~Og'la$P'la~P%.UO(s$YO~P#/eO!YfX!Y${X!]fX!]${X!g%SX#`fX~P!0SOp%WO(U=VO~P!1uOp4bO!S%hO![4aO!_%iO(U%gO!]'fX!k'fX~O!]/qO!k)Pa~O!]/qO!g#vO!k)Pa~O!]/qO!g#vO(s'qO!k)Pa~Og$}i!]$}i#`$}i$P$}i~P!1WO![4jO!Y'hX!]'hX~P!3tO!]/zO!Y)Qa~O!]/zO!Y)Qa~P#/eOP]XR]X[]Xj]Xr]X!Q]X!S]X!Y]X!]]X!l]X!p]X#R]X#S]X#`]X#lfX#o]X#p]X#q]X#r]X#s]X#t]X#u]X#v]X#w]X#y]X#{]X#|]X$R]X(b]X(s]X(z]X({]X~Oj%ZX!g%ZX~P%1{Oj4oO!g#vO~Oh%VO!g#vO!l%eO~Oh%VOr4tO!l%eO(s'qO~Or4yO!g#vO(s'qO~Os!nO!S4zO(WTO(ZUO(f!mO~O(z$}On%bi!Q%bi'z%bi({%bi!]%bi#`%bi~Og%bi$P%bi~P%5lO({%POn%di!Q%di'z%di(z%di!]%di#`%di~Og%di$P%di~P%6_Og(`i!](`i~P!1WO#`5QOg(`i!](`i~P!1WO!k5VO~Oa$pq!]$pq'{$pq'x$pq!Y$pq!k$pqv$pq!_$pq%j$pq!g$pq~P!:tO!Y5ZO~O!]5[O!_)RX~P#/eOa${X!_${X%_]X'{${X!]${X~P!0SO%_5_OaoX!_oX'{oX!]oX~P$!pOp5`O(U#nO~O%_5_O~Ob5fO%k5gO(U+sO(WTO(ZUO!]'uX!^'uX~O!]1UO!^)Ya~O[5kO~O`5lO~O[5pO~Oa%nO'{%nO~P#/eO!]5uO#`5wO!^)VX~O!^5xO~Or6OOs!nO!S*jO!b!yO!c!vO!d!vO!|<VO#T!pO#U!pO#V!pO#W!pO#X!pO#[5}O#]!zO(V!lO(WTO(ZUO(f!mO(p!sO~O!^5|O~P%;bOn6TO!_1pO%j6SO~Oh%VOn6TO!_1pO%j6SO~Ob6[O(U#nO(WTO(ZUO!]'tX!^'tX~O!]1{O!^)Wa~O(WTO(ZUO(f6^O~O`6bO~Oj6eO&]6fO~PNXO!k6gO~P%[Oa6iO~Oa6iO~P%[Ob2cO!^6nO&k2bO~P`O!g6pO~O!g6rOh(ki!](ki!^(ki!g(ki!l(kir(ki(s(ki~O#`6sO!]#hi!^#hi~O!]!ai!^!ai~P#BiOa%nO#`6|O'{%nO~Oa%nO!g#vO#`6|O'{%nO~O!](uq!k(uqa(uq'{(uq~P!:tO!](kO!k(tq~O!S%hO!_%iO#k7TO(U%gO~O!_'aO%j7WO~On7[O!_'aO%j7WO~O#l'jaP'jaR'ja['jaa'jaj'jar'ja!S'ja!l'ja!p'ja#R'ja#o'ja#p'ja#q'ja#r'ja#s'ja#t'ja#u'ja#v'ja#w'ja#y'ja#{'ja#|'ja'{'ja(b'ja(s'ja!k'ja!Y'ja'x'jav'ja!_'ja%j'ja!g'ja~P%-cO#l'laP'laR'la['laa'laj'lar'la!S'la!l'la!p'la#R'la#o'la#p'la#q'la#r'la#s'la#t'la#u'la#v'la#w'la#y'la#{'la#|'la'{'la(b'la(s'la!k'la!Y'la'x'lav'la!_'la%j'la!g'la~P%.UO#l$}iP$}iR$}i[$}ia$}ij$}ir$}i!S$}i!]$}i!l$}i!p$}i#R$}i#o$}i#p$}i#q$}i#r$}i#s$}i#t$}i#u$}i#v$}i#w$}i#y$}i#{$}i#|$}i'{$}i(b$}i(s$}i!k$}i!Y$}i'x$}i#`$}iv$}i!_$}i%j$}i!g$}i~P#/eO#l%biP%biR%bi[%bia%bij%bir%bi!S%bi!l%bi!p%bi#R%bi#o%bi#p%bi#q%bi#r%bi#s%bi#t%bi#u%bi#v%bi#w%bi#y%bi#{%bi#|%bi'{%bi(b%bi(s%bi!k%bi!Y%bi'x%biv%bi!_%bi%j%bi!g%bi~P%5lO#l%diP%diR%di[%dia%dij%dir%di!S%di!l%di!p%di#R%di#o%di#p%di#q%di#r%di#s%di#t%di#u%di#v%di#w%di#y%di#{%di#|%di'{%di(b%di(s%di!k%di!Y%di'x%div%di!_%di%j%di!g%di~P%6_O!]'Za!k'Za~P!:tO!].uO!k(li~O$P#ci!]#ci!^#ci~P#BiOP$[OR#zO!Q#yO!S#{O!l#xO!p$[O(bVO[#nij#nir#ni#R#ni#p#ni#q#ni#r#ni#s#ni#t#ni#u#ni#v#ni#w#ni#y#ni#{#ni#|#ni$P#ni(s#ni(z#ni({#ni!]#ni!^#ni~O#o#ni~P%NVO#o<_O~P%NVOP$[OR#zOr<kO!Q#yO!S#{O!l#xO!p$[O#o<_O#p<`O#q<`O#r<`O(bVO[#nij#ni#R#ni#t#ni#u#ni#v#ni#w#ni#y#ni#{#ni#|#ni$P#ni(s#ni(z#ni({#ni!]#ni!^#ni~O#s#ni~P&!_O#s<aO~P&!_OP$[OR#zO[<mOj<bOr<kO!Q#yO!S#{O!l#xO!p$[O#R<bO#o<_O#p<`O#q<`O#r<`O#s<aO#t<bO#u<bO#v<lO(bVO#y#ni#{#ni#|#ni$P#ni(s#ni(z#ni({#ni!]#ni!^#ni~O#w#ni~P&$gOP$[OR#zO[<mOj<bOr<kO!Q#yO!S#{O!l#xO!p$[O#R<bO#o<_O#p<`O#q<`O#r<`O#s<aO#t<bO#u<bO#v<lO#w<cO(bVO({#}O#{#ni#|#ni$P#ni(s#ni(z#ni!]#ni!^#ni~O#y<eO~P&&hO#y#ni~P&&hO#w<cO~P&$gOP$[OR#zO[<mOj<bOr<kO!Q#yO!S#{O!l#xO!p$[O#R<bO#o<_O#p<`O#q<`O#r<`O#s<aO#t<bO#u<bO#v<lO#w<cO#y<eO(bVO(z#|O({#}O#|#ni$P#ni(s#ni!]#ni!^#ni~O#{#ni~P&(wO#{<gO~P&(wOa#}y!]#}y'{#}y'x#}y!Y#}y!k#}yv#}y!_#}y%j#}y!g#}y~P!:tO[#nij#nir#ni#R#ni#s#ni#t#ni#u#ni#v#ni#w#ni#y#ni#{#ni#|#ni$P#ni(s#ni!]#ni!^#ni~OP$[OR#zO!Q#yO!S#{O!l#xO!p$[O#o<_O#p<`O#q<`O#r<`O(bVO(z#ni({#ni~P&+sOn>]O!Q*PO'z*QO(z$}O({%POP#niR#ni!S#ni!l#ni!p#ni#o#ni#p#ni#q#ni#r#ni(b#ni~P&+sO#S$dOP(aXR(aX[(aXj(aXn(aXr(aX!Q(aX!S(aX!l(aX!p(aX#R(aX#o(aX#p(aX#q(aX#r(aX#s(aX#t(aX#u(aX#v(aX#w(aX#y(aX#{(aX#|(aX$P(aX'z(aX(b(aX(s(aX(z(aX({(aX!](aX!^(aX~O$P$Qi!]$Qi!^$Qi~P#BiO$P!ri!^!ri~P$+lOg'^a!]'^a~P!1WO!^7nO~O!]'ea!^'ea~P#BiO!Y7oO~P#/eO!g#vO(s'qO!]'fa!k'fa~O!]/qO!k)Pi~O!]/qO!g#vO!k)Pi~Og$}q!]$}q#`$}q$P$}q~P!1WO!Y'ha!]'ha~P#/eO!g7vO~O!]/zO!Y)Qi~P#/eO!]/zO!Y)Qi~O!Y7yO~Oh%VOr8OO!l%eO(s'qO~Oj8QO!g#vO~Or8TO!g#vO(s'qO~O!Q*PO'z*QO({%POn'ka(z'ka!]'ka#`'ka~Og'ka$P'ka~P&4tO!Q*PO'z*QOn'ma(z'ma({'ma!]'ma#`'ma~Og'ma$P'ma~P&5gOg(`q!](`q~P!1WO#`8VOg(`q!](`q~P!1WO!Y8WO~Og%Pq!]%Pq#`%Pq$P%Pq~P!1WOa$py!]$py'{$py'x$py!Y$py!k$pyv$py!_$py%j$py!g$py~P!:tO!g6rO~O!]5[O!_)Ra~O!_'aOP$UaR$Ua[$Uaj$Uar$Ua!Q$Ua!S$Ua!]$Ua!l$Ua!p$Ua#R$Ua#o$Ua#p$Ua#q$Ua#r$Ua#s$Ua#t$Ua#u$Ua#v$Ua#w$Ua#y$Ua#{$Ua#|$Ua(b$Ua(s$Ua(z$Ua({$Ua~O%j7WO~P&8XO%_8[Oa%]i!_%]i'{%]i!]%]i~Oa#cy!]#cy'{#cy'x#cy!Y#cy!k#cyv#cy!_#cy%j#cy!g#cy~P!:tO[8^O~Ob8`O(U+sO(WTO(ZUO~O!]1UO!^)Yi~O`8dO~O(f(}O!]'qX!^'qX~O!]5uO!^)Va~O!^8nO~P%;bO(p!sO~P$%zO#[8oO~O!_1pO~O!_1pO%j8qO~On8tO!_1pO%j8qO~O[8yO!]'ta!^'ta~O!]1{O!^)Wi~O!k8}O~O!k9OO~O!k9RO~O!k9RO~P%[Oa9TO~O!g9UO~O!k9VO~O!](xi!^(xi~P#BiOa%nO#`9_O'{%nO~O!](uy!k(uya(uy'{(uy~P!:tO!](kO!k(ty~O%j9bO~P&8XO!_'aO%j9bO~O#l$}qP$}qR$}q[$}qa$}qj$}qr$}q!S$}q!]$}q!l$}q!p$}q#R$}q#o$}q#p$}q#q$}q#r$}q#s$}q#t$}q#u$}q#v$}q#w$}q#y$}q#{$}q#|$}q'{$}q(b$}q(s$}q!k$}q!Y$}q'x$}q#`$}qv$}q!_$}q%j$}q!g$}q~P#/eO#l'kaP'kaR'ka['kaa'kaj'kar'ka!S'ka!l'ka!p'ka#R'ka#o'ka#p'ka#q'ka#r'ka#s'ka#t'ka#u'ka#v'ka#w'ka#y'ka#{'ka#|'ka'{'ka(b'ka(s'ka!k'ka!Y'ka'x'kav'ka!_'ka%j'ka!g'ka~P&4tO#l'maP'maR'ma['maa'maj'mar'ma!S'ma!l'ma!p'ma#R'ma#o'ma#p'ma#q'ma#r'ma#s'ma#t'ma#u'ma#v'ma#w'ma#y'ma#{'ma#|'ma'{'ma(b'ma(s'ma!k'ma!Y'ma'x'mav'ma!_'ma%j'ma!g'ma~P&5gO#l%PqP%PqR%Pq[%Pqa%Pqj%Pqr%Pq!S%Pq!]%Pq!l%Pq!p%Pq#R%Pq#o%Pq#p%Pq#q%Pq#r%Pq#s%Pq#t%Pq#u%Pq#v%Pq#w%Pq#y%Pq#{%Pq#|%Pq'{%Pq(b%Pq(s%Pq!k%Pq!Y%Pq'x%Pq#`%Pqv%Pq!_%Pq%j%Pq!g%Pq~P#/eO!]'Zi!k'Zi~P!:tO$P#cq!]#cq!^#cq~P#BiO(z$}OP%baR%ba[%baj%bar%ba!S%ba!l%ba!p%ba#R%ba#o%ba#p%ba#q%ba#r%ba#s%ba#t%ba#u%ba#v%ba#w%ba#y%ba#{%ba#|%ba$P%ba(b%ba(s%ba!]%ba!^%ba~On%ba!Q%ba'z%ba({%ba~P&IlO({%POP%daR%da[%daj%dar%da!S%da!l%da!p%da#R%da#o%da#p%da#q%da#r%da#s%da#t%da#u%da#v%da#w%da#y%da#{%da#|%da$P%da(b%da(s%da!]%da!^%da~On%da!Q%da'z%da(z%da~P&KsOn>]O!Q*PO'z*QO({%PO~P&IlOn>]O!Q*PO'z*QO(z$}O~P&KsOR0lO!Q0lO!S0mO#S$dOP}a[}aj}an}ar}a!l}a!p}a#R}a#o}a#p}a#q}a#r}a#s}a#t}a#u}a#v}a#w}a#y}a#{}a#|}a$P}a'z}a(b}a(s}a(z}a({}a!]}a!^}a~O!Q*PO'z*QOP$taR$ta[$taj$tan$tar$ta!S$ta!l$ta!p$ta#R$ta#o$ta#p$ta#q$ta#r$ta#s$ta#t$ta#u$ta#v$ta#w$ta#y$ta#{$ta#|$ta$P$ta(b$ta(s$ta(z$ta({$ta!]$ta!^$ta~O!Q*PO'z*QOP$vaR$va[$vaj$van$var$va!S$va!l$va!p$va#R$va#o$va#p$va#q$va#r$va#s$va#t$va#u$va#v$va#w$va#y$va#{$va#|$va$P$va(b$va(s$va(z$va({$va!]$va!^$va~On>]O!Q*PO'z*QO(z$}O({%PO~OP%UaR%Ua[%Uaj%Uar%Ua!S%Ua!l%Ua!p%Ua#R%Ua#o%Ua#p%Ua#q%Ua#r%Ua#s%Ua#t%Ua#u%Ua#v%Ua#w%Ua#y%Ua#{%Ua#|%Ua$P%Ua(b%Ua(s%Ua!]%Ua!^%Ua~P'&xO$P$nq!]$nq!^$nq~P#BiO$P$pq!]$pq!^$pq~P#BiO!^9oO~O$P9pO~P!1WO!g#vO!]'fi!k'fi~O!g#vO(s'qO!]'fi!k'fi~O!]/qO!k)Pq~O!Y'hi!]'hi~P#/eO!]/zO!Y)Qq~Or9wO!g#vO(s'qO~O[9yO!Y9xO~P#/eO!Y9xO~Oj:PO!g#vO~Og(`y!](`y~P!1WO!]'oa!_'oa~P#/eOa%]q!_%]q'{%]q!]%]q~P#/eO[:UO~O!]1UO!^)Yq~O`:YO~O#`:ZO!]'qa!^'qa~O!]5uO!^)Vi~P#BiO!S:]O~O!_1pO%j:`O~O(WTO(ZUO(f:eO~O!]1{O!^)Wq~O!k:hO~O!k:iO~O!k:jO~O!k:jO~P%[O#`:mO!]#hy!^#hy~O!]#hy!^#hy~P#BiO%j:rO~P&8XO!_'aO%j:rO~O$P#}y!]#}y!^#}y~P#BiOP$}iR$}i[$}ij$}ir$}i!S$}i!l$}i!p$}i#R$}i#o$}i#p$}i#q$}i#r$}i#s$}i#t$}i#u$}i#v$}i#w$}i#y$}i#{$}i#|$}i$P$}i(b$}i(s$}i!]$}i!^$}i~P'&xO!Q*PO'z*QO({%POP'jaR'ja['jaj'jan'jar'ja!S'ja!l'ja!p'ja#R'ja#o'ja#p'ja#q'ja#r'ja#s'ja#t'ja#u'ja#v'ja#w'ja#y'ja#{'ja#|'ja$P'ja(b'ja(s'ja(z'ja!]'ja!^'ja~O!Q*PO'z*QOP'laR'la['laj'lan'lar'la!S'la!l'la!p'la#R'la#o'la#p'la#q'la#r'la#s'la#t'la#u'la#v'la#w'la#y'la#{'la#|'la$P'la(b'la(s'la(z'la({'la!]'la!^'la~O(z$}OP%biR%bi[%bij%bin%bir%bi!Q%bi!S%bi!l%bi!p%bi#R%bi#o%bi#p%bi#q%bi#r%bi#s%bi#t%bi#u%bi#v%bi#w%bi#y%bi#{%bi#|%bi$P%bi'z%bi(b%bi(s%bi({%bi!]%bi!^%bi~O({%POP%diR%di[%dij%din%dir%di!Q%di!S%di!l%di!p%di#R%di#o%di#p%di#q%di#r%di#s%di#t%di#u%di#v%di#w%di#y%di#{%di#|%di$P%di'z%di(b%di(s%di(z%di!]%di!^%di~O$P$py!]$py!^$py~P#BiO$P#cy!]#cy!^#cy~P#BiO!g#vO!]'fq!k'fq~O!]/qO!k)Py~O!Y'hq!]'hq~P#/eOr:|O!g#vO(s'qO~O[;QO!Y;PO~P#/eO!Y;PO~Og(`!R!](`!R~P!1WOa%]y!_%]y'{%]y!]%]y~P#/eO!]1UO!^)Yy~O!]5uO!^)Vq~O(U;XO~O!_1pO%j;[O~O!k;_O~O%j;dO~P&8XOP$}qR$}q[$}qj$}qr$}q!S$}q!l$}q!p$}q#R$}q#o$}q#p$}q#q$}q#r$}q#s$}q#t$}q#u$}q#v$}q#w$}q#y$}q#{$}q#|$}q$P$}q(b$}q(s$}q!]$}q!^$}q~P'&xO!Q*PO'z*QO({%POP'kaR'ka['kaj'kan'kar'ka!S'ka!l'ka!p'ka#R'ka#o'ka#p'ka#q'ka#r'ka#s'ka#t'ka#u'ka#v'ka#w'ka#y'ka#{'ka#|'ka$P'ka(b'ka(s'ka(z'ka!]'ka!^'ka~O!Q*PO'z*QOP'maR'ma['maj'man'mar'ma!S'ma!l'ma!p'ma#R'ma#o'ma#p'ma#q'ma#r'ma#s'ma#t'ma#u'ma#v'ma#w'ma#y'ma#{'ma#|'ma$P'ma(b'ma(s'ma(z'ma({'ma!]'ma!^'ma~OP%PqR%Pq[%Pqj%Pqr%Pq!S%Pq!l%Pq!p%Pq#R%Pq#o%Pq#p%Pq#q%Pq#r%Pq#s%Pq#t%Pq#u%Pq#v%Pq#w%Pq#y%Pq#{%Pq#|%Pq$P%Pq(b%Pq(s%Pq!]%Pq!^%Pq~P'&xOg%f!Z!]%f!Z#`%f!Z$P%f!Z~P!1WO!Y;hO~P#/eOr;iO!g#vO(s'qO~O[;kO!Y;hO~P#/eO!]'qq!^'qq~P#BiO!]#h!Z!^#h!Z~P#BiO#l%f!ZP%f!ZR%f!Z[%f!Za%f!Zj%f!Zr%f!Z!S%f!Z!]%f!Z!l%f!Z!p%f!Z#R%f!Z#o%f!Z#p%f!Z#q%f!Z#r%f!Z#s%f!Z#t%f!Z#u%f!Z#v%f!Z#w%f!Z#y%f!Z#{%f!Z#|%f!Z'{%f!Z(b%f!Z(s%f!Z!k%f!Z!Y%f!Z'x%f!Z#`%f!Zv%f!Z!_%f!Z%j%f!Z!g%f!Z~P#/eOr;tO!g#vO(s'qO~O!Y;uO~P#/eOr;|O!g#vO(s'qO~O!Y;}O~P#/eOP%f!ZR%f!Z[%f!Zj%f!Zr%f!Z!S%f!Z!l%f!Z!p%f!Z#R%f!Z#o%f!Z#p%f!Z#q%f!Z#r%f!Z#s%f!Z#t%f!Z#u%f!Z#v%f!Z#w%f!Z#y%f!Z#{%f!Z#|%f!Z$P%f!Z(b%f!Z(s%f!Z!]%f!Z!^%f!Z~P'&xOr<QO!g#vO(s'qO~Ov(gX~P1qO!Q%rO~P!)[O(V!lO~P!)[O!YfX!]fX#`fX~P%1{OP]XR]X[]Xj]Xr]X!Q]X!S]X!]]X!]fX!l]X!p]X#R]X#S]X#`]X#`fX#lfX#o]X#p]X#q]X#r]X#s]X#t]X#u]X#v]X#w]X#y]X#{]X#|]X$R]X(b]X(s]X(z]X({]X~O!gfX!k]X!kfX(sfX~P'KvOP<UOQ<UOSfOd>QOe!iOpkOr<UOskOtkOzkO|<UO!O<UO!SWO!WkO!XkO!_XO!i<XO!lZO!o<UO!p<UO!q<UO!s<YO!u<]O!x!hO$X!kO$o>OO(U)^O(WTO(ZUO(bVO(p[O~O!]<iO!^$ra~Oh%VOp%WOr%XOs$tOt$tOz%YO|%ZO!O<tO!S${O!_$|O!i>VO!l$xO#k<zO$X%`O$u<vO$w<xO$z%aO(U(wO(WTO(ZUO(b$uO(z$}O({%PO~Ol)eO~P(!lOr!eX(s!eX~P#!nO!^]X!^fX~P'KvO!YfX!Y${X!]fX!]${X#`fX~P!0SO#l<^O~O!g#vO#l<^O~O#`<nO~Oj<bO~O#`<}O!](xX!^(xX~O#`<nO!](vX!^(vX~O#l=OO~Og=QO~P!1WO#l=WO~O#l=XO~Og=QO(U&ZO~O!g#vO#l=YO~O!g#vO#l=OO~O$P=ZO~P#BiO#l=[O~O#l=]O~O#l=bO~O#l=cO~O#l=dO~O#l=eO~O$P=fO~P!1WO$P=gO~P!1WOl=rO~P7eOk#S#T#U#W#X#[#j#k#v$o$u$w$z%^%_%i%j%k%r%t%w%x%z%|~(PT#p!X'}(V#qs#o#rr!Q(O$^(O(U$`(f~",
@@ -25405,7 +25446,7 @@ function localCompletionSource2(context) {
 }
 var javascriptLanguage = /* @__PURE__ */ LRLanguage.define({
   name: "javascript",
-  parser: /* @__PURE__ */ parser6.configure({
+  parser: /* @__PURE__ */ parser7.configure({
     props: [
       /* @__PURE__ */ indentNodeProp.add({
         IfStatement: /* @__PURE__ */ continuedIndent({ except: /^\s*({|else\b)/ }),
@@ -26163,7 +26204,7 @@ var defaultAttrs = /* @__PURE__ */ [
 ].concat(/* @__PURE__ */ eventAttributes.map((name2) => ({ name: name2, parser: javascriptLanguage.parser })));
 var htmlPlain = /* @__PURE__ */ LRLanguage.define({
   name: "html",
-  parser: /* @__PURE__ */ parser4.configure({
+  parser: /* @__PURE__ */ parser5.configure({
     props: [
       /* @__PURE__ */ indentNodeProp.add({
         Element(context) {
@@ -26327,8 +26368,8 @@ var headerIndent = /* @__PURE__ */ foldService.of((state, start, end) => {
   }
   return null;
 });
-function mkLang(parser7) {
-  return new Language(data, parser7, [headerIndent], "markdown");
+function mkLang(parser8) {
+  return new Language(data, parser8, [headerIndent], "markdown");
 }
 var commonmarkLanguage = /* @__PURE__ */ mkLang(commonmark);
 var extended = /* @__PURE__ */ commonmark.configure([GFM, Subscript, Superscript, Emoji, {
@@ -26614,8 +26655,8 @@ var markdownKeymap = [
 ];
 var htmlNoMatch = /* @__PURE__ */ html({ matchClosingTags: false });
 function markdown(config = {}) {
-  let { codeLanguages: codeLanguages2, defaultCodeLanguage, addKeymap = true, base: { parser: parser7 } = commonmarkLanguage, completeHTMLTags = true, htmlTagLanguage = htmlNoMatch } = config;
-  if (!(parser7 instanceof MarkdownParser))
+  let { codeLanguages: codeLanguages2, defaultCodeLanguage, addKeymap = true, base: { parser: parser8 } = commonmarkLanguage, completeHTMLTags = true, htmlTagLanguage = htmlNoMatch } = config;
+  if (!(parser8 instanceof MarkdownParser))
     throw new RangeError("Base parser provided to `markdown` should be a Markdown parser");
   let extensions = config.extensions ? [config.extensions] : [];
   let support = [htmlTagLanguage.support], defaultCode;
@@ -26629,7 +26670,7 @@ function markdown(config = {}) {
   extensions.push(parseCode({ codeParser, htmlParser: htmlTagLanguage.language.parser }));
   if (addKeymap)
     support.push(Prec.high(keymap.of(markdownKeymap)));
-  let lang = mkLang(parser7.configure(extensions));
+  let lang = mkLang(parser8.configure(extensions));
   if (completeHTMLTags)
     support.push(lang.data.of({ autocomplete: htmlTagCompletion }));
   return new LanguageSupport(lang, support);
@@ -26685,13 +26726,15 @@ function fencedCode(source) {
   return blocks;
 }
 function anchoredEquations(source, anchors) {
-  const code = fencedCode(source);
+  const code = markdownContext(source).excluded;
   const preserved = anchors.flatMap((a2) => {
     if (a2.from < 0 || a2.to > source.length || a2.from >= a2.to || code.some((b) => a2.from < b.to && a2.to > b.from)) return [];
     let slashes = 0;
     for (let i = a2.from - 1; i >= 0 && source[i] === "\\"; i--) slashes++;
     if (slashes % 2) return [];
-    const fragment = source.slice(a2.from, a2.to), parsed = equations(fragment);
+    const fragment = source.slice(a2.from, a2.to);
+    if (fragment.startsWith("$") && !fragment.startsWith("$$") && (source[a2.from - 1] === "$" || source[a2.to] === "$")) return [];
+    const parsed = equations(fragment);
     return parsed.length === 1 && parsed[0].from === 0 && parsed[0].to === fragment.length ? [{ ...parsed[0], from: a2.from, to: a2.to, bodyFrom: parsed[0].bodyFrom + a2.from, bodyTo: parsed[0].bodyTo + a2.from }] : [];
   }).sort((a2, b) => a2.from - b.from);
   const candidates = equations(source).filter((q) => !preserved.some((a2) => q.from < a2.to && q.to > a2.from));
@@ -26882,6 +26925,97 @@ function writtenEditor(app, host, path, value, owner, change, busy, label = "You
   const surface = wrap.createDiv("study-written-surface");
   let view, field, locked = false, mathOpen = false, importing = false, disposed = false;
   const editable2 = new Compartment();
+  const preview = wrap.createDiv("study-written-preview markdown-rendered");
+  preview.hidden = true;
+  preview.tabIndex = 0;
+  preview.setAttribute("aria-label", label + " preview");
+  let previewMode = false, generation = 0, previewOwner, composing = false, contextMenu = false;
+  const clearPreview = () => {
+    generation++;
+    if (previewOwner) {
+      owner.removeChild(previewOwner);
+      previewOwner = void 0;
+    }
+    preview.empty();
+  };
+  const resume = () => {
+    if (disposed) return;
+    previewMode = false;
+    clearPreview();
+    preview.hidden = true;
+    surface.hidden = false;
+    view.requestMeasure();
+    view.focus();
+  };
+  const showPreview = (focus = false) => {
+    if (!options.previewOnBlur || disposed || mathOpen || importing || composing || view.composing) return;
+    previewMode = true;
+    clearPreview();
+    const ticket = generation, focusAtRequest = view.hasFocus, renderer = owner.addChild(new import_obsidian4.Component());
+    previewOwner = renderer;
+    const stage = wrap.ownerDocument.createElement("div"), text2 = view.state.doc.toString();
+    void RichMarkdown.render(app, text2 || "*Write in the margin\u2026*", stage, path, renderer, { reuseLeaf: true }).then(() => {
+      if (disposed || ticket !== generation || !previewMode) return;
+      if (mathOpen || importing || composing || view.composing || !focusAtRequest && view.hasFocus) {
+        previewMode = false;
+        return;
+      }
+      stage.querySelectorAll("input.task-list-item-checkbox").forEach((box) => box.disabled = true);
+      preview.replaceChildren(...Array.from(stage.childNodes));
+      preview.hidden = false;
+      surface.hidden = true;
+      if (focus) preview.focus();
+    }).catch(() => {
+      if (ticket === generation && previewMode) {
+        preview.textContent = text2;
+        preview.hidden = false;
+        surface.hidden = true;
+        if (focus) preview.focus();
+      }
+    });
+  };
+  const checkBlur = (target) => requestAnimationFrame(() => {
+    const active = wrap.ownerDocument.activeElement, boundary = wrap.closest(".study-margin-note") ?? wrap, destination = target ?? active;
+    if (!disposed && !previewMode && !contextMenu && !view.hasFocus && destination && destination !== wrap.ownerDocument.body && !destination.closest(".modal-container,.menu,.suggestion-container") && wrap.ownerDocument.hasFocus() && !boundary.contains(destination) && !boundary.contains(active)) showPreview();
+  });
+  preview.onclick = (e) => {
+    if (!e.target.closest("a,button,input")) {
+      e.stopPropagation();
+      resume();
+    }
+  };
+  preview.onkeydown = (e) => {
+    if (e.target === preview && e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+      resume();
+    }
+  };
+  wrap.addEventListener("pointerdown", (e) => {
+    if (previewMode && !surface.hidden && surface.contains(e.target)) resume();
+  }, true);
+  wrap.addEventListener("focusout", (e) => {
+    if (e.relatedTarget) checkBlur();
+  });
+  wrap.addEventListener("compositionstart", () => {
+    composing = true;
+  });
+  wrap.addEventListener("compositionend", () => {
+    composing = false;
+    queueMicrotask(() => {
+      if (!disposed) {
+        view.dispatch({ effects: focusChanged.of(view.hasFocus) });
+        checkBlur();
+      }
+    });
+  });
+  wrap.addEventListener("contextmenu", () => {
+    contextMenu = true;
+  });
+  if (options.previewOnBlur) owner.registerDomEvent(wrap.ownerDocument, "pointerdown", (e) => {
+    contextMenu = false;
+    checkBlur(e.target instanceof Element ? e.target : void 0);
+  }, true);
   const open = (from, to = from, display = false) => {
     if (locked || mathOpen) return;
     view.dispatch({ selection: { anchor: from, head: to } });
@@ -27159,23 +27293,29 @@ function writtenEditor(app, host, path, value, owner, change, busy, label = "You
   const blanks = StateField.define({ create: makeBlanks, update: (old, tr) => tr.docChanged || tr.effects.some((e) => e.is(refreshBlankEffect)) ? makeBlanks(tr.state) : old, provide: (f) => [EditorView.decorations.from(f), EditorView.atomicRanges.of((v) => v.state.field(f))] });
   const parse2 = (text2) => options.answers ? fieldEquations(text2, true).filter((q) => q.bodyFrom !== q.from || /[\\_^]/.test(q.body)) : equations(text2);
   const focusChanged = StateEffect.define();
-  const decorations2 = (state, parsed, focused, rawTable) => {
+  const decorations2 = (state, parsed, focused, rawTable, previousFormatting) => {
     const source2 = state.doc.toString(), rich = options.rich !== false && !options.answers;
     const tables = rich ? richTables(source2).filter((t2) => !t2.raw.includes("{{blank:") && (!rawTable || t2.to < rawTable.from || t2.from > rawTable.to)) : [];
     const images = rich ? imageSpans(source2).filter((i) => !tables.some((t2) => i.from < t2.to && i.to > t2.from) && (!focused || state.readOnly || !state.selection.ranges.some((s) => s.from <= i.to && s.to >= i.from))) : [];
     const covered = [...tables, ...images];
-    return Decoration.set([
+    const formatting = previousFormatting ?? Decoration.set(options.lists ? marginFormatting(state, [...covered, ...parsed, ...options.blanks ? blankTokens(source2) : []]) : [], true);
+    const formatted = [];
+    formatting.between(0, state.doc.length, (from, to, d) => {
+      formatted.push(d.range(from, to));
+    });
+    return { formatting, decorations: Decoration.set([
+      ...formatted,
       ...tables.map((t2) => Decoration.replace({ widget: new TableWidget(t2, state.readOnly), block: true }).range(t2.from, t2.to)),
       ...images.map((i) => Decoration.replace({ widget: new ImageWidget(i.raw, i.block), block: i.block }).range(i.from, i.to)),
       ...parsed.filter((q) => !covered.some((t2) => q.from < t2.to && q.to > t2.from) && !q.raw.includes("{{blank:") && q.body.trim() && (!focused || state.readOnly || !state.selection.ranges.some((s) => s.from <= q.to && s.to >= q.from))).map((q) => Decoration.replace({ widget: new MathWidget(q.bodyFrom === q.from ? `$${q.body}$` : q.raw) }).range(q.from, q.to)),
       ...fencedCode(source2).flatMap((block) => block.lines.map((pos) => Decoration.line({ class: "study-written-code-line" }).range(pos)))
-    ], true);
+    ], true) };
   };
   const highlight = HighlightStyle.define([{ tag: tags.keyword, class: "study-code-keyword" }, { tag: tags.string, class: "study-code-string" }, { tag: tags.number, class: "study-code-number" }, { tag: tags.comment, class: "study-code-comment" }, { tag: tags.function(tags.variableName), class: "study-code-function" }]);
   const math = StateField.define({
     create: (state) => {
       const parsed = parse2(state.doc.toString());
-      return { parsed, decorations: decorations2(state, parsed, false, null), focused: false, rawTable: null };
+      return { parsed, ...decorations2(state, parsed, false, null), focused: false, rawTable: null };
     },
     update: (old, tr) => {
       const effect = tr.effects.find((e) => e.is(focusChanged)), focused = effect?.is(focusChanged) ? effect.value : old.focused;
@@ -27183,8 +27323,14 @@ function writtenEditor(app, host, path, value, owner, change, busy, label = "You
       let rawTable = rawEffect ? rawEffect.value : old.rawTable ? { from: tr.changes.mapPos(old.rawTable.from), to: tr.changes.mapPos(old.rawTable.to, 1) } : null;
       if (rawTable && tr.selection && !tr.state.selection.ranges.some((s) => s.from <= rawTable.to && s.to >= rawTable.from)) rawTable = null;
       if (!tr.docChanged && !tr.selection && !tr.reconfigured && !effect && !rawEffect) return old;
-      const parsed = tr.docChanged ? options.answers ? parse2(tr.state.doc.toString()) : anchoredEquations(tr.state.doc.toString(), old.parsed.map((q) => ({ from: tr.changes.mapPos(q.from, 1), to: tr.changes.mapPos(q.to, -1) }))) : old.parsed;
-      return { parsed, decorations: decorations2(tr.state, parsed, focused, rawTable), focused, rawTable };
+      const parsed = tr.docChanged ? options.answers ? parse2(tr.state.doc.toString()) : anchoredEquations(tr.state.doc.toString(), old.parsed.filter((q) => {
+        let touched = false;
+        tr.changes.iterChangedRanges((from, to) => {
+          if (from <= q.to + 1 && to >= q.from - 1) touched = true;
+        });
+        return !touched;
+      }).map((q) => ({ from: tr.changes.mapPos(q.from, 1), to: tr.changes.mapPos(q.to, -1) }))) : old.parsed;
+      return { parsed, ...decorations2(tr.state, parsed, focused, rawTable, composing ? old.formatting.map(tr.changes) : void 0), focused, rawTable };
     },
     provide: (f) => [EditorView.decorations.from(f, (s) => s.decorations), EditorView.atomicRanges.of((v) => v.state.field(f).decorations.update({ filter: (_from, _to, value2) => value2.spec.widget instanceof TableWidget }))]
   });
@@ -27244,6 +27390,12 @@ function writtenEditor(app, host, path, value, owner, change, busy, label = "You
     }
     return false;
   }, focus: (_, v) => {
+    if (previewMode) {
+      previewMode = false;
+      clearPreview();
+      preview.hidden = true;
+      surface.hidden = false;
+    }
     v.dispatch({ effects: focusChanged.of(true) });
   }, blur: (_, v) => {
     v.dispatch({ effects: focusChanged.of(false) });
@@ -27257,6 +27409,9 @@ function writtenEditor(app, host, path, value, owner, change, busy, label = "You
     if (update.docChanged) {
       source.value = update.state.doc.toString();
       change(source.value);
+      if (previewMode) queueMicrotask(() => {
+        if (previewMode && !disposed) showPreview();
+      });
     }
     if (update.selectionSet || update.docChanged) {
       const s = update.state.selection.main;
@@ -27267,9 +27422,12 @@ function writtenEditor(app, host, path, value, owner, change, busy, label = "You
   wrap.querySelectorAll(".study-math-tools button").forEach((button, i) => button.onclick = () => open(view.state.selection.main.from, view.state.selection.main.to, i === 1));
   owner.register(() => {
     disposed = true;
+    generation++;
     view.destroy();
   });
-  return { source, dom: view.dom, refreshBlanks: () => view.dispatch({ effects: refreshBlankEffect.of(null) }), focus: () => view.focus(), setValue: (value2, from, to = from) => {
+  return { source, dom: view.dom, refreshBlanks: () => view.dispatch({ effects: refreshBlankEffect.of(null) }), focus: resume, showPreview, get previewing() {
+    return previewMode;
+  }, setValue: (value2, from, to = from) => {
     view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: value2 }, ...from === void 0 ? {} : { selection: { anchor: from, head: to } } });
   }, get value() {
     return view.state.doc.toString();
@@ -27860,7 +28018,7 @@ var MarginView = class extends import_obsidian5.ItemView {
       if (!card) {
         card = this.createNote(c);
         this.cards.set(c.id, card);
-      } else if (!card.editor && card.signature !== JSON.stringify(c)) {
+      } else if ((!card.editor || card.editor.previewing && !this.notes.drafts.has(c.id) && card.editor.value !== c.comment) && card.signature !== JSON.stringify(c)) {
         const old = card;
         this.removeChild(old.owner);
         card = this.createNote(c);
@@ -27896,6 +28054,7 @@ var MarginView = class extends import_obsidian5.ItemView {
     if (this.notes.drafts.has(this.notes.selected)) this.beginEditor(this.notes.selected, true);
   }
   beginEditor(id3, focus = true) {
+    for (const [otherId, other] of this.cards) if (otherId !== id3 && other.editor && !other.editor.previewing) other.editor.showPreview();
     const card = this.cards.get(id3), c = this.current(id3);
     if (!card || !c) return;
     if (!card.editor) {
@@ -27913,30 +28072,34 @@ var MarginView = class extends import_obsidian5.ItemView {
         busy = active;
         if (active) this.busyEditors.add(id3);
         else this.busyEditors.delete(id3);
-      }, "Margin note", { rich: true, toolbar: false, lists: true, placeholder: "Write in the margin\u2026" });
+      }, "Margin note", { rich: true, toolbar: false, lists: true, previewOnBlur: true, placeholder: "Write in the margin\u2026" });
       body.addEventListener("focusout", (e) => {
         if (!body.contains(e.relatedTarget)) queueMicrotask(() => {
           if (!busy) void this.commit(id3);
         });
       });
       body.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && !busy && !e.defaultPrevented) {
+        if (e.key === "Escape" && !e.isComposing && !busy && !e.defaultPrevented) {
           e.preventDefault();
           e.stopPropagation();
-          void this.commit(id3).then(() => {
-            const current = this.current(id3);
-            if (!current) return;
-            this.removeChild(card.owner);
-            const replacement = this.createNote(current);
-            card.el.replaceWith(replacement.el);
-            this.cards.set(id3, replacement);
-            this.update();
-            replacement.el.querySelector(".study-margin-body")?.focus();
-          });
+          void this.commit(id3);
+          card.editor?.showPreview(true);
         }
       }, true);
     }
     if (focus) card.editor.focus();
+    let retained = [...this.cards.values()].filter((c2) => c2.editor).length;
+    for (const [otherId, other] of this.cards) {
+      if (retained <= 6) break;
+      if (otherId === id3 || !other.editor?.previewing || this.notes.drafts.has(otherId) || this.saving.has(otherId) || this.busyEditors.has(otherId)) continue;
+      const current = this.current(otherId);
+      if (!current) continue;
+      this.removeChild(other.owner);
+      const replacement = this.createNote(current);
+      other.el.replaceWith(replacement.el);
+      this.cards.set(otherId, replacement);
+      retained--;
+    }
   }
   createNote(c) {
     const owner = this.addChild(new import_obsidian5.Component()), el = this.contentEl.ownerDocument.createElement("article");
@@ -28029,7 +28192,7 @@ var MarginView = class extends import_obsidian5.ItemView {
       if (!e.target.closest("a,button,.cm-editor")) this.beginEditor(c.id);
     };
     body.onkeydown = (e) => {
-      if (e.key === "Enter" && !body.querySelector(".cm-editor")) {
+      if (e.target === body && e.key === "Enter" && !body.querySelector(".cm-editor")) {
         e.preventDefault();
         this.beginEditor(c.id);
       }
@@ -34647,10 +34810,10 @@ function parseOptions(options) {
 }
 function parseDocument(source, options = {}) {
   const { lineCounter, prettyErrors } = parseOptions(options);
-  const parser7 = new Parser2(lineCounter?.addNewLine);
+  const parser8 = new Parser2(lineCounter?.addNewLine);
   const composer = new Composer(options);
   let doc2 = null;
-  for (const _doc of composer.compose(parser7.parse(source), true, source.length)) {
+  for (const _doc of composer.compose(parser8.parse(source), true, source.length)) {
     if (!doc2)
       doc2 = _doc;
     else if (doc2.options.logLevel !== "silent") {
@@ -37996,7 +38159,7 @@ function readingInsertion(selection, path) {
 
 // src/math-annotations.ts
 var import_obsidian18 = require("obsidian");
-var import_view9 = require("@codemirror/view");
+var import_view10 = require("@codemirror/view");
 
 // src/comment-marks.ts
 function commentSegments(ranges) {
@@ -38167,7 +38330,7 @@ function selectedMathAnchor(markdown2) {
   if (!selection || selection.isCollapsed || !selection.rangeCount || !markdown2.file) return;
   const range = selection.getRangeAt(0), start = range.startContainer.nodeType === 1 ? range.startContainer : range.startContainer.parentElement, root = start?.closest(".math"), math = root?.querySelector("mjx-math");
   if (!root || !math || !markdown2.containerEl.contains(root) || !math.contains(range.startContainer) || !math.contains(range.endContainer)) return;
-  const cm = root.closest(".cm-editor"), view = cm ? import_view9.EditorView.findFromDOM(cm) : void 0, anchor = view ? liveAnchor(view, root) : readingEquationAnchor(root, markdown2.file.path);
+  const cm = root.closest(".cm-editor"), view = cm ? import_view10.EditorView.findFromDOM(cm) : void 0, anchor = view ? liveAnchor(view, root) : readingEquationAnchor(root, markdown2.file.path);
   if (!anchor) return;
   const part = partFromRange(math, range);
   return { ...anchor, ...part ? { part, renderedQuote: "$" + part.nodes.map((n) => n.latex).join(" ") + "$" } : {} };
@@ -38179,7 +38342,7 @@ function registerMathAnnotations(plugin, store) {
   };
   store.listeners.add(refresh);
   plugin.register(() => store.listeners.delete(refresh));
-  plugin.registerEditorExtension(import_view9.ViewPlugin.fromClass(class {
+  plugin.registerEditorExtension(import_view10.ViewPlugin.fromClass(class {
     constructor(view) {
       this.view = view;
       livePainters.add(this.schedule);
@@ -38247,7 +38410,7 @@ function registerMathAnnotations(plugin, store) {
       if (!root || root.closest(".study-margin-pane,.evidence-reader,.evidence-paper,.modal")) return;
       const math = root.querySelector("mjx-math");
       if (!math) return;
-      const cm = root.closest(".cm-editor"), view = cm ? import_view9.EditorView.findFromDOM(cm) : void 0;
+      const cm = root.closest(".cm-editor"), view = cm ? import_view10.EditorView.findFromDOM(cm) : void 0;
       const markdown2 = plugin.app.workspace.getLeavesOfType("markdown").map((l) => l.view).find((v) => v instanceof import_obsidian18.MarkdownView && v.containerEl.contains(root));
       const anchor = view ? liveAnchor(view, root) : markdown2?.file ? readingEquationAnchor(root, markdown2.file.path) : void 0;
       if (!anchor) return;
@@ -38371,7 +38534,7 @@ var CommentSettings = class extends import_obsidian19.PluginSettingTab {
 
 // src/annotations.ts
 var import_obsidian22 = require("obsidian");
-var import_view10 = require("@codemirror/view");
+var import_view11 = require("@codemirror/view");
 var import_state11 = require("@codemirror/state");
 
 // src/reading-comments.ts
@@ -38625,7 +38788,7 @@ function isProtectedPaper(app, path) {
 
 // src/annotations.ts
 var refreshAnnotations = import_state11.StateEffect.define();
-var AnchorChip = class extends import_view10.WidgetType {
+var AnchorChip = class extends import_view11.WidgetType {
   constructor(id3, plugin) {
     super();
     this.id = id3;
@@ -38671,7 +38834,7 @@ function stickyMarker(doc2, c, store) {
   stickyButton(span, c, store);
   return span;
 }
-var StickyWidget = class extends import_view10.WidgetType {
+var StickyWidget = class extends import_view11.WidgetType {
   constructor(c, store) {
     super();
     this.c = c;
@@ -38898,21 +39061,21 @@ function registerAnnotations(plugin, store) {
   };
   store.listeners.add(refresh);
   plugin.register(() => store.listeners.delete(refresh));
-  plugin.registerEditorExtension(import_view10.ViewPlugin.fromClass(class {
+  plugin.registerEditorExtension(import_view11.ViewPlugin.fromClass(class {
     constructor(view) {
       this.view = view;
       this.build();
     }
-    decorations = import_view10.Decoration.none;
-    atomic = import_view10.Decoration.none;
+    decorations = import_view11.Decoration.none;
+    atomic = import_view11.Decoration.none;
     update(update) {
       if (update.docChanged || update.transactions.some((t2) => t2.effects.some((e) => e.is(refreshAnnotations))) || update.startState.field(import_obsidian22.editorLivePreviewField, false) !== update.state.field(import_obsidian22.editorLivePreviewField, false) || update.startState.field(import_obsidian22.editorInfoField, false)?.file?.path !== update.state.field(import_obsidian22.editorInfoField, false)?.file?.path) this.build();
     }
     build() {
       const state = this.view.state, info = state.field(import_obsidian22.editorInfoField, false);
       if (!state.field(import_obsidian22.editorLivePreviewField, false)) {
-        this.decorations = import_view10.Decoration.none;
-        this.atomic = import_view10.Decoration.none;
+        this.decorations = import_view11.Decoration.none;
+        this.atomic = import_view11.Decoration.none;
         return;
       }
       const raw = state.doc.toString(), commentRanges = [], ranges = [], anchors = [];
@@ -38922,9 +39085,9 @@ function registerAnnotations(plugin, store) {
           if (at) commentRanges.push({ ...at, comment: c });
         }
       }
-      for (const part of commentSegments(commentRanges)) ranges.push(import_view10.Decoration.mark({ class: markClass(part.comments), attributes: markAttributes(part.comments) }).range(part.from, part.to));
+      for (const part of commentSegments(commentRanges)) ranges.push(import_view11.Decoration.mark({ class: markClass(part.comments), attributes: markAttributes(part.comments) }).range(part.from, part.to));
       for (const a2 of anchorsFor(state.doc)) {
-        const mark = import_view10.Decoration.replace({ widget: new AnchorChip(a2.id, plugin) }).range(a2.from, a2.to);
+        const mark = import_view11.Decoration.replace({ widget: new AnchorChip(a2.id, plugin) }).range(a2.from, a2.to);
         ranges.push(mark);
         anchors.push(mark);
       }
@@ -38934,12 +39097,12 @@ function registerAnnotations(plugin, store) {
         const p = placementOf(c);
         if (!p) continue;
         const end = cachedPlacementEnd(path, raw, p);
-        if (end !== void 0) ranges.push(import_view10.Decoration.widget({ widget: new StickyWidget(c, store), side: 1 }).range(end));
+        if (end !== void 0) ranges.push(import_view11.Decoration.widget({ widget: new StickyWidget(c, store), side: 1 }).range(end));
       }
-      this.decorations = import_view10.Decoration.set(ranges, true);
-      this.atomic = import_view10.Decoration.set(anchors, true);
+      this.decorations = import_view11.Decoration.set(ranges, true);
+      this.atomic = import_view11.Decoration.set(anchors, true);
     }
-  }, { decorations: (v) => v.decorations, provide: (p) => import_view10.EditorView.atomicRanges.of((view) => view.plugin(p)?.atomic ?? import_view10.Decoration.none), eventHandlers: { mouseover(event) {
+  }, { decorations: (v) => v.decorations, provide: (p) => import_view11.EditorView.atomicRanges.of((view) => view.plugin(p)?.atomic ?? import_view11.Decoration.none), eventHandlers: { mouseover(event) {
     const node = event.target.closest("[data-critique-id]");
     const c = store.data.comments.find((c2) => c2.id === node?.dataset.critiqueId);
     if (node && c) store.hover(node, c);
@@ -39173,7 +39336,7 @@ function locateTable(hashes, fingerprints, selection) {
 }
 
 // src/evidence-workflow.ts
-var import_view12 = require("@codemirror/view");
+var import_view13 = require("@codemirror/view");
 
 // src/evidence-records.ts
 var safePath = (path) => typeof path === "string" && !!path && !path.startsWith("/") && !path.includes("\\") && !path.split("/").includes("..") && !/^[a-z]+:/i.test(path);
@@ -39248,7 +39411,7 @@ function linkedEvidence(text2) {
 // src/evidence-links.ts
 var import_obsidian23 = require("obsidian");
 var import_state12 = require("@codemirror/state");
-var import_view11 = require("@codemirror/view");
+var import_view12 = require("@codemirror/view");
 var import_language12 = require("@codemirror/language");
 function linkType(target) {
   let path = target.trim();
@@ -39315,7 +39478,7 @@ function registerEvidenceLinks(plugin) {
       if (type) a2.classList.add(`evidence-link-${type}`);
     }
   });
-  class CitationWidget extends import_view11.WidgetType {
+  class CitationWidget extends import_view12.WidgetType {
     constructor(html2, href) {
       super();
       this.html = html2;
@@ -39366,7 +39529,7 @@ function registerEvidenceLinks(plugin) {
       if (view.state.selection.ranges.some((r) => r.from <= end && r.to >= start)) continue;
       const citation = cache4?.citations?.find((c) => c.from === from + f.citeFrom && c.to === from + f.citeTo && sameKeys(c.citations.map((p) => p.id), f.keys));
       if (!citation?.val) continue;
-      ranges.push(import_view11.Decoration.replace({ widget: new CitationWidget(citation.val, f.href) }).range(start, end));
+      ranges.push(import_view12.Decoration.replace({ widget: new CitationWidget(citation.val, f.href) }).range(start, end));
       replaced.push({ from: start, to: end });
     }
     for (const match of text2.matchAll(/\[\[([^\]\n]+)\]\]|\[[^\]\n]*\]\((<?[^\n)]+>?)\)/g)) {
@@ -39381,11 +39544,11 @@ function registerEvidenceLinks(plugin) {
       }
       if (code) continue;
       const type = linkType(match[1] || match[2]);
-      if (type) ranges.push(import_view11.Decoration.mark({ class: `evidence-link-${type}` }).range(start, start + match[0].length));
+      if (type) ranges.push(import_view12.Decoration.mark({ class: `evidence-link-${type}` }).range(start, start + match[0].length));
     }
-    return import_view11.Decoration.set(ranges, true);
+    return import_view12.Decoration.set(ranges, true);
   };
-  plugin.registerEditorExtension(import_state12.Prec.highest(import_view11.ViewPlugin.fromClass(class {
+  plugin.registerEditorExtension(import_state12.Prec.highest(import_view12.ViewPlugin.fromClass(class {
     decorations;
     constructor(view) {
       this.decorations = decorate(view);
@@ -40139,7 +40302,7 @@ function registerEvidenceWorkflow(plugin) {
     const at = next.indexOf(cite), link = next[at + 1];
     let href = link?.matches('a[href^="obsidian://study-evidence"]') ? link.getAttribute("href") : null;
     if (!href && cite.closest(".cm-editor")) {
-      const view = import_view12.EditorView.findFromDOM(cite.closest(".cm-editor"));
+      const view = import_view13.EditorView.findFromDOM(cite.closest(".cm-editor"));
       if (view) {
         const pos = view.posAtDOM(cite), line = view.state.doc.lineAt(pos);
         for (const match of line.text.matchAll(/\[[^\]\n]*@[^\]\n]+\]/g)) {

@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "claims": {
+    "article": {
+      "label": "Full article cleanup simulation",
+      "papers": [
+        {
+          "citekey": "syntheticFlow2026",
+          "label": "Synthetic planar-flow article",
+          "path": "Citation article simulation.md",
+          "selections": [
+            {
+              "quote": "The analytic field is divergence free throughout the square domain.",
+              "comment": "Article prose check 1",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The convergence result does not establish accuracy for every possible flow.",
+              "comment": "Article prose check 2",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The analytic vorticity is positive in the interior of the domain.",
+              "comment": "Article prose check 3",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "Both panels refer to the same analytic field.",
+              "comment": "Article prose check 4",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The plotted arrows do not track material particles through time.",
+              "comment": "Article prose check 5",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The boundary points are excluded from the reported error norm.",
+              "comment": "Article prose check 6",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The vorticity error decreases under grid refinement.",
+              "comment": "Article prose check 7",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The error curve and reference guide use the same axes.",
+              "comment": "Article prose check 8",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "Neither quantity alone supplies a complete description of local deformation.",
+              "comment": "Article prose check 9",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The efficient workflow preserves the original quotation.",
+              "comment": "Article prose check 10",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The \"reference configuration\" label is retained as written.",
+              "comment": "Article prose check 11",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "A soft hyphen in the converted word effect is a typesetting artifact in this fixture.",
+              "comment": "Article prose check 12",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The material is not assumed to be isotropic.",
+              "comment": "Article prose check 13",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "Figures remain the same files when their positions change.",
+              "comment": "Article prose check 14",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The method is stable.",
+              "comment": "Article prose check 15",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "image": "Citation article assets/flow-field.png",
+              "rect": [
+                0.04,
+                0.08,
+                0.4,
+                0.84
+              ],
+              "sha256": "eaaa6e6af928ca6cc8d79512385a0617cb12447c1539014561655c8a6a0df0bd",
+              "comment": "Flow field panel region"
+            },
+            {
+              "image": "Citation article assets/convergence.png",
+              "whole": true,
+              "sha256": "6724c07461860abfb9815aa85bd258ca694be3097b2cae18de919c4f1fce3a11",
+              "comment": "Convergence figure moved intact"
+            },
+            {
+              "table": 1,
+              "cells": [
+                [
+                  2,
+                  2
+                ]
+              ],
+              "sha256": "ca289e83e63c665a3abb25d99758e358354c84f2ac79da170fed2850f5db46f6",
+              "comment": "Coarsest-grid error cell",
+              "tableFingerprint": "274ec230bd6785af53843505f213a55d57f9410d997378cbb1186f4474974a08"
+            },
+            {
+              "table": 2,
+              "whole": true,
+              "sha256": "74fe146b020dd8009aceb5e2321ce9bf80b27254b1d97b32574ffcdbc8094cdf",
+              "comment": "Grouped diagnostic table"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "obsidian-image-gallery",
+  "version": "0.3.1",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/vendor-prism.mjs && tsc --noEmit && node esbuild.mjs",
+    "test": "tsx --test tests/*.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/prismjs": "^1.26.6",
+    "esbuild": "^0.25.0",
+    "obsidian": "latest",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@codemirror/state": "6.5.0",
+    "@codemirror/view": "6.38.6",
+    "prismjs": "^1.30.0"
+  }
+}

@@ -1,0 +1,38 @@
+import {App,FuzzySuggestModal,Notice,TFile} from 'obsidian';
+import {Definition} from './model';
+import {Rect,moveRect} from './diagram-model';
+import {renderDiagram} from './diagram-render';
+class ImagePicker extends FuzzySuggestModal<TFile>{constructor(app:App,private chosen:(f:TFile)=>void){super(app);this.setPlaceholder('Choose a vault image');}getItems(){return this.app.vault.getFiles().filter(f=>/^(png|jpe?g|gif|webp|svg)$/i.test(f.extension));}getItemText(f:TFile){return f.path;}onChooseItem(f:TFile){this.chosen(f);}}
+type Area=(parent:HTMLElement,label:string,value:string,change:(v:string)=>void,rows?:number)=>HTMLTextAreaElement;
+export function diagramAuthor(app:App,root:HTMLElement,d:Definition,path:string,area:Area,rebuild:()=>void){
+ const diagram=d.diagram!;
+ root.createEl('h3',{text:'Diagram layout'});
+ root.createEl('p',{text:'Choose an image, add covers over printed answers, then place labels. Drag a label or cover to move it. Arrow keys move a focused rectangle; Shift moves faster. Size and leader endpoints use percentages below. Label order is the Tab order. The image stays unchanged.'});
+ const image=root.createEl('input',{type:'text',attr:{'aria-label':'Diagram image path'}});image.value=diagram.image;
+ const choose=root.createEl('button',{text:'Choose vault image'});choose.onclick=()=>new ImagePicker(app,f=>{diagram.image=f.path;image.value=f.path;draw();}).open();
+ const upload=root.createEl('input',{type:'file',attr:{accept:'image/png,image/jpeg,image/webp,image/gif,image/svg+xml','aria-label':'Import diagram image'}});
+ upload.onchange=()=>{void(async()=>{const file=upload.files?.[0];if(!file)return;if(!/\.(png|jpe?g|gif|webp|svg)$/i.test(file.name))throw Error('Choose a supported image file.');const dest=await app.fileManager.getAvailablePathForAttachment(file.name,path);await app.vault.createBinary(dest,await file.arrayBuffer());diagram.image=dest;image.value=dest;draw();new Notice('Image imported into the vault. It remains available if you cancel this question.');})().catch(e=>new Notice(String(e)));};
+ image.onchange=()=>{diagram.image=image.value;draw();};
+ area(root,'Image description',diagram.alt,v=>diagram.alt=v,2);
+ const widthLabel=root.createEl('label',{text:'Minimum readable image width (pixels) '});const width=widthLabel.createEl('input',{type:'number',attr:{min:'760',max:'2400',step:'10','aria-label':'Minimum diagram width'}});width.value=String(diagram.minWidth??760);width.onchange=()=>{diagram.minWidth=Math.max(760,Math.min(2400,Number(width.value)||760));width.value=String(diagram.minWidth);draw();};
+ const tools=root.createDiv('study-actions');
+ tools.createEl('button',{text:'Add label'}).onclick=()=>{const id=`label-${crypto.randomUUID().slice(0,8)}`;diagram.labels.push({id,x:.1,y:.1,width:.2,height:.08});d.answers!.push({id,accepted:['answer']});rebuild();};
+ tools.createEl('button',{text:'Add cover'}).onclick=()=>{diagram.covers.push({x:.1,y:.1,width:.2,height:.08,color:'#ffffff'});rebuild();};
+ const preview=root.createDiv();const coordinates=new Map<Rect,Map<string,HTMLInputElement>>();
+ function draggable(el:HTMLElement,r:Rect,label:string){el.tabIndex=0;el.setAttribute('aria-label',label);el.classList.add('study-diagram-handle');
+ const update=()=>{for(const [key,input]of coordinates.get(r)??[])input.value=String(Math.round((r as any)[key]*10000)/100);};
+ el.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();e.stopPropagation();const step=e.shiftKey?.01:.001;moveRect(r,r.x+(e.key==='ArrowRight'?step:e.key==='ArrowLeft'?-step:0),r.y+(e.key==='ArrowDown'?step:e.key==='ArrowUp'?-step:0));update();draw(label);};
+ el.onpointerdown=e=>{if(e.button!==0)return;e.preventDefault();el.focus();el.setPointerCapture(e.pointerId);const box=el.parentElement!.getBoundingClientRect(),start={x:e.clientX,y:e.clientY,rx:r.x,ry:r.y};el.onpointermove=ev=>{moveRect(r,start.rx+(ev.clientX-start.x)/box.width,start.ry+(ev.clientY-start.y)/box.height);el.style.left=`${r.x*100}%`;el.style.top=`${r.y*100}%`;update();};el.onpointerup=()=>{el.onpointermove=null;draw(label);};el.onpointercancel=()=>{el.onpointermove=null;draw(label);};};
+ }
+ function draw(focus?:string){preview.empty();const stage=renderDiagram(app,preview,diagram,path,(host,id,i)=>{host.setText(`Label ${i+1}${diagram.labels[i].math?' · Math':''}`);draggable(host,diagram.labels[i],`Position label ${i+1}`);},true);stage.querySelectorAll<HTMLElement>('.study-diagram-cover').forEach((el,i)=>{draggable(el,diagram.covers[i],`Position cover ${i+1}`);el.setText(`Cover ${i+1}`);});if(focus)Array.from(stage.querySelectorAll<HTMLElement>('[aria-label]')).find(el=>el.getAttribute('aria-label')===focus)?.focus({preventScroll:true});}
+ function geometry(parent:HTMLElement,r:Rect){const row=parent.createDiv('study-diagram-geometry'),map=new Map<string,HTMLInputElement>();coordinates.set(r,map);for(const key of ['x','y','width','height'] as const){const label=row.createEl('label',{text:`${key} % `}),input=label.createEl('input',{type:'number',attr:{min:'0',max:'100',step:'0.1','aria-label':`${parent.dataset.name} ${key} percent`}});input.value=String(r[key]*100);map.set(key,input);input.onchange=()=>{const value=Number(input.value)/100;if(!Number.isFinite(value))return;r[key]=Math.max(key==='width'||key==='height'?.01:0,Math.min(1,value));r.width=Math.min(r.width,1-r.x)||.01;r.height=Math.min(r.height,1-r.y)||.01;moveRect(r,r.x,r.y);for(const [k,el]of map)el.value=String(Math.round((r as any)[k]*10000)/100);draw();};}}
+ diagram.covers.forEach((cover,i)=>{const row=root.createDiv('study-author-answer');row.dataset.name=`Cover ${i+1}`;row.createEl('h4',{text:`Cover ${i+1}`});geometry(row,cover);const color=row.createEl('input',{type:'color',attr:{'aria-label':`Cover ${i+1} color`}});color.value=cover.color;color.oninput=()=>{cover.color=color.value;draw();};row.createEl('button',{text:`Remove cover ${i+1}`}).onclick=()=>{diagram.covers.splice(i,1);rebuild();};});
+ diagram.labels.forEach((label,i)=>{const row=root.createDiv('study-author-answer');row.dataset.name=`Label ${i+1}`;row.createEl('h4',{text:`Label ${i+1}`});geometry(row,label);const a=d.answers!.find(a=>a.id===label.id)!;area(row,`Answer ${i+1} — one accepted answer per line`,a.accepted.join('\n'),v=>a.accepted=v.split('\n').filter(v=>v.trim()));
+ const mathLabel=row.createEl('label',{text:'Math answer '});const math=mathLabel.createEl('input',{type:'checkbox'});math.checked=!!label.math;math.onchange=()=>{label.math=math.checked;draw();};
+ const caseLabel=row.createEl('label',{text:'Case sensitive '});const cs=caseLabel.createEl('input',{type:'checkbox'});cs.checked=!!a.caseSensitive;cs.onchange=()=>a.caseSensitive=cs.checked;
+ row.createEl('button',{text:label.target?'Remove leader line':'Add leader line'}).onclick=()=>{label.target=label.target?undefined:{x:.5,y:.5};rebuild();};
+ if(label.target)for(const key of ['x','y']as const){const l=row.createEl('label',{text:`Leader endpoint ${key} % `}),input=l.createEl('input',{type:'number',attr:{min:'0',max:'100',step:'.1','aria-label':`Label ${i+1} leader ${key} percent`}});input.value=String(label.target[key]*100);input.onchange=()=>{const v=Number(input.value);if(Number.isFinite(v))label.target![key]=Math.max(0,Math.min(1,v/100));draw();};}
+ if(i>0)row.createEl('button',{text:`Move label ${i+1} earlier`}).onclick=()=>{[diagram.labels[i-1],diagram.labels[i]]=[diagram.labels[i],diagram.labels[i-1]];rebuild();};
+ row.createEl('button',{text:`Remove label ${i+1}`}).onclick=()=>{diagram.labels.splice(i,1);d.answers=d.answers!.filter(a=>a.id!==label.id);rebuild();};
+ });draw();
+}

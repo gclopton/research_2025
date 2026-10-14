@@ -1,0 +1,119 @@
+{
+  "baseline": "calc-manager/docs",
+  "theme": "Blue Topaz",
+  "plugins": [
+    {
+      "id": "obsidian-style-settings",
+      "version": "1.0.8",
+      "settings": "visual settings copied"
+    },
+    {
+      "id": "highlightr-plugin",
+      "version": "1.2.2",
+      "settings": "visual settings copied"
+    },
+    {
+      "id": "code-styler",
+      "version": "1.1.7",
+      "settings": "defaults; source settings not copied"
+    },
+    {
+      "id": "horizontal-blocks",
+      "version": "1.1.2",
+      "settings": "defaults; source settings not copied"
+    },
+    {
+      "id": "colored-text",
+      "version": "1.0.0",
+      "settings": "visual settings copied"
+    },
+    {
+      "id": "callout-manager",
+      "version": "1.0.1",
+      "settings": "visual settings copied"
+    },
+    {
+      "id": "callout-tools",
+      "version": "0.1.0",
+      "settings": "defaults; source settings not copied"
+    },
+    {
+      "id": "obsidian-excalidraw-plugin",
+      "version": "2.0.13",
+      "settings": "defaults; source settings not copied"
+    },
+    {
+      "id": "math-studio",
+      "version": "0.1.0",
+      "commit": "657104d05114d57262fa4bb4949f8725911e58bc",
+      "mainSHA256": "05d08a6e6ff9893dad8b2bf11225a3a2704daef7ea363494d4fa713c5c13fdb6"
+    },
+    {
+      "id": "slide-studio",
+      "version": "0.2.0",
+      "commit": "4a2a00d9be310c1315773d706e4af95953e2e494",
+      "mainSHA256": "e8516a70c0855ec4691c1838ca503d394080896cc1c8359bb5351c461c5e49bb"
+    }
+  ],
+  "missingSourceSnippets": [
+    "S - Images Adjustments",
+    "pub-Image Flags",
+    "S - Callouts"
+  ],
+  "enabledSnippets": [
+    "codex-image-align-flags",
+    "codex-pandoc-citation-dark",
+    "fix-callout-color-rgb-1-13"
+  ],
+  "deferredPlugins": [
+    "case-sensitive-find",
+    "colorful-note-borders",
+    "obsidian-file-color",
+    "obsidian-footnotes",
+    "obsidian-local-rest-api",
+    "obsidian-markdown-formatting-assistant-plugin",
+    "mathlinks",
+    "obsidian-shellcommands",
+    "obsidian-code-block-enhancer",
+    "ketcher",
+    "drawio-obsidian",
+    "obsidian-plugin-toc",
+    "note-refactor-obsidian",
+    "obsidian-advanced-slides",
+    "color-palette",
+    "obsidian-quiet-outline",
+    "obsidian-vimrc-support",
+    "terminal",
+    "number-headings-obsidian",
+    "obsidian-hover-editor",
+    "chem",
+    "copy-inline-code",
+    "cloze",
+    "obsidian-wrap-with-shortcuts",
+    "text-snippets-obsidian",
+    "dbfolder",
+    "modalforms",
+    "paste-from-history",
+    "keyword-highlighter",
+    "inline-code-highlight",
+    "calendar",
+    "obsidian-carry-forward",
+    "obsidian-regex-replace",
+    "canvas-presentation",
+    "canvas-card-bg-remover",
+    "oin-gotoheading",
+    "enhanced-tables",
+    "markdown-table-editor",
+    "obsidian-latex",
+    "colored-horizontal-rules",
+    "callout-outline",
+    "obsidian-zotero-desktop-connector",
+    "obsidian-pandoc-reference-list",
+    "iconic"
+  ],
+  "runtimeVerification": "Vault registered and opened in Obsidian; full compatibility pending. Observed Math Studio open and cancel on synthetic display equation, Slide Studio ribbon and visual plugin loading.",
+  "inkStudio": {
+    "version": "0.1.0",
+    "status": "inline drawing smoke-tested under Blue Topaz; full compatibility pending"
+  }
+}

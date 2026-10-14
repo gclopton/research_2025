@@ -13,11 +13,25 @@
     "submitted_at": "2026-03-19T07:11:21.950012",
     "zip_kind": "md.zip"
   },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/pdfs/Castleton et al 2014 - Description of polarons in ceria using Density Functional Theory.pdf": {
+    "completed_at": "2026-10-05T06:28:15.837308",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Castleton et al 2014 - Description of polarons in ceria using Density Functional Theory",
+    "pdf_id": "bcd0a5d5-8b7e-4161-b1db-3615ce44add9",
+    "submitted_at": "2026-10-05T06:28:08.483855",
+    "zip_kind": "md.zip"
+  },
   "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/pdfs/Cococcioni and de Gironcoli 2005 - Linear response approach to the calculation of the effective interaction parameters in the LDA+U method.pdf": {
     "completed_at": "2026-03-19T07:11:40.898606",
     "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Cococcioni and de Gironcoli 2005 - Linear response approach to the calculation of the effective interaction parameters in the LDA+U method",
     "pdf_id": "4f8aa92d-fd61-462c-94ed-08a5e257df02",
     "submitted_at": "2026-03-19T07:11:32.649327",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/pdfs/Das et al 2018 - Anisotropic chemical strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles - Supporting Information.pdf": {
+    "completed_at": "2026-10-05T10:27:36.649755",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Das et al 2018 - Anisotropic chemical strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles - Supporting Information",
+    "pdf_id": "babe33ed-0fa2-4338-860e-0d8af03a0ae9",
+    "submitted_at": "2026-10-05T10:27:31.500491",
     "zip_kind": "md.zip"
   },
   "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/pdfs/Dudarev et al 1998 - Electron-energy-loss spectra and the structural stability of nickel oxide; An LSDA+U study.pdf": {
@@ -39,6 +53,20 @@
     "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Loschen et al 2007 - First-principles LDA+U and GGA+U study of cerium oxides; Dependence on the effective U parameter",
     "pdf_id": "453fd2ae-5125-479f-888a-b4d94160f2be",
     "submitted_at": "2026-03-19T07:11:57.176699",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/pdfs/Mosquera-Lois et al 2022 - ShakeNBreak - Navigating the defect configurational landscape.pdf": {
+    "completed_at": "2026-10-11T18:25:04.366980",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2022 - ShakeNBreak - Navigating the defect configurational landscape",
+    "pdf_id": "0426067b-2ebf-4bcd-b963-942b3bf15697",
+    "submitted_at": "2026-10-11T18:24:57.282078",
+    "zip_kind": "md.zip"
+  },
+  "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/pdfs/Wang et al 2014 - Chemical Strain and Point Defect Configurations in Reduced Ceria.pdf": {
+    "completed_at": "2026-10-05T06:28:25.307620",
+    "out_dir": "/Users/gradyclopton/ObsidianVaults/research_2025/Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Wang et al 2014 - Chemical Strain and Point Defect Configurations in Reduced Ceria",
+    "pdf_id": "d39167fd-d179-4314-8f17-cd7d22a9e5d8",
+    "submitted_at": "2026-10-05T06:28:16.017883",
     "zip_kind": "md.zip"
   }
 }

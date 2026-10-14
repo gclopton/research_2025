@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.DS_Store
+main.js
+frame.js
+vendor/
+qa/*.png

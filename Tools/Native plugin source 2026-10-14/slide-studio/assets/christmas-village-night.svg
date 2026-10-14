@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300">
+<!-- Original Slide Studio artwork: a little winter village at night. -->
+<defs>
+ <filter id="glow" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="6"/></filter>
+ <g id="fir"><path d="M0 0-28 48h13l-27 43h19l-30 47H53L23 91h19L15 48h13Z" fill="#244b5e"/><path d="M0 0-22 38 0 31l22 7ZM-29 81 0 72l29 9-11-18L0 55-18 63Z" fill="#d6e8fa"/><path d="M-6 138h12v17H-6" fill="#9e7653"/></g>
+ <g id="window"><rect x="-3" y="-3" width="38" height="46" rx="8" fill="#ffbe57" opacity=".5" filter="url(#glow)"/><rect width="32" height="40" rx="5" fill="#ffcd75"/><path d="M16 0v40M0 20h32" stroke="#805847" stroke-width="3"/></g>
+</defs>
+<path d="M12 263Q110 236 239 251T483 243T888 260L900 285H0Z" fill="#99bddb"/>
+<path d="M0 276Q165 254 343 277T650 271T900 278V300H0" fill="#e3eef9"/>
+<use href="#fir" transform="translate(70 91) scale(.85)"/>
+<use href="#fir" transform="translate(125 57) scale(1.2)"/>
+<use href="#fir" transform="translate(782 47) scale(1.4)"/>
+<use href="#fir" transform="translate(848 106) scale(.9)"/>
+<!-- Cranberry cottage -->
+<path d="M210 143h152v120H210Z" fill="#784152"/>
+<path d="M196 151 284 61l94 90Z" fill="#343b58"/>
+<path d="M191 151 284 54l99 97-16 7-83-76-78 76Z" fill="#dfedff"/>
+<path d="M327 76V35h23v68" fill="#795b62"/><path d="M323 32h31v10h-31" fill="#dfedff"/>
+<use href="#window" x="228" y="177"/><use href="#window" x="307" y="177"/>
+<path d="M273 263v-55q0-28 24-28t24 28v55" fill="#5c3940"/><circle cx="310" cy="233" r="3" fill="#f5d28b"/>
+<circle cx="284" cy="125" r="14" fill="#ffcd75"/><path d="M284 111v28m-14-14h28" stroke="#7b4e49" stroke-width="3"/>
+<path d="M211 163q74 20 149 0" fill="none" stroke="#254a3d" stroke-width="5"/>
+<g><circle cx="222" cy="167" r="9" fill="#ff7764" opacity=".45" filter="url(#glow)"/><circle cx="222" cy="167" r="4" fill="#ff7764"/><circle cx="248" cy="174" r="9" fill="#b0e877" opacity=".45" filter="url(#glow)"/><circle cx="248" cy="174" r="4" fill="#b0e877"/><circle cx="277" cy="177" r="9" fill="#fcd775" opacity=".45" filter="url(#glow)"/><circle cx="277" cy="177" r="4" fill="#fcd775"/><circle cx="306" cy="176" r="9" fill="#6fd8f3" opacity=".45" filter="url(#glow)"/><circle cx="306" cy="176" r="4" fill="#6fd8f3"/><circle cx="334" cy="171" r="9" fill="#ff7764" opacity=".45" filter="url(#glow)"/><circle cx="334" cy="171" r="4" fill="#ff7764"/><circle cx="355" cy="166" r="9" fill="#b0e877" opacity=".45" filter="url(#glow)"/><circle cx="355" cy="166" r="4" fill="#b0e877"/></g>
+<!-- Honey-colored tall house -->
+<path d="M447 128h145v139H447Z" fill="#8d694f"/>
+<path d="M432 136 520 47l86 89Z" fill="#344c67"/>
+<path d="M429 137 520 39l91 97-16 9-75-75-75 76Z" fill="#dfedff"/>
+<use href="#window" x="464" y="151"/><use href="#window" x="543" y="151"/>
+<use href="#window" x="464" y="207"/><use href="#window" x="543" y="207"/>
+<path d="M509 265v-44q0-19 14-19t14 19v44" fill="#6b5845"/>
+<!-- Christmas tree with tiny ornaments -->
+<use href="#fir" transform="translate(407 111)"/>
+<g fill="#e37770"><circle cx="397" cy="163" r="5"/><circle cx="424" cy="194" r="5"/><circle cx="389" cy="231" r="5"/></g>
+<g fill="#f7d18a"><circle cx="416" cy="158" r="4"/><circle cx="388" cy="201" r="4"/><circle cx="426" cy="233" r="4"/>
+<path d="m407 92 5 12 13 1-10 9 3 13-11-7-11 7 3-13-10-9 13-1Z"/></g>
+<!-- Snowman, mittens and scarf -->
+<path d="m650 233-30-15m77 15 22-28" stroke="#9b795d" stroke-width="5" stroke-linecap="round"/>
+<ellipse cx="674" cy="247" rx="35" ry="32" fill="#edf4fc"/><circle cx="674" cy="203" r="25" fill="#edf4fc"/>
+<path d="M649 215q26 13 49 0v12q-26 8-49-1Z" fill="#ce6566"/><path d="m686 224 13 1 4 31-13 1Z" fill="#ce6566"/>
+<path d="M650 184h49v8h-49Zm7-25h33v26h-33Z" fill="#20334d"/><path d="M657 175h33v7h-33Z" fill="#c9746a"/>
+<circle cx="667" cy="200" r="2.7" fill="#304c46"/><circle cx="682" cy="200" r="2.7" fill="#304c46"/><path d="m674 205 22 5-22 5Z" fill="#de9a51"/>
+<g fill="#6f7462"><circle cx="674" cy="239" r="3"/><circle cx="674" cy="251" r="3"/><circle cx="674" cy="263" r="3"/></g>
+<path d="M231 270q90-12 145 0m97 1q64-12 118-1m46 12q44-10 80-1" stroke="#f0f5ff" stroke-width="10" stroke-linecap="round"/>
+</svg>

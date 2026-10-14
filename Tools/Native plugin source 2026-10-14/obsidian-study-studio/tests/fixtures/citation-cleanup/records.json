@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "claims": {
+    "simulation": {
+      "label": "PDF conversion cleanup simulation",
+      "papers": [
+        {
+          "citekey": "syntheticCleanup2026",
+          "label": "Synthetic converted paper \u2014 not research data",
+          "path": "Citation conversion simulation.md",
+          "selections": [
+            {
+              "quote": "The efficient flow remains steady at 2.43 eV.",
+              "comment": "Formatting: ligatures and line breaks",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The local rotation is determined by the antisymmetric gradient.",
+              "comment": "Formatting: emphasis and line joining",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The boundary condition is imposed on the surface of the domain.",
+              "comment": "Formatting: accidental paragraph split repaired",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The \"reference configuration\" remains fixed.",
+              "comment": "Formatting: quotes and paragraph reordering",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The effect is reversible.",
+              "comment": "Formatting: soft hyphen removed",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The measured spacing is 2.43 A.",
+              "comment": "Must reject changed number",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The material is stable.",
+              "comment": "Must reject changed negation",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The response is non-local.",
+              "comment": "Must reject removed real hyphen",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The conclusion is unique.",
+              "comment": "Must reject newly introduced duplicate",
+              "color": "#247441",
+              "opacity": 0.15
+            },
+            {
+              "quote": "The flow is steady.",
+              "comment": "Must reject ambiguous duplicate",
+              "color": "#247441",
+              "opacity": 0.15
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
