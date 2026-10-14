@@ -14,9 +14,9 @@ var __export = (target, all) => {
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
-    for (let key2 of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key2) && key2 !== except)
-        __defProp(to, key2, { get: () => from[key2], enumerable: !(desc = __getOwnPropDesc(from, key2)) || desc.enumerable });
+    for (let key3 of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key3) && key3 !== except)
+        __defProp(to, key3, { get: () => from[key3], enumerable: !(desc = __getOwnPropDesc(from, key3)) || desc.enumerable });
   }
   return to;
 };
@@ -160,9 +160,9 @@ var require_prism = __commonJS({
                   clone = /** @type {Record<string, any>} */
                   {};
                   visited[id] = clone;
-                  for (var key2 in o) {
-                    if (o.hasOwnProperty(key2)) {
-                      clone[key2] = deepClone(o[key2], visited);
+                  for (var key3 in o) {
+                    if (o.hasOwnProperty(key3)) {
+                      clone[key3] = deepClone(o[key3], visited);
                     }
                   }
                   return (
@@ -329,8 +329,8 @@ var require_prism = __commonJS({
              */
             extend: function(id, redef) {
               var lang2 = _.util.clone(_.languages[id]);
-              for (var key2 in redef) {
-                lang2[key2] = redef[key2];
+              for (var key3 in redef) {
+                lang2[key3] = redef[key3];
               }
               return lang2;
             },
@@ -430,9 +430,9 @@ var require_prism = __commonJS({
               }
               var old = root[inside];
               root[inside] = ret;
-              _.languages.DFS(_.languages, function(key2, value) {
-                if (value === old && key2 != inside) {
-                  this[key2] = ret;
+              _.languages.DFS(_.languages, function(key3, value) {
+                if (value === old && key3 != inside) {
+                  this[key3] = ret;
                 }
               });
               return ret;
@@ -2111,10 +2111,10 @@ var require_prism = __commonJS({
         "punctuation": /[;[\]()`,.]/
       };
       (function(Prism3) {
-        var key2 = /(?:[\w-]+|'[^'\n\r]*'|"(?:\\.|[^\\"\r\n])*")/.source;
+        var key3 = /(?:[\w-]+|'[^'\n\r]*'|"(?:\\.|[^\\"\r\n])*")/.source;
         function insertKey(pattern) {
           return pattern.replace(/__/g, function() {
-            return key2;
+            return key3;
           });
         }
         Prism3.languages.toml = {
@@ -2169,9 +2169,9 @@ module.exports = __toCommonJS(main_exports);
 
 // src/menu-groups.ts
 var import_obsidian = require("obsidian");
-function menuGroup(menu, key2, title, icon, section = key2 === "insert" ? "insert" : key2 === "annotation-visibility" ? "view" : key2.startsWith("mark-") ? "selection" : "action") {
+function menuGroup(menu, key3, title, icon, section = key3 === "insert" ? "insert" : key3 === "annotation-visibility" ? "view" : key3.startsWith("mark-") ? "selection" : "action") {
   menu.setUseNativeMenu(false);
-  const symbol = Symbol.for("research-studio.menu." + key2), host = menu;
+  const symbol = Symbol.for("research-studio.menu." + key3), host = menu;
   if (host[symbol]) return host[symbol];
   let child;
   menu.addItem((item) => {
@@ -2190,14 +2190,500 @@ function menuGroup(menu, key2, title, icon, section = key2 === "insert" ? "inser
   return child;
 }
 
-// src/paper-library.ts
-var import_obsidian3 = require("obsidian");
-var fs2 = __toESM(require("node:fs/promises"));
-var nodePath = __toESM(require("node:path"));
+// src/paper-protection.ts
+var import_obsidian2 = require("obsidian");
+var import_state = require("@codemirror/state");
+
+// src/library-model.ts
+var CATALOG_PATH = ".paper-library/catalog.json";
+var LEGACY_CATALOG_PATH = "Papers/.library/catalog.json";
+function validPath(p) {
+  return !!p && !p.startsWith("/") && !p.includes("\\") && !p.split("/").some((x) => x === ".." || x === ".");
+}
+function validateCatalog(v) {
+  const c = v;
+  if (!c || c.schema !== 1 || !Number.isInteger(c.revision) || !c.sources || !c.libraries || !Array.isArray(c.memberships)) throw Error("Unsupported paper catalog. Your saved file has been left intact.");
+  if (c.sourceRoot && !validPath(c.sourceRoot)) throw Error("Invalid paper storage folder");
+  for (const a of c.folderAliases ?? []) if (!validPath(a.path) || !validPath(a.target) || a.path === a.target) throw Error("Invalid folder redirect");
+  const paths = /* @__PURE__ */ new Set(), hashes = /* @__PURE__ */ new Map();
+  for (const [id, s] of Object.entries(c.sources)) {
+    if (!id || !s.title || !s.pdf || !validPath(s.pdf.path) || !s.pdf.path.toLowerCase().endsWith(".pdf") || !/^[a-f0-9]{64}$/.test(s.pdf.sha256)) throw Error("Invalid paper source " + id);
+    if (!Number.isInteger(s.pdf.bytes) || s.pdf.bytes < 0 || s.conversion && !s.conversion.path.endsWith(".md")) throw Error("Invalid source metadata");
+    for (const hash of [s.pdf.sha256, ...(s.equivalentPdfs ?? []).map((e) => e.sha256)]) {
+      if (!/^[a-f0-9]{64}$/.test(hash) || hashes.has(hash) && hashes.get(hash) !== id) throw Error("Repeated or invalid PDF identity");
+      hashes.set(hash, id);
+    }
+    for (const p of [s.pdf.path, s.conversion?.path].filter((x) => !!x)) {
+      if (!validPath(p) || paths.has(p)) throw Error("Repeated or invalid source path " + p);
+      paths.add(p);
+    }
+    for (const a of s.aliases ?? []) if (!validPath(a.path) || !validPath(a.target) || ![s.pdf.path, s.conversion?.path].includes(a.target)) throw Error("Invalid retired source path");
+  }
+  for (const s of Object.values(c.sources)) for (const a of s.aliases ?? []) if (paths.has(a.path)) throw Error("Retired path is currently in use");
+  const pairs = /* @__PURE__ */ new Set();
+  for (const [id, l] of Object.entries(c.libraries)) {
+    if (l.folder && !validPath(l.folder)) throw Error("Invalid library folder");
+    if (!l.title || l.parent === id || l.parent && !c.libraries[l.parent]) throw Error("Invalid library parent");
+    const seen = /* @__PURE__ */ new Set([id]);
+    let p = l.parent;
+    while (p) {
+      if (seen.has(p)) throw Error("Library cycle");
+      seen.add(p);
+      p = c.libraries[p].parent;
+    }
+  }
+  for (const m of c.memberships) {
+    const k = m.source + "|" + m.library;
+    if (!c.sources[m.source] || !c.libraries[m.library] || pairs.has(k)) throw Error("Invalid library membership");
+    pairs.add(k);
+  }
+  return c;
+}
+function libraryTrail(c, id) {
+  const out = [];
+  while (id) {
+    out.unshift(id);
+    id = c.libraries[id]?.parent ?? null;
+  }
+  return out;
+}
+function libraryLabel(c, id) {
+  return libraryTrail(c, id).map((i) => c.libraries[i].title).join(" / ");
+}
+function paperIds(c, library) {
+  if (!library) return Object.keys(c.sources);
+  const scope = new Set(Object.keys(c.libraries).filter((id) => libraryTrail(c, id).includes(library)));
+  return [...new Set(c.memberships.filter((m) => scope.has(m.library)).map((m) => m.source))];
+}
+function resolvePaperPath(c, path2) {
+  const at = path2.indexOf("#");
+  const p = at < 0 ? path2 : path2.slice(0, at), suffix = at < 0 ? "" : path2.slice(at);
+  const candidates = [p, p + ".md"];
+  const sources = Object.values(c.sources);
+  if (sources.some((s) => [s.pdf.path, s.conversion?.path].some((x) => x && candidates.includes(x)))) return path2;
+  for (const s of sources) {
+    const a = s.aliases?.find((a2) => candidates.includes(a2.path));
+    if (a) return (a.path === p ? a.target : a.target.replace(/\.md$/, "")) + suffix;
+  }
+  let resolved = p;
+  const seen = /* @__PURE__ */ new Set();
+  while (!seen.has(resolved)) {
+    seen.add(resolved);
+    const folder = c.folderAliases?.filter((a) => resolved.startsWith(a.path + "/")).sort((a, b) => b.path.length - a.path.length)[0];
+    if (!folder) break;
+    resolved = folder.target + resolved.slice(folder.path.length);
+  }
+  if (resolved !== p) return resolved + suffix;
+  return path2;
+}
+function relocatePaperPaths(c, old, next, folder = false) {
+  const inside = (p) => p === old || p.startsWith(old + "/");
+  const moved = (p) => inside(p) ? next + p.slice(old.length) : p;
+  let affected = false;
+  for (const s of Object.values(c.sources)) for (const ref of [s.pdf, s.conversion]) {
+    if (!ref || !inside(ref.path)) continue;
+    affected = true;
+    const before = ref.path;
+    ref.path = moved(before);
+    s.aliases ??= [];
+    if (ref === s.conversion && s.cleanup?.markdownPath === before) s.cleanup.markdownPath = ref.path;
+    for (const a of s.aliases) a.target = moved(a.target);
+    s.aliases = s.aliases.filter((a) => a.path !== ref.path && a.path !== before);
+    s.aliases.push({ path: before, target: ref.path });
+  }
+  for (const l of Object.values(c.libraries)) if (l.folder && inside(l.folder)) {
+    l.folder = moved(l.folder);
+    affected = true;
+  }
+  const root = c.sourceRoot ?? "Papers";
+  if (inside(root)) {
+    c.sourceRoot = moved(root);
+    affected = true;
+  }
+  if (folder && affected) {
+    c.folderAliases ??= [];
+    for (const a of c.folderAliases) a.target = moved(a.target);
+    c.folderAliases = c.folderAliases.filter((a) => a.path !== a.target && a.path !== old && a.path !== next && !a.path.startsWith(next + "/"));
+    c.folderAliases.push({ path: old, target: next });
+  }
+}
+var libraryColors = ["blue", "orange", "green", "purple", "red", "cyan", "yellow", "pink"];
+function libraryColor(c, id) {
+  const root = libraryTrail(c, id)[0];
+  const roots = Object.keys(c.libraries).filter((k) => !c.libraries[k].parent);
+  return `var(--color-${libraryColors[Math.max(0, roots.indexOf(root)) % libraryColors.length]})`;
+}
+function librarySearchPage(c, library, query, page = 0) {
+  const q = query.toLowerCase().trim();
+  const matched = paperIds(c, library).filter((id) => {
+    const s = c.sources[id];
+    return !q || `${s.title} ${s.authors ?? ""} ${s.year ?? ""} ${s.doi ?? ""}`.toLowerCase().includes(q);
+  }).sort((a, b) => c.sources[a].title.localeCompare(c.sources[b].title, void 0, { numeric: true }));
+  page = Math.max(0, Math.min(Math.floor(page), Math.max(0, Math.ceil(matched.length / 40) - 1)));
+  return { ids: matched.slice(page * 40, (page + 1) * 40), total: matched.length, page };
+}
+function normalizedTitle(title) {
+  return title.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\.pdf$/, "").replace(/[^a-z0-9]/g, "");
+}
+function duplicateMatch(c, hash, title, doi) {
+  const exact = Object.entries(c.sources).filter(([, s]) => s.pdf.sha256 === hash || s.equivalentPdfs?.some((e) => e.sha256 === hash)).map(([id]) => id);
+  if (exact.length) return { kind: "exact", ids: exact };
+  const titleKey = normalizedTitle(title);
+  const doiKey = doi?.trim().toLowerCase().replace(/^https?:\/\/(?:dx\.)?doi\.org\//, "");
+  const ids = Object.entries(c.sources).filter(([, s]) => normalizedTitle(s.title) === titleKey || normalizedTitle(`${s.authors ?? ""} ${s.year ?? ""} - ${s.title}`) === titleKey || !!doiKey && s.doi?.toLowerCase() === doiKey).map(([id]) => id);
+  return ids.length ? { kind: "candidate", ids } : null;
+}
+function addMembership(c, source, library) {
+  if (!c.sources[source] || !c.libraries[library]) throw Error("Paper or library no longer exists");
+  if (!c.memberships.some((m) => m.source === source && m.library === library)) c.memberships.push({ source, library });
+}
+function moveLibrary(c, id, parent) {
+  if (id === parent || parent && libraryTrail(c, parent).includes(id)) throw Error("A library cannot be placed inside itself");
+  c.libraries[id].parent = parent;
+}
+function paperCleanupBadge(source) {
+  const review = source.cleanup;
+  const verified = !!source.conversion && !!review && review.markdownPath === source.conversion?.path && review.pdfSha256 === source.pdf.sha256 && /^[a-f0-9]{64}$/.test(review.markdownSha256) && Number.isFinite(Date.parse(review.verifiedAt));
+  return verified ? { icon: "\u2728", label: `OCR cleanup reviewed \xB7 ${new Date(review.verifiedAt).toLocaleDateString(void 0, { year: "numeric", month: "long", day: "numeric" })}` } : { icon: "\u{1F922}", label: source.conversion ? "Awaiting OCR cleanup" : "No reading copy yet" };
+}
+
+// src/paper-protection-model.ts
+var basename = (path2) => path2.split("/").at(-1) ?? path2;
+var stem = (path2) => basename(path2).replace(/\.(md|pdf)$/i, "");
+var key = (name) => normalizedTitle(name.replace(/\.md$/i, ""));
+var PaperProtectionIndex = class {
+  constructor(catalog) {
+    this.catalog = catalog;
+    for (const [id, s] of Object.entries(catalog.sources)) {
+      for (const p of [s.pdf.path, s.conversion?.path].filter((x) => !!x)) this.canonicalPaths.set(p, id);
+      for (const title of [s.title, stem(s.pdf.path), s.conversion && stem(s.conversion.path), ...(s.aliases ?? []).map((a) => stem(a.path))].filter((x) => !!x)) {
+        const k = key(title);
+        if (!k) continue;
+        const owners = this.reserved.get(k) ?? /* @__PURE__ */ new Set();
+        owners.add(id);
+        this.reserved.set(k, owners);
+      }
+      if (s.cleanup && Number.isFinite(Date.parse(s.cleanup.verifiedAt)) && s.cleanup.markdownPath === s.conversion?.path) {
+        this.protectedPaths.set(s.pdf.path, id);
+        this.protectedPaths.set(s.conversion.path, id);
+        this.assetRoots.push(s.conversion.path.slice(0, s.conversion.path.lastIndexOf("/")) + "/images");
+      }
+    }
+  }
+  assetRoots = [];
+  protectedPaths = /* @__PURE__ */ new Map();
+  canonicalPaths = /* @__PURE__ */ new Map();
+  reserved = /* @__PURE__ */ new Map();
+  isAsset(path2) {
+    return !/\.md$/i.test(path2) && this.assetRoots.some((root) => path2 === root || path2.startsWith(root + "/"));
+  }
+  isProtected(path2) {
+    return this.protectedPaths.has(path2) || this.isAsset(path2);
+  }
+  ownerForName(path2) {
+    if (!/\.(md|pdf)$/i.test(path2)) return;
+    let name = stem(path2), owners = this.reserved.get(key(name));
+    if (owners) return owners;
+    for (let i = 0; i < 3; i++) {
+      const next = name.replace(/(?:[\s_-]+(?:copy|backup|old version|\d+)|\s*\((?:copy|backup|old version|\d+)\))$/i, "").trim();
+      if (next === name) break;
+      name = next;
+      owners = this.reserved.get(key(name));
+      if (owners) return owners;
+    }
+  }
+  assertDestination(path2, from) {
+    const owners = this.ownerForName(path2);
+    if (!owners) return;
+    const canonical = this.canonicalPaths.get(path2);
+    if (!from && canonical && owners.has(canonical)) return;
+    const id = from && this.canonicalPaths.get(from);
+    if (id && from.split(".").at(-1) !== path2.split(".").at(-1)) throw Error("Keep the canonical paper file type unchanged.");
+    if (id && owners.size === 1 && owners.has(id)) return;
+    throw Error("This title belongs to \u201C" + this.catalog.sources[[...owners][0]].title + "\u201D. Use a distinct name such as \u201CPaper title \u2014 Outline\u201D.");
+  }
+  assertContent(path2, before, after) {
+    if (!this.isProtected(path2) || sameContent(before, after)) return;
+    throw Error("Cleaned paper text is protected. Annotations are available; use \u201CCreate working copy\u201D to edit the text.");
+  }
+};
+function sameContent(a, b) {
+  if (typeof a === "string" || typeof b === "string") return a === b;
+  const x = new Uint8Array(a), y = new Uint8Array(b);
+  return x.length === y.length && x.every((v, i) => v === y[i]);
+}
+function workingCopyName(sourceName, description) {
+  const descriptor = description.trim();
+  if (!descriptor || /^(?:\d+|copy|backup|old version)$/i.test(descriptor) || /[\\/:*?"<>|\[\]#\x00-\x1f]/.test(descriptor)) throw Error("Choose a descriptive suffix, such as Outline, Summary, or Worked examples.");
+  return `${stem(sourceName)} \u2014 ${descriptor}.md`;
+}
+
+// src/paper-protection.ts
 var import_node_crypto = require("node:crypto");
 
+// src/working-copy.ts
+function rebasePaperLink(original, path2, fragment = "") {
+  if (original.startsWith("[[") || original.startsWith("![[")) return original.replace(/^(\!?\[\[)[^|\]]+/, (_m, prefix) => prefix + path2 + fragment);
+  const at = original.lastIndexOf("](");
+  if (at < 0) return original;
+  const start = at + 2;
+  let end = start;
+  if (original[start] === "<") {
+    end = original.indexOf(">", start) + 1;
+    if (end === 0) return original;
+  } else {
+    let depth = 0;
+    for (; end < original.length; end++) {
+      const ch = original[end];
+      if (ch === "\\") {
+        end++;
+        continue;
+      }
+      if (ch === "(") depth++;
+      else if (ch === ")") {
+        if (!depth) break;
+        depth--;
+      } else if (/\s/.test(ch) && !depth) break;
+    }
+  }
+  const dest = encodeURI(path2).replace(/#/g, "%23").replace(/\?/g, "%3F").replace(/</g, "%3C").replace(/>/g, "%3E") + fragment;
+  return original.slice(0, start) + "<" + dest + ">" + original.slice(end);
+}
+function equivalentLocalLinks(before, after, resolve2) {
+  const normalize = (text) => text.replace(/!?\[\[[^\]\n]+\]\]|!?\[(?:\\.|[^\]\\])*\]\((?:<[^>\n]+>|(?:\\.|[^()\s]|\([^()\n]*\))+)(?:\s+"[^"]*")?\)/g, (original) => {
+    const wiki = original.startsWith("[[") || original.startsWith("![[");
+    let link2;
+    if (wiki) link2 = original.slice(original.startsWith("!") ? 3 : 2, -2).split("|")[0];
+    else {
+      const tail = original.slice(original.lastIndexOf("](") + 2);
+      link2 = tail[0] === "<" ? tail.slice(1, tail.indexOf(">")) : tail.replace(/(?:\s+"[^"]*")?\)$/, "");
+    }
+    if (!link2 || link2.startsWith("#") || /^[a-z][a-z\d+.-]*:/i.test(link2)) return original;
+    let decoded;
+    try {
+      decoded = decodeURI(link2);
+    } catch {
+      return original;
+    }
+    const at = decoded.indexOf("#"), path2 = at < 0 ? decoded : decoded.slice(0, at), fragment = at < 0 ? "" : decoded.slice(at), target = resolve2(path2);
+    return target ? rebasePaperLink(original, target, fragment) : original;
+  });
+  return before !== after && normalize(before) === normalize(after);
+}
+
+// src/paper-protection.ts
+function installPaperProtection(plugin, owner) {
+  const app = plugin.app, adapter = app.vault.adapter;
+  let index = new PaperProtectionIndex(owner.catalog), lastNotice = 0, active = true;
+  const moved = /* @__PURE__ */ new Map(), relocated = /* @__PURE__ */ new Map();
+  const readonlySlot = new import_state.Compartment();
+  const readonlyExtension = () => import_state.EditorState.readOnly.compute([import_obsidian2.editorInfoField], (state) => locked(state.field(import_obsidian2.editorInfoField, false)?.file?.path ?? ""));
+  const locked = (path2) => index.isProtected(path2) || moved.has(path2);
+  const harmlessRelocation = (path2, before, after) => (relocated.get(path2) ?? 0) > Date.now() && equivalentLocalLinks(before, after, (link2) => app.metadataCache.getFirstLinkpathDest(link2, path2)?.path);
+  const notify = (error) => {
+    if (Date.now() - lastNotice > 2e3) {
+      lastNotice = Date.now();
+      new import_obsidian2.Notice(String(error).replace(/^Error: /, ""), 6500);
+    }
+  };
+  const refusal = () => Error("Cleaned paper text is protected. Annotations are available; use \u201CCreate working copy\u201D to edit the text.");
+  const resetEditor = (path2) => {
+    for (const leaf of app.workspace.getLeavesOfType("markdown")) {
+      const view = leaf.view;
+      if (view instanceof import_obsidian2.MarkdownView && view.file?.path === path2) void app.vault.read(view.file).then((raw) => {
+        if (active && view.file?.path === path2 && view.editor.getValue() !== raw) view.editor.setValue(raw);
+      });
+    }
+  };
+  const contentChecks = /* @__PURE__ */ new Map();
+  let inspections = Promise.resolve();
+  const inspect = async (path2) => {
+    const id = index.protectedPaths.get(path2);
+    if (!id) return;
+    const source = owner.catalog.sources[id];
+    const expected = path2 === source.pdf.path ? source.cleanup?.pdfSha256 : source.cleanup?.markdownSha256;
+    if (!expected) return;
+    try {
+      const data = await adapter.readBinary(path2);
+      if ((0, import_node_crypto.createHash)("sha256").update(new Uint8Array(data)).digest("hex") !== expected) owner.reportProtectionIssue(path2, "Protected paper changed outside the editor; reviewed source needs attention.");
+    } catch {
+      owner.reportProtectionIssue(path2, "Protected paper is missing or unreadable.");
+    }
+  };
+  const schedule = (path2) => {
+    if (!locked(path2)) return;
+    window.clearTimeout(contentChecks.get(path2));
+    contentChecks.set(path2, window.setTimeout(() => {
+      contentChecks.delete(path2);
+      inspections = inspections.then(() => inspect(path2)).catch(() => {
+      });
+    }, 500));
+  };
+  const refresh = () => {
+    for (const leaf of app.workspace.getLeavesOfType("markdown")) {
+      const view = leaf.view;
+      if (view instanceof import_obsidian2.MarkdownView) {
+        const cm = view.editor?.cm;
+        cm?.dispatch({ effects: readonlySlot.reconfigure(readonlyExtension()) });
+      }
+    }
+  };
+  plugin.register(owner.subscribe(() => {
+    index = new PaperProtectionIndex(owner.catalog);
+    for (const p of moved.keys()) if (index.isProtected(p)) moved.delete(p);
+    refresh();
+  }));
+  plugin.registerEvent(app.workspace.on("file-open", (f) => {
+    refresh();
+    if (f?.extension === "md") schedule(f.path);
+  }));
+  plugin.registerEvent(app.workspace.on("active-leaf-change", () => refresh()));
+  plugin.registerEvent(app.vault.on("rename", (f) => {
+    if (f instanceof import_obsidian2.TFile && !moved.has(f.path) && !index.canonicalPaths.has(f.path) && index.ownerForName(f.path)) owner.reportProtectionIssue(f.path, "This file uses a reserved paper title. Rename it with a descriptive suffix.");
+  }));
+  plugin.registerEvent(app.vault.on("modify", (f) => schedule(f.path)));
+  plugin.registerEvent(app.vault.on("delete", (f) => {
+    for (const p of index.protectedPaths.keys()) if (p === f.path || p.startsWith(f.path + "/")) owner.reportProtectionIssue(p, "Protected paper was removed outside the editor.");
+  }));
+  app.workspace.onLayoutReady(() => {
+    const current = app.workspace.getActiveFile();
+    if (current?.extension === "md") schedule(current.path);
+    plugin.registerEvent(app.vault.on("create", (f) => {
+      if (f instanceof import_obsidian2.TFile && !moved.has(f.path) && !index.canonicalPaths.has(f.path) && index.ownerForName(f.path)) owner.reportProtectionIssue(f.path, "This file uses a reserved paper title. Rename it with a descriptive suffix.");
+    }));
+  });
+  plugin.registerEditorExtension(readonlySlot.of(readonlyExtension()));
+  plugin.registerEditorExtension(import_state.EditorState.transactionFilter.of((tr) => {
+    const path2 = tr.startState.field(import_obsidian2.editorInfoField, false)?.file?.path;
+    if (path2 && locked(path2) && tr.docChanged && !!tr.annotation(import_state.Transaction.userEvent)) {
+      notify(refusal());
+      return [];
+    }
+    return tr;
+  }));
+  const patch = (name, wrap) => {
+    const object = adapter, original = object[name];
+    if (typeof original !== "function") return;
+    const guarded = wrap((...args) => original.apply(adapter, args));
+    object[name] = guarded;
+    plugin.register(() => {
+      if (object[name] === guarded) object[name] = original;
+    });
+  };
+  const checkName = async (path2) => {
+    if (index.ownerForName(path2) && !await adapter.exists(path2)) index.assertDestination(path2);
+  };
+  for (const method of ["write", "writeBinary"]) patch(method, (original) => async (path2, data, ...rest) => {
+    if (!active) return original(path2, data, ...rest);
+    try {
+      if (locked(path2)) {
+        const before = method === "write" ? await adapter.read(path2) : await adapter.readBinary(path2);
+        if (sameContent(before, data) || typeof before === "string" && typeof data === "string" && harmlessRelocation(path2, before, data)) return;
+        throw refusal();
+      }
+      await checkName(path2);
+      return await original(path2, data, ...rest);
+    } catch (e) {
+      notify(e);
+      if (locked(path2)) resetEditor(path2);
+      throw e;
+    }
+  });
+  for (const method of ["append", "appendBinary"]) patch(method, (original) => async (path2, data, ...rest) => {
+    if (!active) return original(path2, data, ...rest);
+    try {
+      if (locked(path2) && (typeof data === "string" ? data.length : data.byteLength)) throw refusal();
+      await checkName(path2);
+      return await original(path2, data, ...rest);
+    } catch (e) {
+      notify(e);
+      throw e;
+    }
+  });
+  patch("process", (original) => async (path2, fn, ...rest) => {
+    if (!active) return original(path2, fn, ...rest);
+    try {
+      if (locked(path2)) {
+        const before = await adapter.read(path2), after = fn(before);
+        if (after === before || harmlessRelocation(path2, before, after)) return before;
+        throw refusal();
+      }
+      await checkName(path2);
+      return await original(path2, fn, ...rest);
+    } catch (e) {
+      notify(e);
+      if (locked(path2)) resetEditor(path2);
+      throw e;
+    }
+  });
+  for (const method of ["copy", "rename"]) patch(method, (original) => async (from, to, ...rest) => {
+    if (!active) return original(from, to, ...rest);
+    try {
+      if (locked(to)) throw refusal();
+      const files = app.vault.getFiles().filter((f) => f.path === from || f.path.startsWith(from + "/"));
+      const paths = files.length ? files.map((f) => f.path) : [from];
+      for (const p of paths) {
+        const dest = to + p.slice(from.length);
+        if (method !== "rename" || p.split("/").at(-1) !== dest.split("/").at(-1)) index.assertDestination(dest, method === "rename" ? p : void 0);
+        if (method === "rename" && locked(p) && (p === from && /\.md$/i.test(p) || index.isAsset(from))) throw Error("Move the paper\u2019s whole conversion folder to keep its images and links together. Use a working copy to change its title.");
+      }
+      const pending = method === "rename" ? paths.filter(locked).map((p) => to + p.slice(from.length)) : [];
+      for (const [p, until] of relocated) if (until < Date.now()) relocated.delete(p);
+      for (const p of pending) {
+        moved.set(p, from);
+        if (/\.md$/i.test(p)) relocated.set(p, Date.now() + 15e3);
+      }
+      try {
+        return await original(from, to, ...rest);
+      } catch (e) {
+        for (const p of pending) {
+          moved.delete(p);
+          relocated.delete(p);
+        }
+        throw e;
+      }
+    } catch (e) {
+      notify(e);
+      throw e;
+    }
+  });
+  for (const method of ["remove", "trashLocal", "trashSystem", "rmdir"]) patch(method, (original) => async (path2, ...rest) => {
+    if (active && (index.isAsset(path2) || [...index.protectedPaths.keys(), ...index.assetRoots, ...moved.keys()].some((p) => p === path2 || p.startsWith(path2 + "/")))) {
+      const e = Error("This contains a protected paper. Keep the canonical source and edit a working copy.");
+      notify(e);
+      throw e;
+    }
+    return original(path2, ...rest);
+  });
+  const menus = (menu, path2) => {
+    if (!path2 || !locked(path2)) return;
+    menu.addItem((i) => i.setTitle("Cleaned paper \xB7 annotations available").setIcon("lock").setDisabled(true));
+    menu.addItem((i) => i.setTitle("Create working copy\u2026").setIcon("copy").onClick(() => owner.createWorkingCopy(path2)));
+  };
+  plugin.registerEvent(app.workspace.on("file-menu", (menu, file) => menus(menu, file.path)));
+  plugin.registerEvent(app.workspace.on("editor-menu", (menu, _editor, info) => menus(menu, info.file?.path)));
+  plugin.addCommand({ id: "create-paper-working-copy", name: "Create working copy of paper\u2026", checkCallback: (checking) => {
+    const path2 = app.workspace.getActiveFile()?.path;
+    if (!path2 || !index.canonicalPaths.has(path2)) return false;
+    if (!checking) owner.createWorkingCopy(path2);
+    return true;
+  } });
+  plugin.register(() => {
+    active = false;
+    relocated.clear();
+    for (const t of contentChecks.values()) window.clearTimeout(t);
+  });
+  return { isProtected: locked };
+}
+
+// src/paper-library.ts
+var import_obsidian4 = require("obsidian");
+var fs2 = __toESM(require("node:fs/promises"));
+var nodePath = __toESM(require("node:path"));
+var import_node_crypto2 = require("node:crypto");
+
 // src/finder-preview.ts
-var import_obsidian2 = require("obsidian");
+var import_obsidian3 = require("obsidian");
 
 // src/files.ts
 var imagePath = (p) => /\.(png|jpe?g|gif|webp|avif|svg|bmp)$/i.test(p);
@@ -2365,17 +2851,17 @@ var FinderPreviews = class {
   closed = false;
   cancel = /* @__PURE__ */ new Set();
   get(file) {
-    const key2 = file.path + ":" + file.stat.mtime;
-    const cached = this.cache.get(key2);
+    const key3 = file.path + ":" + file.stat.mtime;
+    const cached = this.cache.get(key3);
     if (cached) {
-      this.cache.delete(key2);
-      this.cache.set(key2, cached);
+      this.cache.delete(key3);
+      this.cache.set(key3, cached);
       return Promise.resolve(cached);
     }
-    const pending = this.pending.get(key2);
+    const pending = this.pending.get(key3);
     if (pending) return pending;
-    const promise = new Promise((resolve2) => this.queue.push({ key: key2, file, resolve: resolve2 }));
-    this.pending.set(key2, promise);
+    const promise = new Promise((resolve2) => this.queue.push({ key: key3, file, resolve: resolve2 }));
+    this.pending.set(key3, promise);
     this.pump();
     return promise;
   }
@@ -2404,7 +2890,7 @@ var FinderPreviews = class {
         if (preview) {
           this.cache.set(job.key, preview);
           while (this.cache.size > 48) {
-            const first = [...this.cache.keys()].find((key2) => !this.cache.get(key2).el.isConnected);
+            const first = [...this.cache.keys()].find((key3) => !this.cache.get(key3).el.isConnected);
             if (!first) break;
             this.cache.get(first).dispose();
             this.cache.delete(first);
@@ -2474,11 +2960,11 @@ var FinderPreviews = class {
           dispose();
           return null;
         }
-        const owner = new import_obsidian2.Component();
+        const owner = new import_obsidian3.Component();
         owner.load();
         disposers.push(() => owner.unload());
         const page = el.createDiv({ cls: "igf-mini-page markdown-rendered" });
-        await import_obsidian2.MarkdownRenderer.render(this.app, previewExcerpt(raw), page, "", owner);
+        await import_obsidian3.MarkdownRenderer.render(this.app, previewExcerpt(raw), page, "", owner);
       } else if (file.extension.toLowerCase() === "pdf") {
         if (file.stat.size > 60 * 1024 * 1024) {
           el.textContent = "PDF document";
@@ -2489,7 +2975,7 @@ var FinderPreviews = class {
           dispose();
           return null;
         }
-        const lib = await (0, import_obsidian2.loadPdfJs)();
+        const lib = await (0, import_obsidian3.loadPdfJs)();
         if (!alive()) {
           dispose();
           return null;
@@ -2543,159 +3029,6 @@ var FinderPreviews = class {
   }
 };
 
-// src/library-model.ts
-var CATALOG_PATH = ".paper-library/catalog.json";
-var LEGACY_CATALOG_PATH = "Papers/.library/catalog.json";
-function validPath(p) {
-  return !!p && !p.startsWith("/") && !p.includes("\\") && !p.split("/").some((x) => x === ".." || x === ".");
-}
-function validateCatalog(v) {
-  const c = v;
-  if (!c || c.schema !== 1 || !Number.isInteger(c.revision) || !c.sources || !c.libraries || !Array.isArray(c.memberships)) throw Error("Unsupported paper catalog. Your saved file has been left intact.");
-  if (c.sourceRoot && !validPath(c.sourceRoot)) throw Error("Invalid paper storage folder");
-  for (const a of c.folderAliases ?? []) if (!validPath(a.path) || !validPath(a.target) || a.path === a.target) throw Error("Invalid folder redirect");
-  const paths = /* @__PURE__ */ new Set(), hashes = /* @__PURE__ */ new Map();
-  for (const [id, s] of Object.entries(c.sources)) {
-    if (!id || !s.title || !s.pdf || !validPath(s.pdf.path) || !s.pdf.path.toLowerCase().endsWith(".pdf") || !/^[a-f0-9]{64}$/.test(s.pdf.sha256)) throw Error("Invalid paper source " + id);
-    if (!Number.isInteger(s.pdf.bytes) || s.pdf.bytes < 0 || s.conversion && !s.conversion.path.endsWith(".md")) throw Error("Invalid source metadata");
-    for (const hash of [s.pdf.sha256, ...(s.equivalentPdfs ?? []).map((e) => e.sha256)]) {
-      if (!/^[a-f0-9]{64}$/.test(hash) || hashes.has(hash) && hashes.get(hash) !== id) throw Error("Repeated or invalid PDF identity");
-      hashes.set(hash, id);
-    }
-    for (const p of [s.pdf.path, s.conversion?.path].filter((x) => !!x)) {
-      if (!validPath(p) || paths.has(p)) throw Error("Repeated or invalid source path " + p);
-      paths.add(p);
-    }
-    for (const a of s.aliases ?? []) if (!validPath(a.path) || !validPath(a.target) || ![s.pdf.path, s.conversion?.path].includes(a.target)) throw Error("Invalid retired source path");
-  }
-  for (const s of Object.values(c.sources)) for (const a of s.aliases ?? []) if (paths.has(a.path)) throw Error("Retired path is currently in use");
-  const pairs = /* @__PURE__ */ new Set();
-  for (const [id, l] of Object.entries(c.libraries)) {
-    if (l.folder && !validPath(l.folder)) throw Error("Invalid library folder");
-    if (!l.title || l.parent === id || l.parent && !c.libraries[l.parent]) throw Error("Invalid library parent");
-    const seen = /* @__PURE__ */ new Set([id]);
-    let p = l.parent;
-    while (p) {
-      if (seen.has(p)) throw Error("Library cycle");
-      seen.add(p);
-      p = c.libraries[p].parent;
-    }
-  }
-  for (const m of c.memberships) {
-    const k = m.source + "|" + m.library;
-    if (!c.sources[m.source] || !c.libraries[m.library] || pairs.has(k)) throw Error("Invalid library membership");
-    pairs.add(k);
-  }
-  return c;
-}
-function libraryTrail(c, id) {
-  const out = [];
-  while (id) {
-    out.unshift(id);
-    id = c.libraries[id]?.parent ?? null;
-  }
-  return out;
-}
-function libraryLabel(c, id) {
-  return libraryTrail(c, id).map((i) => c.libraries[i].title).join(" / ");
-}
-function paperIds(c, library) {
-  if (!library) return Object.keys(c.sources);
-  const scope = new Set(Object.keys(c.libraries).filter((id) => libraryTrail(c, id).includes(library)));
-  return [...new Set(c.memberships.filter((m) => scope.has(m.library)).map((m) => m.source))];
-}
-function resolvePaperPath(c, path2) {
-  const at = path2.indexOf("#");
-  const p = at < 0 ? path2 : path2.slice(0, at), suffix = at < 0 ? "" : path2.slice(at);
-  const candidates = [p, p + ".md"];
-  const sources = Object.values(c.sources);
-  if (sources.some((s) => [s.pdf.path, s.conversion?.path].some((x) => x && candidates.includes(x)))) return path2;
-  for (const s of sources) {
-    const a = s.aliases?.find((a2) => candidates.includes(a2.path));
-    if (a) return (a.path === p ? a.target : a.target.replace(/\.md$/, "")) + suffix;
-  }
-  let resolved = p;
-  const seen = /* @__PURE__ */ new Set();
-  while (!seen.has(resolved)) {
-    seen.add(resolved);
-    const folder = c.folderAliases?.filter((a) => resolved.startsWith(a.path + "/")).sort((a, b) => b.path.length - a.path.length)[0];
-    if (!folder) break;
-    resolved = folder.target + resolved.slice(folder.path.length);
-  }
-  if (resolved !== p) return resolved + suffix;
-  return path2;
-}
-function relocatePaperPaths(c, old, next, folder = false) {
-  const inside = (p) => p === old || p.startsWith(old + "/");
-  const moved = (p) => inside(p) ? next + p.slice(old.length) : p;
-  let affected = false;
-  for (const s of Object.values(c.sources)) for (const ref of [s.pdf, s.conversion]) {
-    if (!ref || !inside(ref.path)) continue;
-    affected = true;
-    const before = ref.path;
-    ref.path = moved(before);
-    s.aliases ??= [];
-    if (ref === s.conversion && s.cleanup?.markdownPath === before) s.cleanup.markdownPath = ref.path;
-    for (const a of s.aliases) a.target = moved(a.target);
-    s.aliases = s.aliases.filter((a) => a.path !== ref.path && a.path !== before);
-    s.aliases.push({ path: before, target: ref.path });
-  }
-  for (const l of Object.values(c.libraries)) if (l.folder && inside(l.folder)) {
-    l.folder = moved(l.folder);
-    affected = true;
-  }
-  const root = c.sourceRoot ?? "Papers";
-  if (inside(root)) {
-    c.sourceRoot = moved(root);
-    affected = true;
-  }
-  if (folder && affected) {
-    c.folderAliases ??= [];
-    for (const a of c.folderAliases) a.target = moved(a.target);
-    c.folderAliases = c.folderAliases.filter((a) => a.path !== a.target && a.path !== old && a.path !== next && !a.path.startsWith(next + "/"));
-    c.folderAliases.push({ path: old, target: next });
-  }
-}
-var libraryColors = ["blue", "orange", "green", "purple", "red", "cyan", "yellow", "pink"];
-function libraryColor(c, id) {
-  const root = libraryTrail(c, id)[0];
-  const roots = Object.keys(c.libraries).filter((k) => !c.libraries[k].parent);
-  return `var(--color-${libraryColors[Math.max(0, roots.indexOf(root)) % libraryColors.length]})`;
-}
-function librarySearchPage(c, library, query, page = 0) {
-  const q = query.toLowerCase().trim();
-  const matched = paperIds(c, library).filter((id) => {
-    const s = c.sources[id];
-    return !q || `${s.title} ${s.authors ?? ""} ${s.year ?? ""} ${s.doi ?? ""}`.toLowerCase().includes(q);
-  }).sort((a, b) => c.sources[a].title.localeCompare(c.sources[b].title, void 0, { numeric: true }));
-  page = Math.max(0, Math.min(Math.floor(page), Math.max(0, Math.ceil(matched.length / 40) - 1)));
-  return { ids: matched.slice(page * 40, (page + 1) * 40), total: matched.length, page };
-}
-function normalizedTitle(title) {
-  return title.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\.pdf$/, "").replace(/[^a-z0-9]/g, "");
-}
-function duplicateMatch(c, hash, title, doi) {
-  const exact = Object.entries(c.sources).filter(([, s]) => s.pdf.sha256 === hash || s.equivalentPdfs?.some((e) => e.sha256 === hash)).map(([id]) => id);
-  if (exact.length) return { kind: "exact", ids: exact };
-  const titleKey = normalizedTitle(title);
-  const doiKey = doi?.trim().toLowerCase().replace(/^https?:\/\/(?:dx\.)?doi\.org\//, "");
-  const ids = Object.entries(c.sources).filter(([, s]) => normalizedTitle(s.title) === titleKey || normalizedTitle(`${s.authors ?? ""} ${s.year ?? ""} - ${s.title}`) === titleKey || !!doiKey && s.doi?.toLowerCase() === doiKey).map(([id]) => id);
-  return ids.length ? { kind: "candidate", ids } : null;
-}
-function addMembership(c, source, library) {
-  if (!c.sources[source] || !c.libraries[library]) throw Error("Paper or library no longer exists");
-  if (!c.memberships.some((m) => m.source === source && m.library === library)) c.memberships.push({ source, library });
-}
-function moveLibrary(c, id, parent) {
-  if (id === parent || parent && libraryTrail(c, parent).includes(id)) throw Error("A library cannot be placed inside itself");
-  c.libraries[id].parent = parent;
-}
-function paperCleanupBadge(source) {
-  const review = source.cleanup;
-  const verified = !!source.conversion && !!review && review.markdownPath === source.conversion?.path && review.pdfSha256 === source.pdf.sha256 && /^[a-f0-9]{64}$/.test(review.markdownSha256) && Number.isFinite(Date.parse(review.verifiedAt));
-  return verified ? { icon: "\u2728", label: `OCR cleanup reviewed \xB7 ${new Date(review.verifiedAt).toLocaleDateString(void 0, { year: "numeric", month: "long", day: "numeric" })}` } : { icon: "\u{1F922}", label: source.conversion ? "Awaiting OCR cleanup" : "No reading copy yet" };
-}
-
 // src/library-storage.ts
 var fs = __toESM(require("node:fs/promises"));
 var path = __toESM(require("node:path"));
@@ -2727,7 +3060,7 @@ async function preparePaperCatalog(base) {
 // src/paper-library.ts
 var VIEW = "paper-library";
 var SIDEBAR = "paper-library-navigation";
-var LibraryPicker = class extends import_obsidian3.FuzzySuggestModal {
+var LibraryPicker = class extends import_obsidian4.FuzzySuggestModal {
   constructor(app, catalog, choose, placeholder = "Jump to a library") {
     super(app);
     this.catalog = catalog;
@@ -2744,7 +3077,7 @@ var LibraryPicker = class extends import_obsidian3.FuzzySuggestModal {
     this.choose(id);
   }
 };
-var NameDialog = class extends import_obsidian3.Modal {
+var NameDialog = class extends import_obsidian4.Modal {
   constructor(app, label, initial, done) {
     super(app);
     this.label = label;
@@ -2782,6 +3115,16 @@ var PaperLibraries = class {
   timers = /* @__PURE__ */ new Map();
   listeners = /* @__PURE__ */ new Set();
   issues = /* @__PURE__ */ new Map();
+  protection;
+  reportProtectionIssue(path2, message) {
+    if (this.issues.get(path2) === message) return;
+    this.issues.set(path2, message);
+    this.emit();
+    new import_obsidian4.Notice(message + " " + path2, 9e3);
+  }
+  isProtected(path2) {
+    return this.protection?.isProtected(path2) ?? false;
+  }
   currentLibrary = null;
   selectionListeners = /* @__PURE__ */ new Set();
   select(id) {
@@ -2799,6 +3142,7 @@ var PaperLibraries = class {
     const base = this.app.vault.adapter.getBasePath?.();
     if (!base || !await preparePaperCatalog(base)) return false;
     await this.reload();
+    this.protection = installPaperProtection(this.plugin, this);
     this.plugin.registerView(VIEW, (l) => new PaperLibraryView(l, this));
     this.plugin.addCommand({ id: "open-paper-libraries", name: "Open paper libraries", callback: () => void this.open() });
     this.plugin.addCommand({ id: "import-paper-pdf", name: "Add PDF to paper library", callback: () => this.pickLibrary((id) => this.importPicker(id), "Add PDF to which library?") });
@@ -2819,19 +3163,19 @@ var PaperLibraries = class {
       }
     });
     this.plugin.registerEvent(this.app.vault.on("modify", (f) => {
-      if (f.path === CATALOG_PATH) void this.reload().catch((e) => new import_obsidian3.Notice(String(e)));
+      if (f.path === CATALOG_PATH) void this.reload().catch((e) => new import_obsidian4.Notice(String(e)));
     }));
     this.app.workspace.onLayoutReady(() => this.plugin.registerEvent(this.app.vault.on("create", (f) => {
-      if (f instanceof import_obsidian3.TFile && f.path.startsWith((this.catalog.sourceRoot ?? "Papers") + "/") && ["pdf", "md"].includes(f.extension)) this.checkArrival(f);
+      if (f instanceof import_obsidian4.TFile && f.path.startsWith((this.catalog.sourceRoot ?? "Papers") + "/") && ["pdf", "md"].includes(f.extension)) this.checkArrival(f);
     })));
     this.plugin.registerEvent(this.app.vault.on("rename", (f, old) => {
-      void this.change((c) => relocatePaperPaths(c, old, f.path, !(f instanceof import_obsidian3.TFile)), true).catch((e) => new import_obsidian3.Notice(String(e)));
+      void this.change((c) => relocatePaperPaths(c, old, f.path, !(f instanceof import_obsidian4.TFile)), true).catch((e) => new import_obsidian4.Notice(String(e)));
     }));
     this.plugin.registerEvent(this.app.vault.on("delete", (f) => {
       if (Object.values(this.catalog.sources).some((s) => [s.pdf.path, s.conversion?.path].some((p) => p === f.path || p?.startsWith(f.path + "/")))) {
         this.issues.set(f.path, "Registered source was removed");
         this.emit();
-        new import_obsidian3.Notice("A shared paper source was removed. Check paper library integrity.", 1e4);
+        new import_obsidian4.Notice("A shared paper source was removed. Check paper library integrity.", 1e4);
       }
     }));
     this.plugin.registerInterval(window.setInterval(() => {
@@ -2882,7 +3226,7 @@ var PaperLibraries = class {
       } catch {
         throw Error("The paper catalog is being updated. Try again in a moment.");
       }
-      const temp = path2 + "." + (0, import_node_crypto.randomUUID)() + ".tmp";
+      const temp = path2 + "." + (0, import_node_crypto2.randomUUID)() + ".tmp";
       try {
         const current = await fs2.readFile(path2, "utf8");
         if (current !== this.raw) {
@@ -2917,10 +3261,10 @@ var PaperLibraries = class {
     try {
       const stat2 = await fs2.stat(path2);
       if (Date.now() - stat2.mtimeMs < 6e4) {
-        new import_obsidian3.Notice("Catalog update is recent. Try again after a minute.");
+        new import_obsidian4.Notice("Catalog update is recent. Try again after a minute.");
         return;
       }
-      const modal = new import_obsidian3.Modal(this.app);
+      const modal = new import_obsidian4.Modal(this.app);
       modal.titleEl.setText("Recover abandoned catalog lock");
       modal.contentEl.createEl("p", { text: "Close other paper import or conversion tools before recovering this lock." });
       modal.contentEl.createEl("button", { text: "Recover lock", cls: "mod-cta" }).onclick = () => void (async () => {
@@ -2928,12 +3272,49 @@ var PaperLibraries = class {
         if (current.mtimeMs !== stat2.mtimeMs) throw Error("Lock changed; retry");
         await fs2.unlink(path2);
         modal.close();
-        new import_obsidian3.Notice("Catalog lock recovered.");
-      })().catch((e) => new import_obsidian3.Notice(String(e)));
+        new import_obsidian4.Notice("Catalog lock recovered.");
+      })().catch((e) => new import_obsidian4.Notice(String(e)));
       modal.open();
     } catch (e) {
-      new import_obsidian3.Notice("No abandoned lock found.");
+      new import_obsidian4.Notice("No abandoned lock found.");
     }
+  }
+  createWorkingCopy(path2 = this.app.workspace.getActiveFile()?.path) {
+    if (!path2) return;
+    const id = this.sourceFor(path2), source = id && this.catalog.sources[id];
+    if (!source || !id) return;
+    if (!source.conversion) {
+      new import_obsidian4.Notice("Convert this paper before creating an editable working copy.");
+      return;
+    }
+    const from = this.app.vault.getAbstractFileByPath(source.conversion.path);
+    if (!(from instanceof import_obsidian4.TFile)) return;
+    new NameDialog(this.app, "Working copy \u2014 add a description", "Outline", (description) => void (async () => {
+      const filename = workingCopyName(from.name, description), folder = "Paper notes", dest = folder + "/" + filename;
+      new PaperProtectionIndex(this.catalog).assertDestination(dest);
+      if (this.app.vault.getAbstractFileByPath(dest)) throw Error("That working copy already exists. Choose another description.");
+      const raw = await this.app.vault.read(from);
+      const cache = this.app.metadataCache.getFileCache(from), edits = [];
+      if (!cache) throw Error("The paper is still being indexed. Try creating the working copy again in a moment.");
+      for (const link2 of [...cache?.links ?? [], ...cache?.embeds ?? []]) {
+        if (link2.link.startsWith("#")) continue;
+        const target = this.app.metadataCache.getFirstLinkpathDest(link2.link.split("#")[0], from.path);
+        if (!target) continue;
+        const original = raw.slice(link2.position.start.offset, link2.position.end.offset);
+        const hashAt = link2.link.indexOf("#");
+        const suffix = hashAt < 0 ? "" : link2.link.slice(hashAt);
+        const replacement = rebasePaperLink(original, target.path, suffix);
+        if (replacement !== original) edits.push({ from: link2.position.start.offset, to: link2.position.end.offset, text: replacement });
+      }
+      let body = raw;
+      for (const edit of edits.sort((a, b) => b.from - a.from)) body = body.slice(0, edit.from) + edit.text + body.slice(edit.to);
+      body = body.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
+      const text = "---\nworkingCopyOf: " + id + "\nsource: " + JSON.stringify("[[" + from.path + "|" + source.title.replace(/[|\[\]]/g, " ") + "]]") + "\n---\n\n" + body;
+      if (!this.app.vault.getAbstractFileByPath(folder)) await this.app.vault.createFolder(folder);
+      const file = await this.app.vault.create(dest, text);
+      await this.app.workspace.getLeaf("tab").openFile(file, { state: { mode: "source" } });
+      new import_obsidian4.Notice("Editable working copy created. The paper and its annotations remain unchanged.");
+    })().catch((e) => new import_obsidian4.Notice(String(e), 8e3))).open();
   }
   async open(library) {
     let leaf = this.app.workspace.getLeavesOfType(VIEW)[0];
@@ -2948,7 +3329,7 @@ var PaperLibraries = class {
     new LibraryPicker(this.app, this.catalog, done, label).open();
   }
   add(id, library) {
-    void this.change((c) => addMembership(c, id, library)).catch((e) => new import_obsidian3.Notice(String(e)));
+    void this.change((c) => addMembership(c, id, library)).catch((e) => new import_obsidian4.Notice(String(e)));
   }
   importPicker(library) {
     const input = document.createElement("input");
@@ -2956,13 +3337,13 @@ var PaperLibraries = class {
     input.accept = ".pdf";
     input.onchange = () => {
       const file = input.files?.[0];
-      if (file) void this.importPDF(file, library).catch((e) => new import_obsidian3.Notice(String(e), 1e4));
+      if (file) void this.importPDF(file, library).catch((e) => new import_obsidian4.Notice(String(e), 1e4));
     };
     input.click();
   }
   async importPDF(file, library, separate = false) {
     const buffer = await file.arrayBuffer(), bytes = new Uint8Array(buffer);
-    const hash = (0, import_node_crypto.createHash)("sha256").update(bytes).digest("hex");
+    const hash = (0, import_node_crypto2.createHash)("sha256").update(bytes).digest("hex");
     if (new TextDecoder().decode(buffer.slice(0, 5)) !== "%PDF-") throw Error("Choose a PDF document.");
     const title = file.name.replace(/\.pdf$/i, "");
     let doi;
@@ -2972,7 +3353,7 @@ var PaperLibraries = class {
     if (!doi) {
       let task;
       try {
-        const lib = await (0, import_obsidian3.loadPdfJs)();
+        const lib = await (0, import_obsidian4.loadPdfJs)();
         task = lib.getDocument({ data: bytes.slice() });
         const pdf = await task.promise;
         const page = await pdf.getPage(1);
@@ -2987,7 +3368,7 @@ var PaperLibraries = class {
     const match = duplicateMatch(this.catalog, hash, title, doi);
     if (match && (match.kind === "exact" || !separate)) {
       if (match.kind === "candidate") {
-        const modal = new import_obsidian3.Modal(this.app);
+        const modal = new import_obsidian4.Modal(this.app);
         modal.titleEl.setText("Review matching papers");
         modal.contentEl.createEl("p", { text: "Choose the existing paper to share it with this library, or keep this as a separate work." });
         for (const id2 of match.ids) modal.contentEl.createEl("button", { text: this.catalog.sources[id2].title }).onclick = () => {
@@ -2996,16 +3377,16 @@ var PaperLibraries = class {
         };
         modal.contentEl.createEl("button", { text: "Import as a separate paper" }).onclick = () => {
           modal.close();
-          void this.importPDF(file, library, true).catch((e) => new import_obsidian3.Notice(String(e)));
+          void this.importPDF(file, library, true).catch((e) => new import_obsidian4.Notice(String(e)));
         };
         modal.open();
         return;
       }
       await this.change((c) => addMembership(c, match.ids[0], library));
-      new import_obsidian3.Notice("Existing paper added to this library.");
+      new import_obsidian4.Notice("Existing paper added to this library.");
       return;
     }
-    const id = "src_" + (0, import_node_crypto.randomUUID)().replace(/-/g, "").slice(0, 14);
+    const id = "src_" + (0, import_node_crypto2.randomUUID)().replace(/-/g, "").slice(0, 14);
     const dir = (this.catalog.sourceRoot ?? "Papers") + "/Sources/" + id;
     await this.change((c) => {
       const again = duplicateMatch(c, hash, title, doi);
@@ -3016,7 +3397,7 @@ var PaperLibraries = class {
     try {
       await this.app.vault.createFolder(dir);
       await this.app.vault.createBinary(this.catalog.sources[id].pdf.path, buffer);
-      new import_obsidian3.Notice("PDF added. Use Register paper reading copy after Mathpix conversion.");
+      new import_obsidian4.Notice("PDF added. Use Register paper reading copy after Mathpix conversion.");
     } catch (e) {
       this.issues.set(this.catalog.sources[id].pdf.path, "PDF import could not finish; source file remains at its original location");
       this.emit();
@@ -3026,12 +3407,12 @@ var PaperLibraries = class {
   async registerReadingCopy() {
     const file = this.app.workspace.getActiveFile();
     if (!file || file.extension !== "md") {
-      new import_obsidian3.Notice("Open the completed paper conversion first.");
+      new import_obsidian4.Notice("Open the completed paper conversion first.");
       return;
     }
     const matches = duplicateMatch(this.catalog, "", file.basename)?.ids ?? [];
     const available = Object.entries(this.catalog.sources).filter(([id, s]) => !s.conversion && (!matches.length || matches.includes(id)));
-    class Picker extends import_obsidian3.FuzzySuggestModal {
+    class Picker extends import_obsidian4.FuzzySuggestModal {
       getItems() {
         return available.map(([id]) => id);
       }
@@ -3045,9 +3426,9 @@ var PaperLibraries = class {
             c.sources[id].conversion = { path: file.path };
           });
           owner.issues.delete(file.path);
-          new import_obsidian3.Notice("Reading copy registered.");
+          new import_obsidian4.Notice("Reading copy registered.");
         } catch (e) {
-          new import_obsidian3.Notice(String(e));
+          new import_obsidian4.Notice(String(e));
         }
       };
     }
@@ -3074,7 +3455,7 @@ var PaperLibraries = class {
         this.checkArrival(file);
         return;
       }
-      match = duplicateMatch(this.catalog, (0, import_node_crypto.createHash)("sha256").update(new Uint8Array(bytes)).digest("hex"), file.basename);
+      match = duplicateMatch(this.catalog, (0, import_node_crypto2.createHash)("sha256").update(new Uint8Array(bytes)).digest("hex"), file.basename);
     } else if (file.path.includes("/markdown_originals/")) {
       match = duplicateMatch(this.catalog, "", file.basename);
     } else return;
@@ -3082,22 +3463,27 @@ var PaperLibraries = class {
       const source = this.catalog.sources[match.ids[0]];
       const needsReading = file.extension === "md" && !source.conversion;
       this.issues.set(file.path, (needsReading ? "Reading copy awaiting registration: " : "Possible duplicate of ") + source.title);
-      new import_obsidian3.Notice(needsReading ? "Open the conversion and run Register paper reading copy." : "A duplicate paper may have arrived. Open Paper libraries to review it.", 1e4);
+      new import_obsidian4.Notice(needsReading ? "Open the conversion and run Register paper reading copy." : "A duplicate paper may have arrived. Open Paper libraries to review it.", 1e4);
       this.emit();
     }
   }
   async check() {
     this.issues.clear();
-    const hashes = /* @__PURE__ */ new Map();
+    const hashes = /* @__PURE__ */ new Map(), protection = new PaperProtectionIndex(this.catalog);
     for (const s of Object.values(this.catalog.sources)) {
       for (const ref of [s.pdf, s.conversion]) if (ref && !await this.app.vault.adapter.exists(ref.path)) this.issues.set(ref.path, "Registered source is missing");
       hashes.set(s.pdf.sha256, s.pdf.path);
       for (const e of s.equivalentPdfs ?? []) hashes.set(e.sha256, s.pdf.path);
+      if (s.cleanup && s.conversion && await this.app.vault.adapter.exists(s.conversion.path)) {
+        const hash = (0, import_node_crypto2.createHash)("sha256").update(new Uint8Array(await this.app.vault.adapter.readBinary(s.conversion.path))).digest("hex");
+        if (hash !== s.cleanup.markdownSha256) this.issues.set(s.conversion.path, "Cleaned reading copy changed outside the editor");
+      }
     }
     for (const f of this.app.vault.getFiles()) {
+      if (!protection.canonicalPaths.has(f.path) && protection.ownerForName(f.path)) this.issues.set(f.path, "Reserved paper title; use a descriptive working-copy suffix");
       if (!f.path.startsWith((this.catalog.sourceRoot ?? "Papers") + "/")) continue;
       if (f.extension === "pdf") {
-        const hash = (0, import_node_crypto.createHash)("sha256").update(new Uint8Array(await this.app.vault.readBinary(f))).digest("hex");
+        const hash = (0, import_node_crypto2.createHash)("sha256").update(new Uint8Array(await this.app.vault.readBinary(f))).digest("hex");
         const previous = hashes.get(hash);
         if (previous && previous !== f.path) this.issues.set(f.path, "Duplicate of " + previous);
         else hashes.set(hash, f.path);
@@ -3107,10 +3493,10 @@ var PaperLibraries = class {
       } else if (f.extension === "md") await this.inspectArrival(f);
     }
     this.emit();
-    new import_obsidian3.Notice(this.issues.size ? `${this.issues.size} paper source issues. Open Paper libraries to review.` : "Paper library integrity check passed.", 8e3);
+    new import_obsidian4.Notice(this.issues.size ? `${this.issues.size} paper source issues. Open Paper libraries to review.` : "Paper library integrity check passed.", 8e3);
   }
 };
-var PaperLibraryView = class extends import_obsidian3.ItemView {
+var PaperLibraryView = class extends import_obsidian4.ItemView {
   constructor(leaf, owner) {
     super(leaf);
     this.owner = owner;
@@ -3287,7 +3673,7 @@ var PaperLibraryView = class extends import_obsidian3.ItemView {
         this.searchTimer = window.setTimeout(() => this.render(true), 120);
       };
       controls.createEl("button", { text: "\uFF0B", attr: { "aria-label": "Library actions" } }).onclick = (e) => {
-        const m = new import_obsidian3.Menu();
+        const m = new import_obsidian4.Menu();
         m.addItem((i) => i.setTitle("Add PDF\u2026").setIcon("file-plus").onClick(() => this.library ? this.owner.importPicker(this.library) : this.owner.pickLibrary((id) => this.owner.importPicker(id), "Add PDF to library")));
         m.addItem((i) => i.setTitle("New library\u2026").setIcon("folder-plus").onClick(() => this.newLibrary()));
         m.addItem((i) => i.setTitle("Check source integrity").onClick(() => void this.owner.check()));
@@ -3312,7 +3698,7 @@ var PaperLibraryView = class extends import_obsidian3.ItemView {
         card.style.setProperty("--library-color", libraryColor(c, id));
         const cover = card.createDiv({ cls: "ig-library-tile-cover" });
         const glyph = cover.createSpan();
-        (0, import_obsidian3.setIcon)(glyph, "library");
+        (0, import_obsidian4.setIcon)(glyph, "library");
         const content = card.createDiv({ cls: "ig-library-tile-body" });
         content.createEl("strong", { text: l.title });
         const n = paperIds(c, id).length, sub = Object.values(c.libraries).filter((l2) => l2.parent === id).length;
@@ -3348,7 +3734,7 @@ var PaperLibraryView = class extends import_obsidian3.ItemView {
         this.observer?.unobserve(e.target);
         const el = e.target;
         const f = this.app.vault.getAbstractFileByPath(el.dataset.path);
-        if (f instanceof import_obsidian3.TFile) void this.previews.get(f).then((p) => {
+        if (f instanceof import_obsidian4.TFile) void this.previews.get(f).then((p) => {
           if (p && el.isConnected) {
             el.empty();
             el.appendChild(p.el);
@@ -3423,37 +3809,38 @@ var PaperLibraryView = class extends import_obsidian3.ItemView {
   }
   newLibrary() {
     new NameDialog(this.app, "New library", "", (title) => void this.owner.change((c) => {
-      c.libraries["lib_" + (0, import_node_crypto.randomUUID)().slice(0, 12)] = { title, parent: this.library };
-    }).catch((e) => new import_obsidian3.Notice(String(e)))).open();
+      c.libraries["lib_" + (0, import_node_crypto2.randomUUID)().slice(0, 12)] = { title, parent: this.library };
+    }).catch((e) => new import_obsidian4.Notice(String(e)))).open();
   }
   libraryMenu(e, id) {
-    const m = new import_obsidian3.Menu();
+    const m = new import_obsidian4.Menu();
     m.addItem((i) => i.setTitle("Open library").onClick(() => this.go(id)));
     m.addItem((i) => i.setTitle("Rename library\u2026").onClick(() => new NameDialog(this.app, "Library name", this.owner.catalog.libraries[id].title, (title) => void this.owner.change((c) => {
       c.libraries[id].title = title;
-    }).catch((e2) => new import_obsidian3.Notice(String(e2)))).open()));
-    m.addItem((i) => i.setTitle("Move into library\u2026").onClick(() => this.owner.pickLibrary((parent) => void this.owner.change((c) => moveLibrary(c, id, parent)).catch((e2) => new import_obsidian3.Notice(String(e2))))));
-    m.addItem((i) => i.setTitle("Move to top level").onClick(() => void this.owner.change((c) => moveLibrary(c, id, null)).catch((e2) => new import_obsidian3.Notice(String(e2)))));
+    }).catch((e2) => new import_obsidian4.Notice(String(e2)))).open()));
+    m.addItem((i) => i.setTitle("Move into library\u2026").onClick(() => this.owner.pickLibrary((parent) => void this.owner.change((c) => moveLibrary(c, id, parent)).catch((e2) => new import_obsidian4.Notice(String(e2))))));
+    m.addItem((i) => i.setTitle("Move to top level").onClick(() => void this.owner.change((c) => moveLibrary(c, id, null)).catch((e2) => new import_obsidian4.Notice(String(e2)))));
     m.showAtMouseEvent(e);
   }
   paperMenu(e, id) {
     const c = this.owner.catalog, s = c.sources[id];
-    const m = new import_obsidian3.Menu();
+    const m = new import_obsidian4.Menu();
     const cleanup = paperCleanupBadge(s);
     m.addItem((i) => i.setTitle(`${cleanup.icon} ${cleanup.label}`).setDisabled(true));
     m.addSeparator();
+    m.addItem((i) => i.setTitle("Create working copy\u2026").setIcon("copy").setDisabled(!s.conversion).onClick(() => this.owner.createWorkingCopy(s.conversion?.path)));
     m.addItem((i) => i.setTitle("Open reading copy").setDisabled(!s.conversion).onClick(() => this.openPaper(id)));
     m.addItem((i) => i.setTitle("Open PDF").onClick(() => this.openPaper(id, true)));
     m.addItem((i) => i.setTitle("Add to library\u2026").onClick(() => this.owner.pickLibrary((lib) => this.owner.add(id, lib), "Add paper to library")));
     for (const x of c.memberships.filter((x2) => x2.source === id)) m.addItem((i) => i.setTitle("Go to " + libraryLabel(c, x.library)).onClick(() => this.go(x.library)));
     if (this.library && c.memberships.filter((x) => x.source === id).length > 1 && c.memberships.some((x) => x.library === this.library && x.source === id)) m.addItem((i) => i.setTitle("Remove from this library").onClick(() => void this.owner.change((next) => {
       next.memberships = next.memberships.filter((x) => x.source !== id || x.library !== this.library);
-    }).catch((e2) => new import_obsidian3.Notice(String(e2)))));
+    }).catch((e2) => new import_obsidian4.Notice(String(e2)))));
     m.addItem((i) => i.setTitle("Copy paper link").onClick(() => void navigator.clipboard.writeText(`[[${s.conversion?.path ?? s.pdf.path}|${s.title.replace(/[|\[\]]/g, " ")}]]`)));
     m.showAtMouseEvent(e);
   }
 };
-var PaperLibraryNavigation = class extends import_obsidian3.ItemView {
+var PaperLibraryNavigation = class extends import_obsidian4.ItemView {
   constructor(leaf, owner) {
     super(leaf);
     this.owner = owner;
@@ -3629,9 +4016,9 @@ function resizeFinder(modal, owner, saved, save) {
 }
 
 // src/file-finder.ts
-var import_obsidian4 = require("obsidian");
+var import_obsidian5 = require("obsidian");
 var nextFinder = 0;
-var FileFinder = class extends import_obsidian4.Modal {
+var FileFinder = class extends import_obsidian5.Modal {
   constructor(app, size = 100, saveSize = () => {
   }, dimensions = {}, saveDimensions = () => {
   }) {
@@ -3652,7 +4039,7 @@ var FileFinder = class extends import_obsidian4.Modal {
   paths = /* @__PURE__ */ new Map();
   selected = 0;
   closed = false;
-  owner = new import_obsidian4.Component();
+  owner = new import_obsidian5.Component();
   previews;
   resize;
   pendingSearch = null;
@@ -3795,13 +4182,13 @@ var FileFinder = class extends import_obsidian4.Modal {
   }
   index() {
     const recent = new Map(this.app.workspace.getLastOpenFiles().map((p, i) => [p, i]));
-    this.entries = this.app.vault.getFiles().map((f) => ({ path: f.path, name: f.basename, folder: f.parent?.path === "/" ? "" : f.path.slice(0, f.path.lastIndexOf("/") + 1), extension: f.extension.toLowerCase(), mtime: f.stat.mtime, recent: recent.get(f.path) ?? Number.MAX_SAFE_INTEGER, aliases: f.extension.toLowerCase() === "md" ? (0, import_obsidian4.parseFrontMatterAliases)(this.app.metadataCache.getFileCache(f)?.frontmatter) ?? [] : [] }));
+    this.entries = this.app.vault.getFiles().map((f) => ({ path: f.path, name: f.basename, folder: f.parent?.path === "/" ? "" : f.path.slice(0, f.path.lastIndexOf("/") + 1), extension: f.extension.toLowerCase(), mtime: f.stat.mtime, recent: recent.get(f.path) ?? Number.MAX_SAFE_INTEGER, aliases: f.extension.toLowerCase() === "md" ? (0, import_obsidian5.parseFrontMatterAliases)(this.app.metadataCache.getFileCache(f)?.frontmatter) ?? [] : [] }));
     this.paths = folderLabels(this.entries);
   }
   apply(retain = false) {
     if (this.closed) return;
     const ticket = ++this.searchTicket, scroll = this.grid.scrollTop, path2 = retain ? this.matches[this.selected]?.entry.path : null;
-    const query = finderQuery(this.search.value), scope = this.filter, fuzzy = query.text ? (0, import_obsidian4.prepareFuzzySearch)(query.text) : null;
+    const query = finderQuery(this.search.value), scope = this.filter, fuzzy = query.text ? (0, import_obsidian5.prepareFuzzySearch)(query.text) : null;
     const finish = (matches) => {
       if (this.closed || ticket !== this.searchTicket) return;
       this.matches = matches;
@@ -3905,16 +4292,16 @@ var FileFinder = class extends import_obsidian4.Modal {
     preview.setAttribute("inert", "");
     const text = card.createDiv({ cls: "igf-text" });
     const name = text.createDiv({ cls: "igf-name", attr: { id: card.id + "-name", title: e.name } });
-    (0, import_obsidian4.renderMatches)(name, e.name, match.nameRanges);
+    (0, import_obsidian5.renderMatches)(name, e.name, match.nameRanges);
     if (match.alias) {
       const alias = text.createDiv({ cls: "igf-alias" });
       alias.appendText("Alias: ");
-      (0, import_obsidian4.renderMatches)(alias, match.alias, match.aliasRanges ?? []);
+      (0, import_obsidian5.renderMatches)(alias, match.alias, match.aliasRanges ?? []);
     }
     const meta = text.createDiv({ cls: "igf-meta" });
     meta.createSpan({ cls: "igf-type igf-type-" + e.extension, text: e.extension.toUpperCase() || "FILE", attr: { id: card.id + "-type" } });
     const path2 = meta.createDiv({ cls: "igf-path", attr: { id: card.id + "-path", title: e.path } });
-    if (match.pathRanges.length) (0, import_obsidian4.renderMatches)(path2, e.folder, match.pathRanges.map(([a, b]) => [a, Math.min(b, e.folder.length)]).filter(([a, b]) => b > a));
+    if (match.pathRanges.length) (0, import_obsidian5.renderMatches)(path2, e.folder, match.pathRanges.map(([a, b]) => [a, Math.min(b, e.folder.length)]).filter(([a, b]) => b > a));
     else {
       const label = this.paths.get(e.path) ?? e.folder, parts = label.split("/").filter(Boolean);
       if (parts[0] === "\u2026") {
@@ -3936,7 +4323,7 @@ var FileFinder = class extends import_obsidian4.Modal {
       this.fileMenu(ev, e.path);
     };
     const file = this.app.vault.getAbstractFileByPath(e.path), revision = this.revision;
-    if (file instanceof import_obsidian4.TFile) void this.previews.get(file).then((result) => {
+    if (file instanceof import_obsidian5.TFile) void this.previews.get(file).then((result) => {
       if (this.closed || revision !== this.revision || !card.isConnected) return;
       if (result) preview.replaceChildren(result.el);
       else preview.textContent = e.extension.toUpperCase();
@@ -3965,8 +4352,8 @@ var FileFinder = class extends import_obsidian4.Modal {
   async openPath(path2, target) {
     if (this.closed) return;
     const file = this.app.vault.getAbstractFileByPath(path2);
-    if (!(file instanceof import_obsidian4.TFile)) {
-      new import_obsidian4.Notice("This file has moved. Search again.");
+    if (!(file instanceof import_obsidian5.TFile)) {
+      new import_obsidian5.Notice("This file has moved. Search again.");
       this.index();
       this.apply();
       return;
@@ -3975,7 +4362,7 @@ var FileFinder = class extends import_obsidian4.Modal {
     try {
       await this.app.workspace.getLeaf(target === "current" ? false : target).openFile(file);
     } catch (error) {
-      new import_obsidian4.Notice("Could not open file: " + String(error));
+      new import_obsidian5.Notice("Could not open file: " + String(error));
     }
   }
   setScope(scope) {
@@ -3995,7 +4382,7 @@ var FileFinder = class extends import_obsidian4.Modal {
     for (const [scope, label] of [["documents", "Notes and PDFs"], ["images", "Images"], ["all", "All file types"]]) menu.addItem((item) => item.setTitle(label).setChecked(this.filter === scope && !finderQuery(this.search.value).extensions.length).onClick(() => this.setScope(scope)));
     menu.addSeparator();
     menu.addItem((i) => i.setTitle("Reset gallery size").onClick(() => this.sizing?.reset()));
-    const mod = import_obsidian4.Platform.isMacOS ? "\u2318" : "Ctrl";
+    const mod = import_obsidian5.Platform.isMacOS ? "\u2318" : "Ctrl";
     menu.addSeparator();
     menu.addItem((i) => i.setTitle(`Larger thumbnails (${mod} +)`).onClick(() => this.zoom(10)));
     menu.addItem((i) => i.setTitle(`Smaller thumbnails (${mod} \u2212)`).onClick(() => this.zoom(-10)));
@@ -4003,7 +4390,7 @@ var FileFinder = class extends import_obsidian4.Modal {
   }
   scopeMenu(event) {
     this.menu?.hide();
-    this.menu = new import_obsidian4.Menu();
+    this.menu = new import_obsidian5.Menu();
     this.addScope(this.menu);
     if (event.detail === 0) {
       const r = this.status.getBoundingClientRect();
@@ -4012,10 +4399,10 @@ var FileFinder = class extends import_obsidian4.Modal {
   }
   fileMenu(event, path2) {
     this.menu?.hide();
-    const menu = this.menu = new import_obsidian4.Menu();
+    const menu = this.menu = new import_obsidian5.Menu();
     for (const [target, label] of [["current", "Open"], ["tab", "Open in new tab"], ["split", "Open to the right"], ["window", "Open in new window"]]) menu.addItem((i) => i.setTitle(label).onClick(() => void this.openPath(path2, target)));
     const file = this.app.vault.getAbstractFileByPath(path2);
-    if (file instanceof import_obsidian4.TFile) {
+    if (file instanceof import_obsidian5.TFile) {
       menu.addSeparator();
       menu.addItem((i) => i.setTitle("Copy path").onClick(() => void navigator.clipboard.writeText(file.path)));
       this.app.workspace.trigger("file-menu", menu, file, "file-finder");
@@ -4044,7 +4431,7 @@ var FileFinder = class extends import_obsidian4.Modal {
 };
 
 // src/folder-browser.ts
-var import_obsidian5 = require("obsidian");
+var import_obsidian6 = require("obsidian");
 
 // src/folders.ts
 var import_promises = require("node:fs/promises");
@@ -4101,7 +4488,7 @@ async function scanFolder(base, folder, recursive, keep, cancelled, limit = 5e4)
 }
 
 // src/folder-browser.ts
-var FolderBrowser = class extends import_obsidian5.Modal {
+var FolderBrowser = class extends import_obsidian6.Modal {
   constructor(app, label, start, base, done, cancelled) {
     super(app);
     this.label = label;
@@ -4173,8 +4560,8 @@ var FolderBrowser = class extends import_obsidian5.Modal {
       if (this.base) children = await childFolders(this.base, folder);
       else {
         const parent = folder ? this.app.vault.getAbstractFileByPath(folder) : this.app.vault.getRoot();
-        if (!(parent instanceof import_obsidian5.TFolder)) throw Error("Folder not found. Use the breadcrumbs to choose its parent.");
-        children = parent.children.filter((f) => f instanceof import_obsidian5.TFolder && !f.name.startsWith(".")).map((f) => f.name).sort((a, b) => a.localeCompare(b));
+        if (!(parent instanceof import_obsidian6.TFolder)) throw Error("Folder not found. Use the breadcrumbs to choose its parent.");
+        children = parent.children.filter((f) => f instanceof import_obsidian6.TFolder && !f.name.startsWith(".")).map((f) => f.name).sort((a, b) => a.localeCompare(b));
       }
       if (this.closed || ticket !== this.ticket) return;
       this.children = children;
@@ -4206,7 +4593,7 @@ var FolderBrowser = class extends import_obsidian5.Modal {
 };
 
 // src/main.ts
-var import_obsidian9 = require("obsidian");
+var import_obsidian10 = require("obsidian");
 var import_view = require("@codemirror/view");
 
 // src/embeds.ts
@@ -4436,11 +4823,11 @@ function embedAtCursor(text, offset) {
 }
 
 // src/picker.ts
-var import_obsidian7 = require("obsidian");
+var import_obsidian8 = require("obsidian");
 
 // src/favorites.ts
-var import_obsidian6 = require("obsidian");
-var key = (f) => f.root + "\n" + f.folder.replace(/^\/+|\/+$/g, "");
+var import_obsidian7 = require("obsidian");
+var key2 = (f) => f.root + "\n" + f.folder.replace(/^\/+|\/+$/g, "");
 var FolderFavorites = class {
   constructor(parent, store, current, apply, allowExternal = true) {
     this.store = store;
@@ -4451,7 +4838,7 @@ var FolderFavorites = class {
       attr: { "aria-label": "Favorite folders" }
     });
     this.select.onchange = () => {
-      const chosen = this.store.get().find((f) => key(f) === this.select.value);
+      const chosen = this.store.get().find((f) => key2(f) === this.select.value);
       if (chosen) {
         this.apply(chosen);
         this.refresh();
@@ -4469,12 +4856,12 @@ var FolderFavorites = class {
     this.select.createEl("option", { value: "", text: "Favorite folders\u2026" });
     for (const f of this.store.get().filter((f2) => this.allowExternal || !f2.root)) {
       this.select.createEl("option", {
-        value: key(f),
+        value: key2(f),
         text: (f.root ? f.root + ":" : "Vault: ") + (f.folder || "/")
       });
     }
     this.select.value = "";
-    const exists = this.store.get().some((f) => key(f) === key(current));
+    const exists = this.store.get().some((f) => key2(f) === key2(current));
     this.star.setText(exists ? "\u2605 Favorited" : "\u2606 Favorite folder");
     this.star.setAttribute(
       "aria-label",
@@ -4485,24 +4872,24 @@ var FolderFavorites = class {
   async toggle() {
     const current = this.current();
     if (!current.root && !current.folder) {
-      new import_obsidian6.Notice("Choose a folder or enter a folder prefix first.");
+      new import_obsidian7.Notice("Choose a folder or enter a folder prefix first.");
       return;
     }
     const before = this.store.get();
-    const exists = before.some((f) => key(f) === key(current));
+    const exists = before.some((f) => key2(f) === key2(current));
     try {
       await this.store.set(
-        exists ? before.filter((f) => key(f) !== key(current)) : [...before, { ...current }]
+        exists ? before.filter((f) => key2(f) !== key2(current)) : [...before, { ...current }]
       );
       this.refresh();
     } catch (e) {
-      new import_obsidian6.Notice("Could not save favorite: " + String(e));
+      new import_obsidian7.Notice("Could not save favorite: " + String(e));
     }
   }
 };
 
 // src/picker.ts
-var GalleryModal = class extends import_obsidian7.Modal {
+var GalleryModal = class extends import_obsidian8.Modal {
   constructor(app, configured, options, done, favoritesStore) {
     super(app);
     this.configured = configured;
@@ -4655,7 +5042,7 @@ var GalleryModal = class extends import_obsidian7.Modal {
   draw() {
     clearTimeout(this.timer);
     this.favorites?.refresh();
-    const fuzzy = this.query ? (0, import_obsidian7.prepareFuzzySearch)(this.query) : null;
+    const fuzzy = this.query ? (0, import_obsidian8.prepareFuzzySearch)(this.query) : null;
     const files = this.images.filter((f) => folderMatches(f.path, this.folder, this.category) && withinFolder(f.path, this.folder, this.recursive)).map((f) => ({ f, score: fuzzy ? fuzzy(f.path)?.score : 0 })).filter((x) => x.score !== void 0).sort((a, b) => b.score - a.score || a.f.path.localeCompare(b.f.path)).map((x) => x.f);
     this.count.setText(
       `${files.length} image${files.length === 1 ? "" : "s"}${files.length > this.limit ? ` \xB7 showing ${this.limit}` : ""}`
@@ -4700,7 +5087,7 @@ var GalleryModal = class extends import_obsidian7.Modal {
 };
 
 // src/file-picker.ts
-var import_obsidian8 = require("obsidian");
+var import_obsidian9 = require("obsidian");
 
 // src/languages.ts
 var Prism = require_prism();
@@ -4762,7 +5149,7 @@ function highlightedCode(text, path2) {
 }
 
 // src/file-picker.ts
-var FileGalleryModal = class extends import_obsidian8.Modal {
+var FileGalleryModal = class extends import_obsidian9.Modal {
   constructor(app, options, done, favoritesStore) {
     super(app);
     this.options = options;
@@ -5015,8 +5402,8 @@ var FileGalleryModal = class extends import_obsidian8.Modal {
       this.count.setText(String(e));
       return;
     }
-    const key2 = JSON.stringify([root.name, folder, this.recursive]);
-    if (this.indexedRoot === key2) {
+    const key3 = JSON.stringify([root.name, folder, this.recursive]);
+    if (this.indexedRoot === key3) {
       void this.draw();
       return;
     }
@@ -5035,7 +5422,7 @@ var FileGalleryModal = class extends import_obsidian8.Modal {
       );
       if (ticket !== this.scan || !this.contentEl.isConnected) return;
       this.entries = this.entries.filter((e) => !e.external).concat(result.paths.map((path2) => ({ path: root.name + ":" + path2, external: true })));
-      this.indexedRoot = key2;
+      this.indexedRoot = key3;
       this.scopeNote = result.capped ? " \xB7 first 50,000 files; choose a subfolder to narrow the scan" : "";
       void this.draw();
     } catch (e) {
@@ -5043,13 +5430,13 @@ var FileGalleryModal = class extends import_obsidian8.Modal {
     }
   }
   matches() {
-    const key2 = JSON.stringify([this.query, this.folder, this.category, this.kind, this.selectedRoot, this.recursive]);
-    if (this.matchCache?.key === key2 && this.matchCache.entries === this.entries) return this.matchCache.result;
-    const fuzzy = this.query.trim() ? (0, import_obsidian8.prepareFuzzySearch)(this.query.trim()) : null;
+    const key3 = JSON.stringify([this.query, this.folder, this.category, this.kind, this.selectedRoot, this.recursive]);
+    if (this.matchCache?.key === key3 && this.matchCache.entries === this.entries) return this.matchCache.result;
+    const fuzzy = this.query.trim() ? (0, import_obsidian9.prepareFuzzySearch)(this.query.trim()) : null;
     const result = this.entries.filter(
       (e) => (this.selectedRoot ? e.external && e.path.startsWith(this.selectedRoot + ":") : !e.external) && kindMatches(e.path, this.kind) && folderMatches(e.path, this.folder, this.category) && withinFolder(e.path, this.folder.trim().replace(/^\/+|\/+$/g, ""), this.recursive)
     ).map((e) => ({ e, score: fuzzy ? fuzzy(e.path)?.score : 0 })).filter((x) => x.score !== void 0).sort((a, b) => b.score - a.score || a.e.path.localeCompare(b.e.path)).map((x) => x.e);
-    this.matchCache = { key: key2, entries: this.entries, result };
+    this.matchCache = { key: key3, entries: this.entries, result };
     return result;
   }
   async draw() {
@@ -5125,7 +5512,7 @@ var FileGalleryModal = class extends import_obsidian8.Modal {
         );
         return;
       }
-      const lib = await (0, import_obsidian8.loadPdfJs)();
+      const lib = await (0, import_obsidian9.loadPdfJs)();
       if (!alive()) return;
       const bytes = await this.app.vault.readBinary(e.file);
       if (!alive()) return;
@@ -5188,7 +5575,7 @@ var FileGalleryModal = class extends import_obsidian8.Modal {
         }
       }
     } else if (e.file && (e.file.extension === "md" || codePath(e.path)) && !/\.(blend)$/i.test(e.path)) {
-      if (e.file.stat.size > 2 * 1024 * 1024 && this.app.vault.adapter instanceof import_obsidian8.FileSystemAdapter) {
+      if (e.file.stat.size > 2 * 1024 * 1024 && this.app.vault.adapter instanceof import_obsidian9.FileSystemAdapter) {
         const fs3 = require("fs/promises");
         const handle = await fs3.open(
           this.app.vault.adapter.getFullPath(e.path),
@@ -5215,14 +5602,14 @@ var FileGalleryModal = class extends import_obsidian8.Modal {
       return;
     }
     if (e.file?.extension === "md") {
-      const component = new import_obsidian8.Component();
+      const component = new import_obsidian9.Component();
       component.load();
       this.previewDisposers.push(() => component.unload());
       const bridge = this.bridge();
       if (bridge?.renderInHost) body.dataset.codeLinksHost = "gallery";
       body.classList.add("markdown-rendered");
       const excerpt = text.slice(0, 4e4);
-      await import_obsidian8.MarkdownRenderer.render(
+      await import_obsidian9.MarkdownRenderer.render(
         this.app,
         excerpt,
         body,
@@ -5273,7 +5660,7 @@ var FileGalleryModal = class extends import_obsidian8.Modal {
 };
 
 // src/main.ts
-var ImageOptions = class extends import_obsidian9.Modal {
+var ImageOptions = class extends import_obsidian10.Modal {
   constructor(app, target, done) {
     super(app);
     this.target = target;
@@ -5284,12 +5671,12 @@ var ImageOptions = class extends import_obsidian9.Modal {
     const l = layout(this.target.embed.label);
     let align = l.align ?? "left";
     let width = void 0;
-    const row = new import_obsidian9.Setting(this.contentEl).setName("Alignment");
+    const row = new import_obsidian10.Setting(this.contentEl).setName("Alignment");
     row.addDropdown(
       (d) => d.addOptions({ left: "Left", center: "Center", right: "Right" }).setValue(align).onChange((v) => align = v)
     );
     let field;
-    new import_obsidian9.Setting(this.contentEl).setName("Width (pixels)").setDesc(
+    new import_obsidian10.Setting(this.contentEl).setName("Width (pixels)").setDesc(
       "Leave blank for natural size. Height follows the image aspect ratio."
     ).addText((t) => {
       field = t.inputEl;
@@ -5298,7 +5685,7 @@ var ImageOptions = class extends import_obsidian9.Modal {
       t.inputEl.max = "10000";
       t.setValue(l.width ? String(l.width) : "");
     });
-    new import_obsidian9.Setting(this.contentEl).addButton(
+    new import_obsidian10.Setting(this.contentEl).addButton(
       (b) => b.setButtonText("Reset to natural size").onClick(() => {
         field.value = "";
         width = null;
@@ -5307,7 +5694,7 @@ var ImageOptions = class extends import_obsidian9.Modal {
       (b) => b.setButtonText("Apply").setCta().onClick(() => {
         width = field.value.trim() ? Number(field.value) : null;
         if (width !== null && (!Number.isInteger(width) || width < 1 || width > 1e4)) {
-          new import_obsidian9.Notice("Enter a whole-number width from 1 to 10000.");
+          new import_obsidian10.Notice("Enter a whole-number width from 1 to 10000.");
           return;
         }
         this.done({ align, width });
@@ -5319,7 +5706,7 @@ var ImageOptions = class extends import_obsidian9.Modal {
     this.contentEl.empty();
   }
 };
-var ImageGallery = class extends import_obsidian9.Plugin {
+var ImageGallery = class extends import_obsidian10.Plugin {
   settings = { finderSize: 100, finderWidth: 0, finderHeight: 0, folder: "", favorites: [] };
   favoritesStore = {
     get: () => this.settings.favorites,
@@ -5339,7 +5726,7 @@ var ImageGallery = class extends import_obsidian9.Plugin {
     try {
       if (await libraries.start()) this.paperLibrary = libraries;
     } catch (e) {
-      new import_obsidian9.Notice("Paper library: " + String(e), 1e4);
+      new import_obsidian10.Notice("Paper library: " + String(e), 1e4);
     }
     this.api = {
       library: this.paperLibrary,
@@ -5427,7 +5814,7 @@ var ImageGallery = class extends import_obsidian9.Plugin {
           editor.posToOffset(editor.getCursor())
         );
         if (!embed) {
-          new import_obsidian9.Notice(
+          new import_obsidian10.Notice(
             "Place the cursor inside an image link, or on a line with one image."
           );
           return;
@@ -5466,7 +5853,7 @@ var ImageGallery = class extends import_obsidian9.Plugin {
           if (cm) {
             const view = import_view.EditorView.findFromDOM(cm);
             if (!view) return;
-            const file = view.state.field(import_obsidian9.editorInfoField, false)?.file;
+            const file = view.state.field(import_obsidian10.editorInfoField, false)?.file;
             if (!file) return;
             const snapshot = view.state.doc.toString();
             const widget = img.closest(".cm-embed-block") ?? img;
@@ -5495,7 +5882,7 @@ var ImageGallery = class extends import_obsidian9.Plugin {
             else {
               event.preventDefault();
               event.stopImmediatePropagation();
-              new import_obsidian9.Notice(
+              new import_obsidian10.Notice(
                 "This image cannot be mapped safely in Live Preview. Use Reading view."
               );
               return;
@@ -5526,7 +5913,7 @@ var ImageGallery = class extends import_obsidian9.Plugin {
     void this.api.pickImage({ sourcePath: file.path, title: "Insert image" }).then((f) => {
       if (!f) return;
       if (editor.getValue() !== snapshot || view.file !== file) {
-        new import_obsidian9.Notice(
+        new import_obsidian10.Notice(
           "Note changed. Run Insert image again at the desired position."
         );
         return;
@@ -5534,7 +5921,7 @@ var ImageGallery = class extends import_obsidian9.Plugin {
       const link2 = this.app.fileManager.generateMarkdownLink(f, file.path);
       const made = scanEmbeds("!" + link2)[0];
       if (!made) {
-        new import_obsidian9.Notice("Cannot create an image link for this filename.");
+        new import_obsidian10.Notice("Cannot create an image link for this filename.");
         return;
       }
       editor.replaceRange(
@@ -5557,7 +5944,7 @@ var ImageGallery = class extends import_obsidian9.Plugin {
       });
       if (!choice) return;
       if (editor.getValue() !== snapshot || view.file !== file) {
-        new import_obsidian9.Notice(
+        new import_obsidian10.Notice(
           "The text changed. Reopen the gallery at the intended link."
         );
         return;
@@ -5592,7 +5979,7 @@ var ImageGallery = class extends import_obsidian9.Plugin {
   async bindReading(el, ctx) {
     if (el.closest(".ss-stage, .ig-modal")) return;
     const file = this.app.vault.getAbstractFileByPath(ctx.sourcePath);
-    if (!(file instanceof import_obsidian9.TFile) || file.extension !== "md") return;
+    if (!(file instanceof import_obsidian10.TFile) || file.extension !== "md") return;
     const section = ctx.getSectionInfo(el);
     if (!section) return;
     const snapshot = await this.app.vault.cachedRead(file);
@@ -5622,7 +6009,7 @@ var ImageGallery = class extends import_obsidian9.Plugin {
         img.style.removeProperty("--ig-width");
       });
     }
-    const child = new import_obsidian9.MarkdownRenderChild(el);
+    const child = new import_obsidian10.MarkdownRenderChild(el);
     child.register(() => cleanup.forEach((f) => f()));
     ctx.addChild(child);
   }
@@ -5635,7 +6022,7 @@ var ImageGallery = class extends import_obsidian9.Plugin {
   }
   menu(event, target) {
     this.activeMenu?.hide();
-    const menu = new import_obsidian9.Menu().setUseNativeMenu(false);
+    const menu = new import_obsidian10.Menu().setUseNativeMenu(false);
     this.activeMenu = menu;
     const actions = [
       [
@@ -5671,7 +6058,7 @@ var ImageGallery = class extends import_obsidian9.Plugin {
       )
     );
     const doc = event ? event.target.ownerDocument : this.app.workspace.containerEl.ownerDocument;
-    const key2 = (e) => {
+    const key3 = (e) => {
       if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey || e.repeat) return;
       const n = Number(e.key) - 1;
       if (!/^[1-6]$/.test(e.key)) return;
@@ -5680,8 +6067,8 @@ var ImageGallery = class extends import_obsidian9.Plugin {
       menu.hide();
       actions[n][2]();
     };
-    doc.addEventListener("keydown", key2, true);
-    menu.onHide(() => doc.removeEventListener("keydown", key2, true));
+    doc.addEventListener("keydown", key3, true);
+    menu.onHide(() => doc.removeEventListener("keydown", key3, true));
     if (event) menu.showAtMouseEvent(event);
     else {
       const box = this.app.workspace.containerEl.getBoundingClientRect();
@@ -5730,7 +6117,7 @@ var ImageGallery = class extends import_obsidian9.Plugin {
         return;
       }
       const views = this.app.workspace.getLeavesOfType("markdown").map((l) => l.view).filter(
-        (v) => v instanceof import_obsidian9.MarkdownView && v.file?.path === target.file.path
+        (v) => v instanceof import_obsidian10.MarkdownView && v.file?.path === target.file.path
       );
       if (views.some((v) => v.getMode() === "source")) {
         const v = views.find((v2) => v2.getMode() === "source");
@@ -5751,17 +6138,17 @@ var ImageGallery = class extends import_obsidian9.Plugin {
     }
   }
   error(e) {
-    new import_obsidian9.Notice(e.message ?? String(e), 8e3);
+    new import_obsidian10.Notice(e.message ?? String(e), 8e3);
   }
 };
-var GallerySettings = class extends import_obsidian9.PluginSettingTab {
+var GallerySettings = class extends import_obsidian10.PluginSettingTab {
   constructor(app, plugin) {
     super(app, plugin);
     this.plugin = plugin;
   }
   display() {
     this.containerEl.empty();
-    new import_obsidian9.Setting(this.containerEl).setName("Images folder").setDesc(
+    new import_obsidian10.Setting(this.containerEl).setName("Images folder").setDesc(
       "Optional vault-relative folder. The picker also offers the note attachment folder and all vault images."
     ).addText(
       (t) => t.setPlaceholder("Attachments").setValue(this.plugin.settings.folder).onChange(async (v) => {
