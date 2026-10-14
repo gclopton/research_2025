@@ -46,8 +46,13 @@ def membership(c,source,library):
     if item not in c['memberships']:c['memberships'].append(item)
 
 def check(v,c):
-    errors=[];seen={};registered={}
+    errors=[];seen={};registered={};reserved=set()
     for i,s in c['sources'].items():
+        reserved.update(key(t) for t in [s['title'],Path(s['pdf']['path']).stem,Path(s.get('conversion',{}).get('path','')).stem]+[Path(a['path']).stem for a in s.get('aliases',[])])
+        cleanup=s.get('cleanup');conversion=s.get('conversion')
+        if cleanup and conversion:
+            md=within(v,conversion['path'])
+            if md.is_file() and digest(md)!=cleanup['markdownSha256']:errors.append('Changed cleaned reading copy '+conversion['path'])
         for field in ['pdf','conversion']:
             if field in s:
                 p=within(v,s[field]['path']);registered[str(p)]=i
@@ -64,6 +69,19 @@ def check(v,c):
         if 'markdown_originals' not in p.parts or str(p.resolve()) in registered:continue
         kind,ids=matches(c,title=p.stem)
         if ids:errors.append('Unregistered matching conversion '+str(p.relative_to(v)))
+    reserved.discard('')
+    for root,dirs,files in os.walk(v):
+        dirs[:]=[d for d in dirs if not d.startswith('.')]
+        for name in files:
+            p=Path(root)/name
+            if p.suffix.lower() not in ['.md','.pdf'] or str(p.resolve()) in registered:continue
+            name=p.stem
+            for _ in range(4):
+                if key(name) in reserved:
+                    errors.append('Reserved paper title: '+str(p.relative_to(v)));break
+                stripped=re.sub(r'(?:[\s_-]+(?:copy|backup|old version|\d+)|\s*\((?:copy|backup|old version|\d+)\))$','',name,flags=re.I).strip()
+                if stripped==name:break
+                name=stripped
     return errors
 
 def main():
