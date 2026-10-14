@@ -39073,26 +39073,22 @@ function registerAnnotations(plugin, store) {
     }
     build() {
       const state = this.view.state, info = state.field(import_obsidian22.editorInfoField, false);
-      if (!state.field(import_obsidian22.editorLivePreviewField, false)) {
-        this.decorations = import_view11.Decoration.none;
-        this.atomic = import_view11.Decoration.none;
-        return;
-      }
+      const live = !!state.field(import_obsidian22.editorLivePreviewField, false);
       const raw = state.doc.toString(), commentRanges = [], ranges = [], anchors = [];
       for (const c of store.data.comments.filter((c2) => !c2.resolved && store.isAnnotationVisible(c2) && excerpts(c2).some((a2) => a2.path === info?.file?.path) && !c2.questionId)) {
-        for (const a2 of excerpts(c).filter((a3) => a3.path === info?.file?.path && !a3.sectionSource && a3.kind !== "math")) {
-          const at = locateQuote(raw, a2);
+        for (const a2 of excerpts(c).filter((a3) => a3.path === info?.file?.path && !a3.sectionSource && (!live || a3.kind !== "math"))) {
+          const at = locateMarginAnchor(raw, a2);
           if (at) commentRanges.push({ ...at, comment: c });
         }
       }
       for (const part of commentSegments(commentRanges)) ranges.push(import_view11.Decoration.mark({ class: markClass(part.comments), attributes: markAttributes(part.comments) }).range(part.from, part.to));
-      for (const a2 of anchorsFor(state.doc)) {
+      if (live) for (const a2 of anchorsFor(state.doc)) {
         const mark = import_view11.Decoration.replace({ widget: new AnchorChip(a2.id, plugin) }).range(a2.from, a2.to);
         ranges.push(mark);
         anchors.push(mark);
       }
       const path = info?.file?.path;
-      if (path) for (const c of store.data.comments) {
+      if (path && live) for (const c of store.data.comments) {
         if (c.kind !== "sticky" || c.deletedAt || c.path !== path || !store.isAnnotationVisible(c)) continue;
         const p = placementOf(c);
         if (!p) continue;

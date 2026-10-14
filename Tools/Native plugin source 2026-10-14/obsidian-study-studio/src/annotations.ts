@@ -1,3 +1,4 @@
+import {locateMarginAnchor} from './math-anchor-location';
 import {FloatingPalette} from './floating-palette';
 import {readingInsertion} from './margin-anchors';
 import {menuGroup} from './menu-groups';
@@ -104,12 +105,12 @@ export function registerAnnotations(plugin:Plugin,store:ReviewStore){
   decorations:DecorationSet=Decoration.none;atomic:DecorationSet=Decoration.none;
   constructor(readonly view:EditorView){this.build();}
   update(update:import('obsidian-cm/view').ViewUpdate){if(update.docChanged||update.transactions.some(t=>t.effects.some(e=>e.is(refreshAnnotations)))||update.startState.field(editorLivePreviewField,false)!==update.state.field(editorLivePreviewField,false)||update.startState.field(editorInfoField,false)?.file?.path!==update.state.field(editorInfoField,false)?.file?.path)this.build();}
-  build(){const state=this.view.state,info=state.field(editorInfoField,false);if(!state.field(editorLivePreviewField,false)){this.decorations=Decoration.none;this.atomic=Decoration.none;return;}const raw=state.doc.toString(),commentRanges:CommentRange[]=[],ranges:Range<Decoration>[]=[],anchors:Range<Decoration>[]=[];
-   for(const c of store.data.comments.filter(c=>!c.resolved&&store.isAnnotationVisible(c)&&excerpts(c).some(a=>a.path===info?.file?.path)&&!c.questionId)){for(const a of excerpts(c).filter(a=>a.path===info?.file?.path&&!a.sectionSource&&a.kind!=='math')){const at=locateQuote(raw,a);if(at)commentRanges.push({...at,comment:c});}}
+  build(){const state=this.view.state,info=state.field(editorInfoField,false);const live=!!state.field(editorLivePreviewField,false);const raw=state.doc.toString(),commentRanges:CommentRange[]=[],ranges:Range<Decoration>[]=[],anchors:Range<Decoration>[]=[];
+   for(const c of store.data.comments.filter(c=>!c.resolved&&store.isAnnotationVisible(c)&&excerpts(c).some(a=>a.path===info?.file?.path)&&!c.questionId)){for(const a of excerpts(c).filter(a=>a.path===info?.file?.path&&!a.sectionSource&&(!live||a.kind!=='math'))){const at=locateMarginAnchor(raw,a);if(at)commentRanges.push({...at,comment:c});}}
    for(const part of commentSegments(commentRanges))ranges.push(Decoration.mark({class:markClass(part.comments),attributes:markAttributes(part.comments)}).range(part.from,part.to));
    // Block IDs at paragraph ends are preserved in source and remain atomic in Live Preview.
-   for(const a of anchorsFor(state.doc)){const mark=Decoration.replace({widget:new AnchorChip(a.id,plugin)}).range(a.from,a.to);ranges.push(mark);anchors.push(mark);}
-   const path=info?.file?.path;if(path)for(const c of store.data.comments){if(c.kind!=='sticky'||c.deletedAt||c.path!==path||!store.isAnnotationVisible(c))continue;const p=placementOf(c);if(!p)continue;const end=cachedPlacementEnd(path,raw,p);if(end!==undefined)ranges.push(Decoration.widget({widget:new StickyWidget(c,store),side:1}).range(end));}
+   if(live)for(const a of anchorsFor(state.doc)){const mark=Decoration.replace({widget:new AnchorChip(a.id,plugin)}).range(a.from,a.to);ranges.push(mark);anchors.push(mark);}
+   const path=info?.file?.path;if(path&&live)for(const c of store.data.comments){if(c.kind!=='sticky'||c.deletedAt||c.path!==path||!store.isAnnotationVisible(c))continue;const p=placementOf(c);if(!p)continue;const end=cachedPlacementEnd(path,raw,p);if(end!==undefined)ranges.push(Decoration.widget({widget:new StickyWidget(c,store),side:1}).range(end));}
    this.decorations=Decoration.set(ranges,true);this.atomic=Decoration.set(anchors,true);
   }
  },{decorations:v=>v.decorations,provide:p=>EditorView.atomicRanges.of(view=>view.plugin(p)?.atomic??Decoration.none),eventHandlers:{mouseover(event){const node=(event.target as HTMLElement).closest<HTMLElement>('[data-critique-id]');const c=store.data.comments.find(c=>c.id===node?.dataset.critiqueId);if(node&&c)store.hover(node,c);return false;},contextmenu(event){const node=(event.target as HTMLElement).closest<HTMLElement>('[data-critique-id]');const ids=(node?.dataset.studyCommentIds??node?.dataset.critiqueId??'').split(' '),comments=store.data.comments.filter(c=>ids.includes(c.id));if(comments.length){const menu=Menu.forEvent(event);for(const c of comments)menu.addItem(i=>i.setSection('selection').setTitle('Open margin note: '+(c.comment||c.intent||c.quote).slice(0,60)).setIcon('notebook-pen').onClick(()=>store.edit(c)));}return false;}}}));

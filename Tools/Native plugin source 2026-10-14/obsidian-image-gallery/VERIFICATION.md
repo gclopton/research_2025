@@ -1,0 +1,3 @@
+
+
+2026-10-14 source-mode update: build passed; Study Studio 292 tests and Image Gallery 53 tests passed. Native synthetic-lab checks verified Source-mode text/TeX marks, Live Preview and Reading-view text marks, original warning/read-only state, uniquely named editable copy, successful copy edits, preserved original bytes, rebased image link and next numbered suggestion. Harness initially used the wrong single-ID selector for overlapping marks, wrong editor offset method, and compared an encoded image URL without decoding; corrected checks passed. Screenshot capture was stale during this run, so these are native DOM/editor/file checks, not a claimed visual-layout review.

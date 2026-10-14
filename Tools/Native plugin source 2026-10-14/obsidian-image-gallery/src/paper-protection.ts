@@ -1,6 +1,6 @@
 import {Plugin,MarkdownView,Notice,TFile,editorInfoField} from 'obsidian';
 import {EditorState,Compartment,Transaction} from '@codemirror/state';
-import {EditorView} from '@codemirror/view';
+import {EditorView,showPanel} from '@codemirror/view';
 import {PaperProtectionIndex,sameContent} from './paper-protection-model';
 import {createHash} from 'node:crypto';
 import type {LibraryCatalog} from './library-model';
@@ -11,8 +11,9 @@ interface Owner {catalog:LibraryCatalog;subscribe(f:()=>void):()=>void;issues:Ma
 export function installPaperProtection(plugin:Plugin,owner:Owner){
  const app=plugin.app,adapter=app.vault.adapter;let index=new PaperProtectionIndex(owner.catalog),lastNotice=0,active=true;
  const moved=new Map<string,string>(),relocated=new Map<string,number>();const readonlySlot=new Compartment();
- const readonlyExtension=()=>EditorState.readOnly.compute([editorInfoField],state=>locked(state.field(editorInfoField,false)?.file?.path??''));
+ const readonlyExtension=()=>EditorState.readOnly.compute([editorInfoField],state=>editorLocked(state.field(editorInfoField,false)?.file?.path??''));
  const locked=(path:string)=>index.isProtected(path)||moved.has(path);
+ const editorLocked=(path:string)=>locked(path)||/\.md$/i.test(path)&&index.canonicalPaths.has(path);
  const harmlessRelocation=(path:string,before:string,after:string)=>(relocated.get(path)??0)>Date.now()&&equivalentLocalLinks(before,after,link=>app.metadataCache.getFirstLinkpathDest(link,path)?.path);
  const notify=(error:unknown)=>{if(Date.now()-lastNotice>2000){lastNotice=Date.now();new Notice(String(error).replace(/^Error: /,''),6500);}};
  const refusal=()=>Error('Cleaned paper text is protected. Annotations are available; use “Create working copy” to edit the text.');
@@ -32,10 +33,21 @@ export function installPaperProtection(plugin:Plugin,owner:Owner){
   plugin.registerEvent(app.vault.on('create',f=>{if(f instanceof TFile&&!moved.has(f.path)&&!index.canonicalPaths.has(f.path)&&index.ownerForName(f.path))owner.reportProtectionIssue(f.path,'This file uses a reserved paper title. Rename it with a descriptive suffix.');}));
  });
  plugin.registerEditorExtension(readonlySlot.of(readonlyExtension()));
+ // The panel exists only in the editor; Reading view remains uncluttered.
+ plugin.registerEditorExtension(showPanel.compute([editorInfoField],state=>{
+  const path=state.field(editorInfoField,false)?.file?.path;
+  if(!path||!editorLocked(path))return null;
+  return view=>{
+   const dom=view.dom.ownerDocument.createElement('div');dom.className='image-gallery-source-warning';dom.setAttribute('role','note');
+   const message=dom.createEl('span',{text:'Naughty boy — this is an original source. Duplicate it before making edits. Annotations are still available.'});
+   const copy=dom.createEl('button',{text:'Duplicate before editing'});copy.onclick=()=>owner.createWorkingCopy(path);
+   return {dom,top:true};
+  };
+ }));
  // Typing/paste/drop are rejected; system document loads and annotation-only transactions remain valid.
  plugin.registerEditorExtension(EditorState.transactionFilter.of(tr=>{
   const path=tr.startState.field(editorInfoField,false)?.file?.path;
-  if(path&&locked(path)&&tr.docChanged&&!!tr.annotation(Transaction.userEvent)){notify(refusal());return [];}
+  if(path&&editorLocked(path)&&tr.docChanged&&!!tr.annotation(Transaction.userEvent)){notify(refusal());return [];}
   return tr;
  }));
  const patch=(name:string,wrap:(original:(...args:any[])=>any)=>(...args:any[])=>any)=>{

@@ -485,3 +485,8 @@ Margin note editors support Tab/Shift-Tab and Cmd/Ctrl-]/[ to nest or promote li
 Margin cards show native rendered Markdown when focus leaves the card or Escape is pressed. Clicking text or pressing Enter reopens the retained editor without resetting source, caret or undo. Up to six clean inactive editors remain retained; busy editors and drafts are never evicted. Preview renders offscreen and swaps atomically, with generation guards against stale results. Math Studio, image import, composition, context menus and application switches do not hide an active editor. Save failure keeps and displays the current draft.
 
 Editing supports bold, italic, strikethrough, inline code, Markdown link labels and headings, plus existing math/table/image widgets and nested-list commands. Selected formatting delimiters remain visible for editing; list markers and wikilink brackets remain source while editing. Bare URLs have no additional live styling. This is a bounded editor, not full native Live Preview parity. CommonMark code boundaries distinguish indented list math from literal code; small-field caches cannot evict the main note's incremental parse. Existing equation anchors release when their delimiters change or they move into code.
+
+
+## Source-mode paper review — 2026-10-14
+
+Source mode retains text and equation annotation decorations. Raw Markdown and block IDs remain visible; Live Preview retains its existing chips and math overlays. In Source mode, a math annotation marks its source equation, including semantic sub-equation annotations whose rendered selection is not a contiguous TeX span.

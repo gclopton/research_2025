@@ -38,6 +38,6 @@ export class PaperProtectionIndex {
 }
 export function sameContent(a:string|ArrayBuffer,b:string|ArrayBuffer){if(typeof a==='string'||typeof b==='string')return a===b;const x=new Uint8Array(a),y=new Uint8Array(b);return x.length===y.length&&x.every((v,i)=>v===y[i]);}
 export function workingCopyName(sourceName:string,description:string){
- const descriptor=description.trim();if(!descriptor||/^(?:\d+|copy|backup|old version)$/i.test(descriptor)||/[\\/:*?"<>|\[\]#\x00-\x1f]/.test(descriptor))throw Error('Choose a descriptive suffix, such as Outline, Summary, or Worked examples.');
+ const requested=description.trim(),descriptor=/^\d+$/.test(requested)?`Working copy ${requested}`:requested;if(!descriptor||/^(?:copy|backup|old version)$/i.test(descriptor)||/[\\/:*?"<>|\[\]#\x00-\x1f]/.test(descriptor))throw Error('Choose a descriptive suffix, such as Outline, Summary, or Worked examples.');
  return `${stem(sourceName)} — ${descriptor}.md`;
 }

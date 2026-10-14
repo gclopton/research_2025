@@ -26,7 +26,7 @@ test('canonical moves retain reservation and source lock but duplicate copies ar
 });
 test('working copies require meaningful distinct descriptors',()=>{
  assert.match(workingCopyName('A paper.md','Outline'),/A paper — Outline.md$/);
- for(const description of ['','1','copy','backup','../Original'])assert.throws(()=>workingCopyName('A paper.md',description));
+ for(const description of ['','copy','backup','../Original'])assert.throws(()=>workingCopyName('A paper.md',description));
 });
 test('registration can create its own canonical file and figure assets are protected',()=>{
  const index=new PaperProtectionIndex(catalog());
@@ -47,4 +47,9 @@ test('automatic link shortening can be ignored only with identical resolved targ
  const a='Text. ![Figure](images/fig.svg)\n[Section](#Results)';
  assert.equal(equivalentLocalLinks(a,a.replace('images/fig.svg','fig.svg'),resolve),true);
  for(const b of [a.replace('images/fig.svg','other.svg'),a.replace('Text.','Changed.'),a.replace('Figure','Different caption'),a.replace('#Results','#Methods')])assert.equal(equivalentLocalLinks(a,b,resolve),false);
+});
+
+test('numeric working-copy names remain distinct and pass paper title reservations',()=>{
+ const index=new PaperProtectionIndex(catalog());
+ for(const n of ['1','2']){const name=workingCopyName('Native defects in CeO2.md',n);assert.equal(name,`Native defects in CeO2 — Working copy ${n}.md`);assert.doesNotThrow(()=>index.assertDestination('Paper notes/'+name));}
 });

@@ -63,3 +63,8 @@ Move a cleaned conversion's whole folder to retain relative assets. Automatic li
 Protection applies while Image Gallery is enabled. Direct filesystem/Git writes bypass Obsidian; changed open files are reported and stay protected, without automatic reversion. The explicit integrity check hashes reviewed conversions and scans reserved names across the vault. Opening the library does not hash every paper. A missing plugin or disabled plugin is not an operating-system lock.
 
 Acceptance (2026-10-13): 52 TypeScript tests and two Python intake tests pass. Native Obsidian 1.14.4 lab checks cover rejected source writes/deletes/copies, image protection, unchanged annotation bytes and mtime, same-tab read-only transitions, post-it creation with editable math, working-copy edits and images, whole-folder moves, PDF intake, and reporting an external modification without unlocking or reverting it. Light/dark annotation rendering was inspected with Study Studio.
+
+
+## Source-mode paper review — 2026-10-14
+
+Registered original Markdown papers show a persistent editor warning and stay read-only. Duplicate before editing creates a separately titled editable note under Paper notes, using the first free Working copy N suffix. Numeric suffix input expands to Working copy N. Existing source links and rebased asset references are retained; original annotations stay on the original.

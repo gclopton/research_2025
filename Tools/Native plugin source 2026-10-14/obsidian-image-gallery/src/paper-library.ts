@@ -77,7 +77,8 @@ export class PaperLibraries {
   if(!path)return;const id=this.sourceFor(path),source=id&&this.catalog.sources[id];if(!source||!id)return;
   if(!source.conversion){new Notice('Convert this paper before creating an editable working copy.');return;}
   const from=this.app.vault.getAbstractFileByPath(source.conversion.path);if(!(from instanceof TFile))return;
-  new NameDialog(this.app,'Working copy — add a description','Outline',description=>void(async()=>{
+  let number=1;while(this.app.vault.getAbstractFileByPath('Paper notes/'+workingCopyName(from.name,`Working copy ${number}`)))number++;
+  new NameDialog(this.app,'Duplicate before editing — choose a distinct title suffix',`Working copy ${number}`,description=>void(async()=>{
    const filename=workingCopyName(from.name,description),folder='Paper notes',dest=folder+'/'+filename;
    new PaperProtectionIndex(this.catalog).assertDestination(dest);
    if(this.app.vault.getAbstractFileByPath(dest))throw Error('That working copy already exists. Choose another description.');
