@@ -1,0 +1,277 @@
+{
+  "version": 1,
+  "claims": {
+    "observed-residue": {
+      "label": "Observed crystalline residue and authors interpretation of recovery",
+      "papers": [
+        {
+          "citekey": "takakiAtomicStructureIon2014",
+          "label": "Takaki et al 2014 - Atomic structure of ion tracks in Ceria",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Takaki et al 2014 - Atomic structure of ion tracks in Ceria/Takaki et al 2014 - Atomic structure of ion tracks in Ceria.md",
+          "selections": [
+            {
+              "quote": "The discrepancy implies that the size of damage regions obtained by TEM and STEM techniques is the result of the recovering process after an impact of incident swift heavy ions."
+            },
+            {
+              "quote": "These results clearly show that the oxygen sublattice at the core damage region of ion tracks is significantly disordered."
+            },
+            {
+              "image": "images/adf90a32-df06-4515-858a-67a6858ed95d-4_657_1282_228_396.jpg",
+              "whole": true,
+              "sha256": "885608a3ae6e045a990c79a4e7867e7a1372226bf96c3ee279d4f51ea4ff6efd"
+            },
+            {
+              "image": "images/adf90a32-df06-4515-858a-67a6858ed95d-4_759_1114_1072_493.jpg",
+              "whole": true,
+              "sha256": "958078a62748fd382a2d50d4d0de9a91a2ebd62184e57369501fe6aef8759aee"
+            }
+          ]
+        }
+      ]
+    },
+    "deep-residue": {
+      "label": "Depth of the experimental sample, limits of EELS and single-spike recovery",
+      "papers": [
+        {
+          "citekey": "yablinskyCharacterizationSwiftHeavy2015",
+          "label": "Yablinsky et al 2015 - Characterization of swift heavy ion irradiation damage in ceria",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Yablinsky et al 2015 - Characterization of swift heavy ion irradiation damage in ceria/Yablinsky et al 2015 - Characterization of swift heavy ion irradiation damage in ceria.md",
+          "selections": [
+            {
+              "quote": "While chemical changes in the ion track are not precluded, evidence of them was not observed."
+            },
+            {
+              "quote": "These energy deposition values represent thermal energy deposition and are thus not directly comparable to experimental stopping power"
+            },
+            {
+              "quote": "The highly efficient anion sublattice recovery, evident for the lower energy deposition per unit length (Fig. 5), is not seen here."
+            },
+            {
+              "image": "images/3ce6b0f8-f0ed-4d20-af56-98e7fbd7383f-07_487_1206_2014_403.jpg",
+              "whole": true,
+              "sha256": "72c3a437067cffbe79710c20e87ea0f486ad99a4657e75cb7ddaf5a8ac2ba67f"
+            },
+            {
+              "quote": "Because of this procedure, it is estimated that the depth investigated by TEM was"
+            }
+          ]
+        }
+      ]
+    },
+    "single-bulk": {
+      "label": "One ion: initial disorder and radial recrystallization",
+      "papers": [
+        {
+          "citekey": "rymzhanov2025ceria",
+          "label": "Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2/Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2.md",
+          "selections": [
+            {
+              "quote": "Further, this region recovers the initial structure in radial direction, finally producing the damaged crystalline ion track of a smaller diameter.",
+              "comment": "The surrounding paragraph reports an initial radius of approximately 6–7 nm and recrystallization over approximately 40 ps for a single 210 MeV Xe impact."
+            },
+            {
+              "quote": "The transversal projection (Fig. 1b) also shows that the track consists of small crystalline regions representing agglomerations of defects and separated point defects."
+            },
+            {
+              "image": "images/75e74863-6e66-45b2-8a81-0ed33d285cd7-3_664_1760_1296_155.jpg",
+              "whole": true,
+              "sha256": "5c720117a9581db5f4ce9b1d3754bdf8ef704e8aaf70bb3ed33045a37b6a137d"
+            }
+          ]
+        }
+      ]
+    },
+    "single-surface": {
+      "label": "Surface cooling, recrystallization and mass loss; experimental comparison reported by Rymzhanov",
+      "papers": [
+        {
+          "citekey": "rymzhanov2025ceria",
+          "label": "Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2/Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2.md",
+          "selections": [
+            {
+              "quote": "In contrast, in the second case (Fig. 6b) the material has enough time to recrystallize both: the track and nanohillock."
+            },
+            {
+              "quote": "The observed surface structures were found to be crystalline with the lattice spacing and orientation coinciding with the matrix."
+            },
+            {
+              "quote": "which is supposed to suppress the recrystallization processes."
+            },
+            {
+              "image": "images/75e74863-6e66-45b2-8a81-0ed33d285cd7-6_748_1267_1748_400.jpg",
+              "whole": true,
+              "sha256": "7405eb11cbe50b131d7f6d8af8de1a8d4aa5affc085257825f3bfc5d6be26c69"
+            },
+            {
+              "image": "images/75e74863-6e66-45b2-8a81-0ed33d285cd7-7_814_1275_1266_396.jpg",
+              "whole": true,
+              "sha256": "4f2dbf77ef67249d3299451150946289034dbd878b18b169c42a63ce31a30f52"
+            }
+          ]
+        }
+      ]
+    },
+    "surface-reoxidation": {
+      "label": "XPS after atmospheric storage and sputtering correction",
+      "papers": [
+        {
+          "citekey": "iwaseStudyBehaviorOxygen2009",
+          "label": "Iwase et al 2009 - Study on the behavior of oxygen atoms in swift heavy ion irradiated CeO2 by means of synchrotron radiation X-ray photoelectron spectroscopy",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 2: Irradiation-Induced Reduction in Ceria (Experimental Evidence)/markdown_originals/Iwase et al 2009 - Study on the behavior of oxygen atoms in swift heavy ion irradiated CeO2 by means of synchrotron radiation X-ray photoelectron spectroscopy/Iwase et al 2009 - Study on the behavior of oxygen atoms in swift heavy ion irradiated CeO2 by means of synchrotron radiation X-ray photoelectron spectroscopy.md",
+          "selections": [
+            {
+              "quote": "is due to the effect of re-oxidization which has occurred during keeping the samples in atmosphere."
+            },
+            {
+              "quote": "We therefore plotted the data in the figure after removing this effect."
+            },
+            {
+              "quote": "To obtain XPS spectra which were not affected by the re-oxidization, we measured the XPS spectra again after sputtering the specimens slightly with 3 keV Ar ions without any exposure in atmosphere."
+            },
+            {
+              "image": "images/1b9e7f28-2ba0-4b6a-ae6b-72743b0f6eb4-3_643_853_1866_157.jpg",
+              "whole": true,
+              "sha256": "9cab7c86bbdaf249ff1eb8a3f7e17ad6d93cfa0e043facda1825e7e54adbba09"
+            }
+          ]
+        }
+      ]
+    },
+    "surface-balance": {
+      "label": "Surface outflow leaves a mass deficit",
+      "papers": [
+        {
+          "citekey": "rymzhanov2025ceria",
+          "label": "Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2/Rymzhanov et al 2025 - Bulk, overlap and surface effects of swift heavy ions in CeO2.md",
+          "selections": [
+            {
+              "quote": "In contrast, in the second case (Fig. 6b) the material has enough time to recrystallize both: the track and nanohillock."
+            },
+            {
+              "quote": "The observed surface structures were found to be crystalline with the lattice spacing and orientation coinciding with the matrix."
+            },
+            {
+              "quote": "which is supposed to suppress the recrystallization processes."
+            },
+            {
+              "image": "images/75e74863-6e66-45b2-8a81-0ed33d285cd7-6_748_1267_1748_400.jpg",
+              "whole": true,
+              "sha256": "7405eb11cbe50b131d7f6d8af8de1a8d4aa5affc085257825f3bfc5d6be26c69"
+            },
+            {
+              "image": "images/75e74863-6e66-45b2-8a81-0ed33d285cd7-7_814_1275_1266_396.jpg",
+              "whole": true,
+              "sha256": "4f2dbf77ef67249d3299451150946289034dbd878b18b169c42a63ce31a30f52"
+            }
+          ]
+        }
+      ]
+    },
+    "overlap-context": {
+      "label": "overlap recovery",
+      "papers": [
+        {
+          "citekey": "yasudaDefectFormationAccumulation2013",
+          "label": "Yasuda et al 2013",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 4: Track Morphology and Annealing in CeO2 (Experiment + Simulation)/markdown_originals/Yasuda et al 2013 - Defect formation and accumulation in CeO2 irradiated with swift heavy ions/Yasuda et al 2013 - Defect formation and accumulation in CeO2 irradiated with swift heavy ions.md",
+          "selections": [
+            {
+              "quote": "the pre-existing core damage regions are fully recovered within the influence region"
+            },
+            {
+              "quote": "If one assumes partial recovery for the pre-existing damage region, a larger value of the influence region might be obtained."
+            },
+            {
+              "quote": "Data obtained at ambient temperature"
+            },
+            {
+              "quote": "fitted results by an numerical simulation"
+            },
+            {
+              "quote": "the fitting analysis was carried out without differentiation of data points"
+            },
+            {
+              "quote": "evolves to saturation at higher fluences than"
+            },
+            {
+              "image": "images/16c0e990-3fc5-4a04-9de2-f4efc2138945-3_507_649_232_262.jpg",
+              "whole": true,
+              "sha256": "035e28abf31b9f83090e0c8ac4dbc58b0966dfc50b6877f80152948f1469af88"
+            }
+          ]
+        }
+      ]
+    },
+    "jump-estimate": {
+      "label": "migration edge",
+      "papers": [
+        {
+          "citekey": "nakayamaConcertedMigrationMechanism2012",
+          "label": "Nakayama et al 2012",
+          "path": "Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen Transport in Reduced Ceria/markdown_originals/Nakayama et al 2012 - A concerted migration mechanism of mixed oxide ion and electron conduction in reduced ceria/Nakayama et al 2012 - A concerted migration mechanism of mixed oxide ion and electron conduction in reduced ceria.md",
+          "selections": [
+            {
+              "quote": "oxide ions jump between NN tetrahedral sites and pass through a particular type of cation shared edge."
+            },
+            {
+              "quote": "The migration energy for Model A was ~0.62 eV"
+            },
+            {
+              "quote": "resulting in migration energies of ~0.55 and ~0.45 eV for Models B and C, respectively."
+            },
+            {
+              "quote": "In this manner, the electronic structure of"
+            },
+            {
+              "quote": "cannot jump to neighbouring sites to reduce the two repulsive interactions"
+            },
+            {
+              "quote": "it was assumed that the migration path can be linearized from two configurations."
+            },
+            {
+              "image": "images/05657f72-b3de-414f-8e31-2c707a6a4fda-4_617_696_194_244.jpg",
+              "whole": true,
+              "sha256": "5c65be04498cf8de9bea819cd53d48265f2293ec253ddbb0247014f94def0e49"
+            },
+            {
+              "quote": "modified Perdew-Burke-Ernzerhof generalized gradient approximation (PBEsol-GGA)"
+            },
+            {
+              "quote": "Therefore, the assumption of fast"
+            }
+          ]
+        }
+      ]
+    },
+    "interstitial-states": {
+      "label": "interstitial charge",
+      "papers": [
+        {
+          "citekey": "xiaoStabilityMigrationCharged2013",
+          "label": "Xiao et al 2013",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2/Xiao et al 2013 - Stability and migration of charged oxygen interstitials in ThO2 and CeO2.md",
+          "selections": [
+            {
+              "quote": "Our calculations suggest that oxygen interstitial migration"
+            },
+            {
+              "quote": "is influenced by the charge state, configuration of the oxygen interstitial, and the composition of host material."
+            },
+            {
+              "quote": "These results suggest that oxygen interstitials behave as donor- and acceptor-like defects"
+            },
+            {
+              "quote": "the two oxygens interact with their neighbors rather than forming a free"
+            },
+            {
+              "quote": "Energy barrier for oxygen interstitial migration in"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

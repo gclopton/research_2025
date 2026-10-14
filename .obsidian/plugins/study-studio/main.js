@@ -27849,6 +27849,12 @@ function vaultWindowTitle(vault, title) {
 // src/vault-window-identity.ts
 function registerVaultWindowIdentity(plugin) {
   if (!import_obsidian6.Platform.isDesktopApp) return;
+  const identity = plugin.addStatusBarItem();
+  identity.addClass("study-vault-identity");
+  identity.setText(plugin.app.vault.getName());
+  identity.setAttribute("aria-label", "Vault: " + plugin.app.vault.getName());
+  identity.style.fontWeight = "600";
+  identity.style.color = "var(--text-accent)";
   const attached = /* @__PURE__ */ new Map();
   let alive = true;
   const attach = (win) => {
@@ -38736,6 +38742,12 @@ function registerAnnotations(plugin, store) {
   }));
 }
 
+// src/paper-source-path.ts
+function paperSourcePath(app, path) {
+  if (app.vault.getAbstractFileByPath(path)) return path;
+  return app.plugins?.plugins?.["image-gallery"]?.api?.library?.resolve(path) ?? path;
+}
+
 // src/citation-anchor.ts
 function citationText(raw) {
   const text2 = [], starts = [], ends = [];
@@ -39120,7 +39132,7 @@ function reviewMarkdown(report, jsonName) {
 var import_obsidian24 = require("obsidian");
 var READER = "study-evidence-reader";
 function imageFile(app, source, path) {
-  const direct = app.metadataCache.getFirstLinkpathDest(path, source);
+  const direct = app.metadataCache.getFirstLinkpathDest(path, paperSourcePath(app, source));
   if (direct) return direct;
   return app.vault.getFiles().find((f) => app.vault.getResourcePath(f).split("?")[0] === path.split("?")[0]) || null;
 }
@@ -39181,7 +39193,7 @@ var EvidenceReader = class extends import_obsidian24.ItemView {
     const identity = this.identity?.(), paper = this.paper, generation = this.generation, source = this.source;
     if (!this.reviewReady) throw Error("Wait for the source to finish loading with highlights shown before exporting a review.");
     if (!identity || !paper) throw Error("Open a citation record before exporting a review.");
-    const currentSource = await this.app.vault.adapter.read(paper.path);
+    const currentSource = await this.app.vault.adapter.read(paperSourcePath(this.app, paper.path));
     if (currentSource !== source) throw Error("Source changed during review. Wait for the viewer to refresh, then export again.");
     const currentRecord = await this.app.vault.adapter.read(identity.file);
     const report = { schema: "citation-source-review/v1", generatedAt: (/* @__PURE__ */ new Date()).toISOString(), coverage: "current source paper only", identity: { recordPath: identity.file, claimId: identity.id, citekey: paper.citekey, sourcePath: paper.path }, recordSha256: await digest(identity.raw), sourceSha256: await digest(source), recordChangedSinceOpen: currentRecord !== identity.raw, totalSelections: paper.selections.length, tableInventory: await Promise.all(sourceTableLocations(source, tableSources(source)).map(async ({ raw, ...location }) => ({ ...location, sha256: await digest(raw) }))), figureInventory: await Promise.all(paper.selections.filter((s) => s.image).map(async (s) => {
@@ -39272,8 +39284,8 @@ var EvidenceReader = class extends import_obsidian24.ItemView {
       review.value = "";
     };
     toolbar.createEl("button", { text: mark ? "Clear highlights" : "Show highlights" }).onclick = () => void this.show(claim, paper, !mark);
-    toolbar.createEl("button", { text: "Open original" }).onclick = () => void this.app.workspace.openLinkText(paper.path, "", "tab");
-    const file = this.app.vault.getAbstractFileByPath(paper.path);
+    toolbar.createEl("button", { text: "Open original" }).onclick = () => void this.app.workspace.openLinkText(paperSourcePath(this.app, paper.path), "", "tab");
+    const file = this.app.vault.getAbstractFileByPath(paperSourcePath(this.app, paper.path));
     if (!(file instanceof import_obsidian24.TFile)) {
       this.contentEl.createEl("p", { text: `Unavailable paper: ${paper.path}`, cls: "evidence-error" });
       return;
@@ -39282,7 +39294,7 @@ var EvidenceReader = class extends import_obsidian24.ItemView {
     if (generation !== this.generation) return;
     this.source = source;
     const body = this.contentEl.createDiv("markdown-rendered evidence-paper");
-    await import_obsidian24.MarkdownRenderer.render(this.app, renderablePaper(this.source), body, paper.path, this.component);
+    await import_obsidian24.MarkdownRenderer.render(this.app, renderablePaper(this.source), body, paperSourcePath(this.app, paper.path), this.component);
     if (generation !== this.generation) return;
     body.addEventListener("mouseup", () => {
       if (!this.editing) return;
@@ -39487,7 +39499,7 @@ function registerEvidenceWorkflow(plugin) {
     const m = new import_obsidian25.Modal(app);
     m.titleEl.setText(claim.label);
     for (const paper of claim.papers) {
-      const available = app.vault.getAbstractFileByPath(paper.path) instanceof import_obsidian25.TFile;
+      const available = app.vault.getAbstractFileByPath(paperSourcePath(app, paper.path)) instanceof import_obsidian25.TFile;
       const b = m.contentEl.createEl("button", { text: `${paper.label} [${paper.citekey}]${available ? "" : " \u2014 file missing"}`, cls: "evidence-paper-choice" });
       b.onclick = () => {
         m.close();
@@ -39922,6 +39934,7 @@ function registerEvidence(plugin) {
     }
     try {
       const target = parseEvidence(params.target || "");
+      target.path = paperSourcePath(plugin.app, target.path);
       const file = plugin.app.vault.getAbstractFileByPath(target.path);
       if (!(file instanceof import_obsidian26.TFile)) throw Error("Source paper is not present in this vault");
       const leaf = plugin.app.workspace.getLeaf(target.window ? "window" : "tab");

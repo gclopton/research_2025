@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "claims": {
+    "dudarev-functional": {
+      "label": "Dudarev on-site functional: method attribution",
+      "papers": [
+        {
+          "citekey": "dudarevElectronenergylossSpectraStructural1998",
+          "label": "Dudarev et al. (1998), Section II, Eq. (5)",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Dudarev et al 1998 - Electron-energy-loss spectra and the structural stability of nickel oxide; An LSDA+U study/Dudarev et al 1998 - Electron-energy-loss spectra and the structural stability of nickel oxide; An LSDA+U study.md",
+          "selections": [
+            {
+              "quote": "Equation (5) bridges the orbital-dependent formulation by Anisimov et al. [see Eq. (13) from Ref. 21] with the rotationally invariant functional proposed by Liechtenstein et al. [see Eq. (3) from Ref. 15], retaining the simplicity of the first and the covariant character of the second.",
+              "comment": "Method attribution only. The adjacent Eq. (5) gives the U minus J dependence; this NiO paper does not establish the chosen Ce 4f U value or any ceria geometry. Mathematical formula is retained in source, not used as a text-selection anchor.",
+              "color": "#c37b24",
+              "darkColor": "#efb565",
+              "opacity": 0.15
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

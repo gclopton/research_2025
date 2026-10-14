@@ -1,0 +1,2056 @@
+version: 1
+claims:
+  castleton-outward-relaxation:
+    label: 'Castleton et al. (2007): nearest-neighbor Ce displacement'
+    papers:
+    - citekey: castletonTuningLDAU2007
+      label: Castleton et al. (2007)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Castleton et al 2007 - Tuning LDA+U
+        for electron localization and structure at oxygen vacancies in ceria/Castleton et al 2007 - Tuning
+        LDA+U for electron localization and structure at oxygen vacancies in ceria.md'
+      selections:
+      - quote: The four nearest neighbor Ce ions always relax outwards
+        comment: Abstract, journal page 244704-1; PDF page 2. This record demonstrates exact source navigation.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q11-isolated-polaron:
+    label: Isolated-polaron bond elongation
+    papers:
+    - citekey: sunDisentanglingRoleSmall2017
+      label: Sun et al. (2017)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Sun et al 2017 - Disentangling the role of small polarons
+        and oxygen vacancies in CeO2/Sun et al 2017 - Disentangling the role of small polarons and oxygen vacancies
+        in CeO2.md'
+      selections:
+      - quote: bond lengths are 3.4% longer than the equilibrium Ce-O bond length.
+        comment: 'Section III.B, PDF page 3: excess electron in vacancy-free bulk. 96-atom cell at fixed volume;
+          the paper does not say whether this value is from HSE06 or PBE+U. This is not a same-shell carrier-minus-control
+          measurement near a vacancy. The species immediately preceding this selection is rendered mathematics,
+          excluded by the reader.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: hoangNativeDefectsHydrogen2025
+      label: Hoang & Johannes (2025)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox
+        Chemistry/markdown_originals/Hoang and Johannes 2025 - Native defects, hydrogen impurities, and metal
+        dopants in CeO2/Hoang and Johannes 2025 - Native defects, hydrogen impurities, and metal dopants in
+        CeO2.md'
+      selections:
+      - quote: The local lattice environment is distorted with longer Ce-O bond lengths as the negative (positive)
+          charge gets reduced;
+        comment: Native defects, PDF page 3. The immediately following rendered equations give 2.41 Å for the
+          electron polaron versus 2.33 Å in perfect bulk. Vacancy-free HSE06 reference, 324-atom cell. Checked
+          against the PDF and Mathpix conversion; mathematical expressions cannot themselves be selected by
+          this plugin.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q11-vacancy-displacement:
+    label: Vacancy-neighbor Ce displacements
+    papers:
+    - citekey: keatingAnalysisIntrinsicDefects2012
+      label: Keating et al. (2012)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox
+        Chemistry/markdown_originals/Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like
+        GGA+U Approach/Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like GGA+U
+        Approach.md'
+      selections:
+      - quote: The vacancy is an area of effective positive charge, hence the eight neighboring oxygen ions
+          move off their lattice site toward the vacancy, while the neighboring Ce ions move away from the
+          vacancy.
+        comment: Oxygen Vacancy section, PDF page 4. The authors describe the effective vacancy charge and
+          accompanying ionic displacements. Their text says eight neighboring oxygen ions; the six nearest
+          oxygen neighbors in the ideal fluorite geometry are distinguished in Das Fig. 1.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: castletonTuningLDAU2007
+      label: Castleton et al. (2007)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Castleton et al 2007 - Tuning LDA+U
+        for electron localization and structure at oxygen vacancies in ceria/Castleton et al 2007 - Tuning
+        LDA+U for electron localization and structure at oxygen vacancies in ceria.md'
+      selections:
+      - quote: The symmetric outward contribution always dominates, so all four move outwards, but 1 and 2
+          move by a shorter distance.
+        comment: 'Section IV.A, PDF page 6: Ce 1 and Ce 2 host the localized electrons. These are displacements
+          relative to the vacancy, not Ce–O bond-length changes.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: sunDisentanglingRoleSmall2017
+      label: Sun et al. (2017)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Sun et al 2017 - Disentangling the role of small polarons
+        and oxygen vacancies in CeO2/Sun et al 2017 - Disentangling the role of small polarons and oxygen vacancies
+        in CeO2.md'
+      selections:
+      - quote: This relaxation pattern is only slightly perturbed in the presence of small polarons.
+        comment: 'Section III.D, PDF page 6: the following sentence gives first-shell Ce4+ displaced 7.6% and
+          Ce3+ 5.2% of the bond length away from the vacancy in HSE06 (7.8% and 5.6% in PBE+U) for the neutral
+          complex; those numbers sit in rendered mathematics. 96-atom cell, fixed volume.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q11-directional-distortion:
+    label: Directional bond distortion and source qualification
+    papers:
+    - citekey: das2018ceria
+      label: Das et al. (2018)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles.md'
+      selections:
+      - quote: contracted to lengths between
+        comment: 'Section 3.1: preceding words identify the seven bonds around vacancy-coordinated Ce4+. The
+          reference is the perfect lattice, not a carrier-minus-control difference. Numerical values immediately
+          adjacent to this prose selection are rendered mathematics, which the highlighter cannot select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - image: images/e49d2335-69af-4849-bfb8-96f6f378b4fd-3_1080_1480_167_292.jpg
+        whole: true
+        sha256: 0804a8a3a4aff5c12d35d8919fbae6ec13ff38193e353cdeb95d74ac0a619a27
+        comment: Figure1, originalPDFp3, checked against Mathpix image. Paneld gives oxygen-framework angles,
+          not O–Ce–O angles. Table1 is now present separately in the Mathpix conversion. Caption pink=elongation/blue=contraction;
+          the following paragraph reverses these colors, a source-text error.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: elongated (as denoted by the pink bonds in Fig. 1c) to
+        comment: 'Section 3.1: preceding words specify six of seven Ce–O bonds around vacancy-coordinated Ce3+.
+          Both carriers in the first shell; GGA+U, Ueff = 4.5 eV, 2×2×2 (96-atom) cell with the cell volume
+          held fixed (PDFp3, now also present in the Mathpix conversion). The following sentence reports the
+          trans bond contracting to 2.33 Å. Mathpix conversion and originalPDFp4 now checked together. Numerical
+          values immediately adjacent to this prose selection are rendered mathematics, which the highlighter
+          cannot select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: or by -2%. Li et al.
+        comment: 'Section 3.1: trans Ce3+–O bond relative to the perfect lattice. The Mathpix conversion and
+          original PDF page 4 confirm the O–Ce3+–vacancy diagonal. This is not the sign of the carrier-minus-noncarrier
+          contrast. Numerical values immediately adjacent to this prose selection are rendered mathematics,
+          which the highlighter cannot select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - table: 1
+        whole: true
+        sha256: efd3923ba8048d6cdb71809bb34e8572f1b14a1a177727fee741bca9956b031c
+        comment: 'Section 1.1 bond-length evidence: non-uniform-deformation rows of Table 1;
+          native percent changes and bond multiplicities for each Ce site type. Checked
+          against original PDF page 3. No mapping of non-carrier directional identities
+          is supplied.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q11-comparison-context:
+    label: Structural context for the same-shell comparison
+    papers:
+    - citekey: castletonTuningLDAU2007
+      label: Castleton et al. (2007)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Castleton et al 2007 - Tuning LDA+U
+        for electron localization and structure at oxygen vacancies in ceria/Castleton et al 2007 - Tuning
+        LDA+U for electron localization and structure at oxygen vacancies in ceria.md'
+      selections:
+      - quote: The symmetric outward contribution always dominates, so all four move outwards, but 1 and 2
+          move by a shorter distance.
+        comment: 'Section IV.A, PDF page 6: Ce 1 and Ce 2 host the localized electrons. These are displacements
+          relative to the vacancy, not Ce–O bond-length changes.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: das2018ceria
+      label: Das et al. (2018)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles.md'
+      selections:
+      - quote: contracted to lengths between
+        comment: 'Section 3.1: preceding words identify the seven bonds around vacancy-coordinated Ce4+. The
+          reference is the perfect lattice, not a carrier-minus-control difference. Numerical values immediately
+          adjacent to this prose selection are rendered mathematics, which the highlighter cannot select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - image: images/e49d2335-69af-4849-bfb8-96f6f378b4fd-3_1080_1480_167_292.jpg
+        whole: true
+        sha256: 0804a8a3a4aff5c12d35d8919fbae6ec13ff38193e353cdeb95d74ac0a619a27
+        comment: Figure1, originalPDFp3, checked against Mathpix image. Paneld gives oxygen-framework angles,
+          not O–Ce–O angles. Table1 is now present separately in the Mathpix conversion. Caption pink=elongation/blue=contraction;
+          the following paragraph reverses these colors, a source-text error.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: elongated (as denoted by the pink bonds in Fig. 1c) to
+        comment: 'Section 3.1: preceding words specify six of seven Ce–O bonds around vacancy-coordinated Ce3+.
+          Both carriers in the first shell; GGA+U, Ueff = 4.5 eV, 2×2×2 (96-atom) cell with the cell volume
+          held fixed (PDFp3, now also present in the Mathpix conversion). The following sentence reports the
+          trans bond contracting to 2.33 Å. Mathpix conversion and originalPDFp4 now checked together. Numerical
+          values immediately adjacent to this prose selection are rendered mathematics, which the highlighter
+          cannot select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: or by -2%. Li et al.
+        comment: 'Section 3.1: trans Ce3+–O bond relative to the perfect lattice. The Mathpix conversion and
+          original PDF page 4 confirm the O–Ce3+–vacancy diagonal. This is not the sign of the carrier-minus-noncarrier
+          contrast. Numerical values immediately adjacent to this prose selection are rendered mathematics,
+          which the highlighter cannot select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q11-oxygen-displacements:
+    label: Oxygen relaxation depends on neighboring Ce sites
+    papers:
+    - citekey: das2018ceria
+      label: Das et al. (2018)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles.md'
+      selections:
+      - quote: the FNN oxygen atoms connected to two
+        comment: 'Section 3.1: first-neighbor oxygen connected to two Ce4+ moves toward the vacancy. One adjacent-polaron
+          configuration, GGA+U 4.5 eV, 96-atom cell, fixed volume. Numerical values immediately adjacent to
+          this prose selection are rendered mathematics, which the highlighter cannot select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Specifically, the 4 FNN oxygen atoms connected to
+        comment: 'Section 3.1: the four first-neighbor oxygen atoms connected to one Ce3+ and one Ce4+. Numerical
+          values immediately adjacent to this prose selection are rendered mathematics, which the highlighter
+          cannot select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: atoms moved away only by
+        comment: 'Section 3.1: the first-neighbor oxygen connecting the two Ce3+. Numerical values immediately
+          adjacent to this prose selection are rendered mathematics, which the highlighter cannot select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - image: images/e49d2335-69af-4849-bfb8-96f6f378b4fd-3_1080_1480_167_292.jpg
+        whole: true
+        sha256: 0804a8a3a4aff5c12d35d8919fbae6ec13ff38193e353cdeb95d74ac0a619a27
+        comment: Figure1, originalPDFp3, checked against Mathpix image. Paneld gives oxygen-framework angles,
+          not O–Ce–O angles. Table1 is now present separately in the Mathpix conversion. Caption pink=elongation/blue=contraction;
+          the following paragraph reverses these colors, a source-text error.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: keatingAnalysisIntrinsicDefects2012
+      label: Keating et al. (2012)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox
+        Chemistry/markdown_originals/Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like
+        GGA+U Approach/Keating et al 2012 - Analysis of Intrinsic Defects in CeO2 Using a Koopmans-Like GGA+U
+        Approach.md'
+      selections:
+      - quote: the neighboring oxygen which is only coordinated to Ce(IV) ions moves by
+        comment: 'Oxygen Vacancy section, PDF pages 4–5: the following rendered equations give 0.22 Å (0.30
+          Å), then 0.04 Å (0.03 Å) for the carrier bridge, and 0.19 Å (0.12 Å) for mixed coordination. The
+          continuation explicitly says all toward the vacancy. This supports the ordering of magnitudes, not
+          identical signs across studies; Das has slight outward motion at the carrier bridge.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The variation in the relaxation of the oxygen ions can be related to the Ce(III) ions being
+          less positive than the Ce(IV) ions, leading to a longer Ce(III)-O bond.
+        comment: PDF page 5. Author interpretation of the oxygen-relaxation pattern. Mathpix restored the bond
+          dash and continuous sentence.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: huangDFT+UStudyCeO22014
+      label: Huang et al. (2014)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox
+        Chemistry/markdown_originals/Huang et al 2014 - DFT+U Study of CeO2 and Its Native Defects/Huang et
+        al 2014 - DFT+U Study of CeO2 and Its Native Defects.md'
+      selections:
+      - quote: eight neighboring oxygen atoms move off their ideal lattice sites towards the vacancy site since
+          vacancy site is an effective positive charge center, while neighboring Ce atoms move away from the
+          vacancy
+        comment: 'Section 4.2, PDF page 4. Read the immediately following equations and prose: 0.25 Å for oxygen
+          bridging two Ce4+, 0.01 Å for the two-Ce3+ bridge, 0.15 Å for mixed coordination. Here motion is
+          toward the vacancy; Das reports 0.01 Å away for the carrier bridge. The ambiguous subsequent Ce3+
+          motion sentence is not used.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: ions having less positive charge than
+        comment: Section 4.2. The preceding rendered species is Ce3+ and the following species Ce4+. This is
+          the authors’ explanation of the oxygen-relaxation pattern; checked against the PDF.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q11-orbital-state:
+    label: Occupied 4f orbital as a further variable
+    papers:
+    - citekey: allenOccupationMatrixControl2014
+      label: Allen & Watson (2014)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Allen and Watson 2014 - Occupation
+        matrix control of d- and f-electron localisations using DFT+U/Allen and Watson 2014 - Occupation matrix
+        control of d- and f-electron localisations using DFT+U.md'
+      selections:
+      - quote: orbital configurations could be localised, and a relaxed energy obtained.
+        comment: 'Section 3.2.3: for the vacancy configurations tested, every combination of occupied cubic
+          f orbitals localized and relaxed to a distinct state (the preceding word f is rendered mathematics).
+          PBE+U, U(Ce 4f) = 5.0 eV, U(O 2p) = 5.5 eV for bulk. The paper reports energies of these states,
+          not their Ce–O geometries.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: When the orbital is occupied NN to the vacancy a distortion occurs allowing one of the lobes
+          to extend towards the vacancy position, stabilising the configuration.
+        comment: 'Section 3.2.3: orbital distortion at a first-shell site.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q12-local-response:
+    label: Relocating a polaron changes overlapping coordination environments
+    papers:
+    - citekey: sunDisentanglingRoleSmall2017
+      label: Sun et al. (2017)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Sun et al 2017 - Disentangling the role of small polarons
+        and oxygen vacancies in CeO2/Sun et al 2017 - Disentangling the role of small polarons and oxygen vacancies
+        in CeO2.md'
+      selections:
+      - quote: The combination of the electron localization and the local lattice distortion comprises the
+          small polaron.
+        comment: Section III.B. Nearby text describes local Ce–O elongation. This establishes coupled electronic/structural
+          localization, not a spatial cutoff.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The energy barrier for this process was determined by first performing two separate calculations,
+          one for the small polaron on a given Ce site in the supercell (initial configuration), and the other
+          for the polaron on a nearest-neighbor site (final configuration).
+        comment: Section III.C. Separate relaxed endpoints underpin our inference about relocating local coordination
+          distortion; no displacement-versus-distance profile is reported here.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: arnoldTransportWindEffect2025
+      label: Arnold 2025 (RWTH Aachen dissertation)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Arnold 2025 - On the Transport and Wind Effect of Small
+        Polarons in Ceria/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria.md'
+      selections:
+      - quote: This means that the local distortions around cerium sites will affect each other. This is made
+          very clear when considering that two oxygen ions in the first coordination shell around two cerium
+          ions are shared.
+        comment: Section 2.3.1, PDF page 31. Neighboring Ce coordination environments overlap through shared
+          oxygen ions. Doctoral dissertation, not a peer-reviewed article. PBE+U, Ueff = 5 eV, lattice parameter
+          fixed at 5.499 Å, 2×2×2 cell (Methods M.1.1).
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q12-elastic-response:
+    label: Local distortion and long-range elastic response
+    papers:
+    - citekey: freysoldtFirstprinciplesCalculationsPoint2014
+      label: Freysoldt et al. (2014)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive
+        and Redox-Active Oxides/markdown_originals/Freysoldt et al 2014 - First-principles calculations for
+        point defects in solids/Freysoldt et al 2014 - First-principles calculations for point defects in solids.md'
+      selections:
+      - quote: since defects do not exert a net force, the displacement field decays as
+        comment: 'Section on elastic interactions: the following rendered expression is 1/r² (the lattice Green
+          function itself decays as 1/r). General harmonic-elasticity result for a single point defect; it
+          describes one configuration''s response, not the difference between two relaxed configurations.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: das2018ceria
+      label: Das et al. (2018)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles.md'
+      selections:
+      - quote: Charge disproportionation and anisotropic local lattice distortions lead to anisotropic elastic
+          dipoles and an anisotropic long-range chemical expansion coefficient
+        comment: Section 3.2. Establishes the distinction between local bond distortion and long-range elastic
+          response for the neutral vacancy with two localized electrons; it does not measure a same-charge
+          polaron-relocation difference or its decay length.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q12-vacancy-coupling:
+    label: Polaron and vacancy distortions change when combined
+    papers:
+    - citekey: arnoldTransportWindEffect2025
+      label: Arnold 2025 (RWTH Aachen dissertation)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Arnold 2025 - On the Transport and Wind Effect of Small
+        Polarons in Ceria/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria.md'
+      selections:
+      - quote: In the 1NN complex, the distortions significantly differ in shape compared to the lone defects
+        comment: 'Section 4.2 and Figure 4.1: one polaron adjacent to the vacancy (singly positive cell with
+          compensating background). Doctoral dissertation, not a peer-reviewed article. PBE+U, Ueff = 5 eV,
+          lattice parameter fixed at 5.499 Å, 2×2×2 cell (Methods M.1.1).'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Conversely, the 2NN complex largely maintains the distortions induced by the lone defects
+        comment: 'Section 4.2: second-neighbor complex. The next sentence notes one exception, the oxygen ion
+          connecting the vacancy and the polaron, whose displacement increases.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q12-finite-cell:
+    label: Periodic-image interactions in 96-atom ceria cells
+    papers:
+    - citekey: castletonTuningLDAU2007
+      label: Castleton et al. (2007)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Castleton et al 2007 - Tuning LDA+U
+        for electron localization and structure at oxygen vacancies in ceria/Castleton et al 2007 - Tuning
+        LDA+U for electron localization and structure at oxygen vacancies in ceria.md'
+      selections:
+      - quote: Atoms on the cell borders are kept fixed in order to truncate elastic
+        comment: 'Section II, 96-atom cell: the sentence continues that this truncates elastic defect–defect
+          image interactions via the periodic boundary conditions.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: sunDisentanglingRoleSmall2017
+      label: Sun et al. (2017)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Sun et al 2017 - Disentangling the role of small polarons
+        and oxygen vacancies in CeO2/Sun et al 2017 - Disentangling the role of small polarons and oxygen vacancies
+        in CeO2.md'
+      selections:
+      - quote: We note that a supercell of 96 atoms might be too small for such analyses, since one has also
+          to consider the spurious interactions between vacancies and polarons in image cells due to the periodic
+          boundary conditions.
+        comment: 'Section III.D: concern about image interactions when comparing carrier arrangements in a
+          96-atom cell.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q21-carrier-count:
+    label: Vacancy charge states and number of polarons
+    papers:
+    - citekey: sunDisentanglingRoleSmall2017
+      label: Sun et al. (2017)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Sun et al 2017 - Disentangling the role of small polarons
+        and oxygen vacancies in CeO2/Sun et al 2017 - Disentangling the role of small polarons and oxygen vacancies
+        in CeO2.md'
+      selections:
+      - image: ./images/49e11221-2ee4-4922-ab39-464147ad742c-6_338_870_240_163.jpg
+        whole: true
+        sha256: 35952c790030443d50307bc014637ebb72af55b1ae39adbe7eda210fe4b075ec
+        comment: 'Figure 7, PDF page 6: neutral complex has two localized electrons; singly positive complex
+          has one. Figure and caption distinguish the three charge states. First-shell placements here are
+          chosen configurations, not a proof that all carriers occupy this shell.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q21-shell-pair:
+    label: Vacancy shells and inequivalent carrier pairs
+    papers:
+    - citekey: murgidaOrderingOxygenVacancies2014
+      label: Murgida et al. (2014)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive
+        and Redox-Active Oxides/markdown_originals/Murgida et al 2014 - Ordering of oxygen vacancies and excess
+        charge localization in bulk ceria; A DFT+U study/Murgida et al 2014 - Ordering of oxygen vacancies
+        and excess charge localization in bulk ceria; A DFT+U study.md'
+      selections:
+      - table: 2
+        whole: true
+        sha256: 0a955fd9512bcb7297047fccd233f364e0144071a390b6c47c58679ac6351e71
+        comment: 'Table II, PDF page 5; visually compared with original PDF. nN–mN denotes vacancy shells,
+          second column closest Ce–Ce neighbor order. Two 2N–2N rows with first-neighbor pair separation carry
+          footnote a: Nonequivalent structures. Table includes farther-shell relaxed configurations; energies
+          are discussed in 2.2, not ranked here.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Nonequivalent structures.
+        comment: Footnote a immediately below Table II identifies the two second-shell pairs with the same
+          first-neighbor separation. Relative pair orientation and lattice symmetry must therefore supplement
+          distance labels; no new enumeration is required.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: das2018ceria
+      label: Das et al. (2018)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles.md'
+      selections:
+      - quote: Because there are six equivalent arrangements for
+        comment: 'Section 3.2: the sentence continues that Ce3+ and Ce4+ can occupy the four first-shell sites
+          around each vacancy in six equivalent ways, so both carriers in the first shell form a single arrangement
+          up to symmetry.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q21-relaxed-sites:
+    label: Relaxed localization can differ from initialization
+    papers:
+    - citekey: allenOccupationMatrixControl2014
+      label: Allen & Watson (2014)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Allen and Watson 2014 - Occupation
+        matrix control of d- and f-electron localisations using DFT+U/Allen and Watson 2014 - Occupation matrix
+        control of d- and f-electron localisations using DFT+U.md'
+      selections:
+      - quote: For each case, at least one of the excess electrons were seen to move from the intended Ce site
+          to an alternative.
+        comment: 'Section 3.2.3: after restarting 33 configurations from structure without the wavefunction,
+          six changed localized-electron sites. This supports identifying the final arrangement from electronic
+          output, not initial targets.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: showing that local distortion alone can direct the localisation, but a certain amount of distortion/rotation
+          of the
+        comment: Section 3.2.3, remaining configurations retained Ce(III) locations while the f orbital distorted
+          or rotated. Orbital state and site arrangement are separate descriptors; the following mathematical
+          f is excluded from text selection.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q21-coordination:
+    label: Coordination of carrier sites near one vacancy
+    papers:
+    - citekey: murgidaOrderingOxygenVacancies2014
+      label: Murgida et al. (2014)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive
+        and Redox-Active Oxides/markdown_originals/Murgida et al 2014 - Ordering of oxygen vacancies and excess
+        charge localization in bulk ceria; A DFT+U study/Murgida et al 2014 - Ordering of oxygen vacancies
+        and excess charge localization in bulk ceria; A DFT+U study.md'
+      selections:
+      - quote: structure, the coordination number of the cation is eight and of the anion is four.
+        comment: 'Section II: perfect fluorite CeO2 (preceding rendered formula). Ce sites not bordering a
+          vacancy keep eight oxygen neighbors.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: das2018ceria
+      label: Das et al. (2018)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles.md'
+      selections:
+      - quote: All seven of the
+        comment: 'Section 3.1: the sentence continues that all seven Ce4+–O bonds around each vacancy-coordinated
+          Ce4+ contract; first-shell Ce sites have seven oxygen neighbors.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: atoms moved away only by
+        comment: 'Section 3.1: the first-neighbor oxygen shared by the two Ce3+ carriers barely moves, unlike
+          oxygen shared with non-carriers (see q11-oxygen-displacements). Numerical values immediately adjacent
+          to this prose selection are rendered mathematics, which the highlighter cannot select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q21-inequivalent-pairs:
+    label: Inequivalent carrier pairs with the same shell and separation labels
+    papers:
+    - citekey: murgidaOrderingOxygenVacancies2014
+      label: Murgida et al. (2014)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive
+        and Redox-Active Oxides/markdown_originals/Murgida et al 2014 - Ordering of oxygen vacancies and excess
+        charge localization in bulk ceria; A DFT+U study/Murgida et al 2014 - Ordering of oxygen vacancies
+        and excess charge localization in bulk ceria; A DFT+U study.md'
+      selections:
+      - table: 2
+        whole: true
+        sha256: 0a955fd9512bcb7297047fccd233f364e0144071a390b6c47c58679ac6351e71
+        comment: 'Table II, PDF page 5; visually compared with original PDF. nN–mN denotes vacancy shells,
+          second column closest Ce–Ce neighbor order. Two 2N–2N rows with first-neighbor pair separation carry
+          footnote a: Nonequivalent structures. Table includes farther-shell relaxed configurations; energies
+          are discussed in 2.2, not ranked here.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Nonequivalent structures.
+        comment: Footnote a immediately below Table II identifies the two second-shell pairs with the same
+          first-neighbor separation. Relative pair orientation and lattice symmetry must therefore supplement
+          distance labels; no new enumeration is required.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q21-single-carrier-shells:
+    label: Singly charged DFT complexes with first- and second-shell carriers
+    papers:
+    - citekey: arnoldTransportWindEffect2025
+      label: 'Arnold 2025: methods M.1.6 and Figure 4.1'
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Arnold 2025 - On the Transport and Wind Effect of Small
+        Polarons in Ceria/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria.md'
+      selections:
+      - quote: Due to the vacancy's double positive charge and the polaron's single negative charge, the lattice
+          was singly positively charged.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: In total, two configuration were calculated in which the polaron and vacancy are in nearest
+          neighborhood position, and five in which the polaron is in nextnearest neighborhood position to the
+          vacancy.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The relaxed local structures were obtained with DFT calculations.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - image: ./images/a4870003-cc6c-459e-9b2a-72bb3e053109-055_1186_1484_397_320.jpg
+        whole: true
+        sha256: 0e6e4a790d80e07b37156f59220d5410dea1272de5a21eb283ca86808923b5de
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+        comment: Figure 4.1 panels c and d show the relaxed first- and second-neighbor polaron-vacancy complexes.
+          Charge state is established separately by M.1.6.
+  q22-neutral-energies:
+    label: Neutral vacancy arrangement energies
+    papers:
+    - citekey: murgidaOrderingOxygenVacancies2014
+      label: Murgida et al 2014 - Ordering of oxygen vacancies and excess charge localization in bulk ceria;
+        A DFT+U study
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive
+        and Redox-Active Oxides/markdown_originals/Murgida et al 2014 - Ordering of oxygen vacancies and excess
+        charge localization in bulk ceria; A DFT+U study/Murgida et al 2014 - Ordering of oxygen vacancies
+        and excess charge localization in bulk ceria; A DFT+U study.md'
+      selections:
+      - table: 2
+        whole: true
+        sha256: 0a955fd9512bcb7297047fccd233f364e0144071a390b6c47c58679ac6351e71
+        comment: 'Table II: first/second-shell pairs 2.85–2.95 eV; third/fourth-shell pairs 3.04–3.19 eV. Original
+          PDF table already visually checked.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: allenOccupationMatrixControl2014
+      label: Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Allen and Watson 2014 - Occupation
+        matrix control of d- and f-electron localisations using DFT+U/Allen and Watson 2014 - Occupation matrix
+        control of d- and f-electron localisations using DFT+U.md'
+      selections:
+      - image: ./images/88ffc107-e475-46c8-b055-4a34d5382513-16_677_703_1064_1123.jpg
+        whole: true
+        sha256: 83bdeca03e5ed40112a9ba5f5b78f9bfc0c091a50793965b9cbeec6db504402a
+        comment: 'Figure9: closed squares retain wavefunction after removing occupation constraint; open circles
+          restart without prior wavefunction. Mixed pair9 +0.04 and first-shell pair1 +0.13 relative to pair30
+          in the first series.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: This additional term is only applied to bulk
+        comment: 'Preceding sentences: U = 5.0 eV on Ce 4f and 5.5 eV on O 2p; the O term is used for bulk
+          CeO2 only.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: keeping the structure and wavefunction information from the constrained calculation
+        comment: 'First series (closed squares in Figure 9): constraint lifted, wavefunction retained.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Configuration 9 showed an energy only marginally higher ( 0.04 eV ) and possessed a configuration
+          with one Ce (III) ion NN to the vacancy and the other NNN.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: higher in energy than configuration 30, represents the commonly studied structure with both
+          Ce (III) ions NN to the vacancy
+        comment: The value 0.13 eV is in the math span immediately before this quote.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: a slightly larger reduction in the energy of configuration 9 meant that it possessed a very
+          similar energy to configuration 30
+        comment: 'Second series: restart from the relaxed structure with the wavefunction removed (open circles
+          in Figure 9).'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q22-method-order:
+    label: Model-dependent neutral arrangement ordering
+    papers:
+    - citekey: zhangConsistentPredictionDefect2023
+      label: Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox
+        Chemistry/markdown_originals/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry
+        in CeO2/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2.md'
+      selections:
+      - table: 5
+        whole: true
+        sha256: 303d052d4605684d9a51ed156d2090dc865e7be7554cf2756aec5352697e8918
+        comment: Original PDF page13 visually verified. M-L has nine entries; hybrid QM/MM covers only selected
+          rows. Mixed NN1-NNN2 is below NNN1-NNN4 by0.07eV(PBE0),0.10eV(BB1K),0.014eV(M-L).
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Our QM/MM calculations also favor the stabilization of the NN1-NNN2 configuration against the
+          NNN1-NNN4 configuration, consistent with the M-L predictions.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: among the formation energies of all the nine configurations suggest very close stabilities of
+          different configurations
+        comment: The spread (< 0.12 eV) in the preceding math span refers to the nine M-L configurations.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The Molecular Mechanical, Mott-Littleton (MM M-L) approach
+        comment: M-L is the molecular-mechanical (classical shell-model) method, distinct from the hybrid-DFT
+          QM/MM calculations.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q22-single-energies:
+    label: Singly charged arrangement energies (DFT+U interaction energies and shell model)
+    papers:
+    - citekey: grieshammerAssociationDefectsDoped2016
+      label: Grieshammer et al. 2016 — Vacancy–polaron interaction energies
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Grieshammer et al 2016 - Association of defects in doped
+        non-stoichiometric ceria from first principles/Grieshammer et al 2016 - Association of defects in doped
+        non-stoichiometric ceria from first principles.md'
+      selections:
+      - quote: A value of 5 eV for the 4f-orbitals of cerium was chosen according to earlier studies.
+        comment: 'Methods: PBE+U; the following charge-state sentence specifies the singly charged Ce32O63
+          cell.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: For all defective cells the total number of electrons in the cell was adapted to reproduce the
+          actual charge state of the different defects
+        comment: The following formula gives (Ce32O63)+ for a vacancy and one polaron.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: from the energy difference of two cells, whereat one cell contained two defects in neighbouring
+          positions, while the other cell contained the two defects in separated positions. By performing calculations
+          for different sized supercells, the results were extrapolated to infinite dilution to correct finite
+          size errors.
+        comment: Interaction energies relative to separated defects, extrapolated to infinite dilution; not
+          vacancy formation energies.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Indeed, calculation of the interaction energies in this study without ramping resulted in values
+          of approximately -0.3 eV and -0.2 eV for the 1 NN and 2 NN position, respectively, indicating a preference
+          of the 1NN position.
+        comment: Ordering without U ramping.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: In contrast, application of the ramping method to all calculations yielded interaction energies
+          of -0.14 eV for 1NN and -0.19 eV for 2NN.
+        comment: 'After U ramping: second shell lower by 0.05 eV. Methods describe relaxation before and after
+          the ramp.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: It should be noted that in our study this result is only achieved including finite size correction.
+        comment: The reported second-shell preference requires the finite-size correction in this study.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: zhangConsistentPredictionDefect2023
+      label: Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox
+        Chemistry/markdown_originals/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry
+        in CeO2/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2.md'
+      selections:
+      - quote: This conclusion is confirmed by our M-L calculations.
+        comment: Section3.2.1 following paragraph reports singly charged first–fifth shell energies0.049,0.046,0.306,0.267,0.303eV.
+          Original PDF page13 verified; differences0.003 and0.221–0.260eV relative to second shell. These are
+          classical Mott–Littleton results.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: and 0.303 eV for the localized electrons at the first-, second-, third-, fourth-, and fifth-nearest
+          neighbor sites, respectively.
+        comment: End of the numerical sentence; 0.049, 0.046, 0.306 and 0.267 eV are in the preceding math
+          span.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The Molecular Mechanical, Mott-Littleton (MM M-L) approach
+        comment: M-L is the molecular-mechanical (classical shell-model) method.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q22-orbitals:
+    label: Energy depends on occupied 4f orbitals
+    papers:
+    - citekey: allenOccupationMatrixControl2014
+      label: Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Allen and Watson 2014 - Occupation
+        matrix control of d- and f-electron localisations using DFT+U/Allen and Watson 2014 - Occupation matrix
+        control of d- and f-electron localisations using DFT+U.md'
+      selections:
+      - image: ./images/88ffc107-e475-46c8-b055-4a34d5382513-17_1198_1609_571_212.jpg
+        whole: true
+        sha256: bc24ce11db0845e95dc8c9704154a4824b37855a4375121555a3fae651e4704e
+        comment: 'Figure10d and preceding paragraph: both f−2 vs both t2u penalties0.21(first-shell),0.33(mixed),0.44(second-shell)eV.
+          Orbital changes and carrier-site changes must not be conflated.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: giving it a energy 0.21 eV higher than when both electrons are in
+        comment: Configuration 1 (first-shell pair), both f-2 versus both t2u.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: the energy is 0.33 eV higher than when both electrons are in
+        comment: Configuration 9 (mixed pair).
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: 0.44 eV greater than occupying a
+        comment: Configuration 30 (second-shell pair).
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q22-spin:
+    label: Small spin splittings in reported neutral configurations
+    papers:
+    - citekey: sunDisentanglingRoleSmall2017
+      label: Sun et al 2017 - Disentangling the role of small polarons and oxygen vacancies in CeO2
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Sun et al 2017 - Disentangling the role of small polarons
+        and oxygen vacancies in CeO2/Sun et al 2017 - Disentangling the role of small polarons and oxygen vacancies
+        in CeO2.md'
+      selections:
+      - quote: is 1.5 meV lower in energy than the triplet state, in agreement with previous studies
+        comment: 'SectionIII.D: first-shell neutral complex; DFT+U singlet below triplet, HSE06 triplet preferred.
+          No magnitude for HSE splitting is stated.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: species are both spin up, resulting in a paramagnetic triplet
+        comment: HSE06 result for the neutral first-shell complex; no singlet-triplet energy is given for HSE06.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: allenOccupationMatrixControl2014
+      label: Allen and Watson 2014 - Occupation matrix control of d- and f-electron localisations using DFT+U
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Allen and Watson 2014 - Occupation
+        matrix control of d- and f-electron localisations using DFT+U/Allen and Watson 2014 - Occupation matrix
+        control of d- and f-electron localisations using DFT+U.md'
+      selections:
+      - quote: Initial tests found a negligible difference between antiferromagnetic and ferromagnetic arrangements,
+          in agreement with past work,
+        comment: Section3.2.3; subsequent configuration calculations run ferromagnetically. Not a proof that
+          spin never changes a near-degenerate arrangement ordering.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q22-cell-context:
+    label: Arrangement energies depend on cell and relaxation
+    papers:
+    - citekey: murgidaOrderingOxygenVacancies2014
+      label: Murgida et al 2014 - Ordering of oxygen vacancies and excess charge localization in bulk ceria;
+        A DFT+U study
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive
+        and Redox-Active Oxides/markdown_originals/Murgida et al 2014 - Ordering of oxygen vacancies and excess
+        charge localization in bulk ceria; A DFT+U study/Murgida et al 2014 - Ordering of oxygen vacancies
+        and excess charge localization in bulk ceria; A DFT+U study.md'
+      selections:
+      - table: 2
+        whole: true
+        sha256: 0a955fd9512bcb7297047fccd233f364e0144071a390b6c47c58679ac6351e71
+        comment: Compare identical charge/composition within each cell.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - table: 3
+        whole: true
+        sha256: 7ad60d50f02150412b4671d89b58e1b4e2c370a6a0163b9ed86f14e7e022ab7f
+        comment: Table III uses smaller cell/higher vacancy concentration; comparison with II demonstrates
+          relative energies need not be size independent.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q31-site:
+    label: Electronic identification of a small polaron
+    papers:
+    - citekey: sunDisentanglingRoleSmall2017
+      label: Sun et al. (2017)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Sun et al 2017 - Disentangling the role of small polarons
+        and oxygen vacancies in CeO2/Sun et al 2017 - Disentangling the role of small polarons and oxygen vacancies
+        in CeO2.md'
+      selections:
+      - quote: The electron localization is accompanied by a local lattice distortion, where the
+        comment: Section III.B; mathematical Ce3+–O expression follows. The paragraph identifies an occupied
+          localized Ce4f gap state and spin 1/2; electronic site identification is the inference used here.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: prefer to localize on individual Ce atoms, in the form of
+        comment: 'Section III.B: excess electrons localize as Ce3+ on individual Ce atoms.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: appears in the band gap, in the up-spin channel
+        comment: 'Added electron in bulk CeO2: occupied 4f state in the gap; the system is paramagnetic with
+          S = 1/2.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q31-shared:
+    label: Shared localization along a static hopping path
+    papers:
+    - citekey: sunDisentanglingRoleSmall2017
+      label: Sun et al. (2017)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Sun et al 2017 - Disentangling the role of small polarons
+        and oxygen vacancies in CeO2/Sun et al 2017 - Disentangling the role of small polarons and oxygen vacancies
+        in CeO2.md'
+      selections:
+      - quote: The energy barrier for this process was determined by first performing two separate calculations,
+          one for the small polaron on a given Ce site in the supercell (initial configuration), and the other
+          for the polaron on a nearest-neighbor site (final configuration).
+        comment: 'Section III.C: static interpolation in vacancy-free bulk; not an AIMD trajectory.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: At the saddle point, the electron is equally distributed among the two neighboring Ce atoms,
+          with magnetic moments of
+        comment: Immediately following mathematical values are 0.453 and 0.460 muB, checked against PDF. These
+          are not proposed tracking cutoffs.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - image: ./images/49e11221-2ee4-4922-ab39-464147ad742c-4_338_861_2145_1086.jpg
+        whole: true
+        sha256: bf2bc34cc7732debd5e49cf274af652a9805d02c378e63c81de0019a848bc4da
+        comment: 'Fig.4: HSE06 initial, shared saddle and final localized charge distributions; static vacancy-free
+          path.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: depending on if the calculation started from the initial or final configuration.
+        comment: 'Section III.C: DFT+U saddle electron remains on initial or final Ce according to endpoint
+          used to start the calculation.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: the excess electron remains localized on the initial atom for all
+        comment: 'DFT+U along the interpolated path: the electron stays on the starting site for every interpolation
+          fraction x.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q31-orbital:
+    label: Spin-resolved occupation matrices and orbital orientation
+    papers:
+    - citekey: allenOccupationMatrixControl2014
+      label: Allen & Watson (2014)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Allen and Watson 2014 - Occupation
+        matrix control of d- and f-electron localisations using DFT+U/Allen and Watson 2014 - Occupation matrix
+        control of d- and f-electron localisations using DFT+U.md'
+      selections:
+      - quote: Therefore, it is important to ensure either bond/orbital geometries are aligned to this reference
+          frame correctly, or the occupation matrix is rotated to give the correct orbital filling. The matrix
+          can be rotated (or orbitals distorted) through filling of the relevant off-diagonal terms.
+        comment: 'Methods: surrounding paragraph defines spin-resolved matrices and diagonalization; for f
+          orbitals two 7x7 matrices. Eigenvalues give occupations; eigenvectors describe orbital combinations
+          in the specified basis.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: is obtained from diagonalisation of the matrix and can be fed into the
+        comment: 'Methods: immediately preceding mathematical symbol denotes orbital occupation; context extends
+          to the following sentence defining the f matrices.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q31-spin:
+    label: Total spin does not determine localization or spin dynamics
+    papers:
+    - citekey: allenOccupationMatrixControl2014
+      label: Allen & Watson (2014)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Allen and Watson 2014 - Occupation
+        matrix control of d- and f-electron localisations using DFT+U/Allen and Watson 2014 - Occupation matrix
+        control of d- and f-electron localisations using DFT+U.md'
+      selections:
+      - quote: When the system was relaxed with the overall spin of the system constrained to +2 but no direction
+          to the site of localisation or use of the occupation matrix control methodology, the two electrons
+          were found to delocalise over the system.
+        comment: Section3.2.3. Direct example that an imposed total moment does not fix individual carrier
+          sites. The distinction between site moment sign and physical spin dynamics is our methodological
+          inference, not a measured spin-flip result.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q32-oxygen-path:
+    label: Continuous oxygen migration versus a discrete vacancy label
+    papers:
+    - citekey: arnoldTransportWindEffect2025
+      label: 'Arnold 2025: Section 4.2 and Figure 4.2'
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Arnold 2025 - On the Transport and Wind Effect of Small
+        Polarons in Ceria/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria.md'
+      selections:
+      - quote: Here the oxygen ion is at its midway point and the polaron is already localized at its new position.
+        comment: 'Arnold4.2, originalPDFp56: one CI-NEB singly charged complex path. This midway transition
+          state is not a general criterion for assigning the vacancy in a trajectory.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - image: ./images/a4870003-cc6c-459e-9b2a-72bb3e053109-056_731_1698_1025_164.jpg
+        whole: true
+        sha256: ba31d5bfc9e65cb00298c0a06492117b19e1bcd9ce3ccb05113e01ae23e37b50
+        comment: 'Figure4.2: oxygen transfer between anion sites through intermediate static configurations;
+          not an AIMD time series.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q33-bulk-sequence:
+    label: 'Arnold: different sequences along bulk coupled-jump paths'
+    papers:
+    - citekey: arnoldTransportWindEffect2025
+      label: 'Arnold: different sequences along bulk coupled-jump paths'
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Arnold 2025 - On the Transport and Wind Effect of Small
+        Polarons in Ceria/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria.md'
+      selections:
+      - quote: Fig. 4.2a-ii illustrates the initial movement of one oxygen ion to about a quarter of its path,
+          while the polaron stays at its initial position.
+        comment: 'Section4.2, PDF56: singly charged bulk2NN-2CI-NEB path; reaction coordinate, not time.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Here the oxygen ion is at its midway point and the polaron is already localized at its new position.
+        comment: Same path, transition configuration; midpoint applies this example.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: In the 1NN mechanism, the polaron remains at its original position upon reaching the transition
+          point and moves only afterwards.
+        comment: 'AppendixA.2: alternative bulk path; no universal order relative to transition state.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q33-surface-sequence:
+    label: 'Zhang et al.2019: surface vacancy motion and polaron transfer'
+    papers:
+    - citekey: zhangOxygenVacancyDynamicsEntanglement2019
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Zhang et al 2019 - Oxygen-Vacancy Dynamics and Entanglement
+        with Polaron Hopping at the Reduced CeO2(111) Surface/Zhang et al 2019 - Oxygen-Vacancy Dynamics and
+        Entanglement with Polaron Hopping at the Reduced CeO2(111) Surface.md'
+      label: 'Zhang et al.2019: surface vacancy motion and polaron transfer'
+      selections:
+      - quote: Standard AIMD simulations in the canonical (NVT) ensemble were performed at 300, 500, 700, and
+          900 K to investigate the dynamics of the electronic and ionic carriers with temperature. The simulations
+          run 60 ps for each trajectory with a 1 fs time step.
+        comment: MethodsPDFp2; PBE+U5eV, CeO2(111)4x4surface slab. Surface geometry is not bulk.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: polaron hopping did not occur during the first 22.5 ps , while the vacancy migrated 7 times
+          between
+        comment: PDFp2 at500K; continuationp3 specifies adjacent surface/subsurface sites. The observed time
+          ordering is surface-specific.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: However, if a polaron hops to a NN site to the subsurface vacancy first
+        comment: PDFp4; intervening formula names configurations; following prose reports lower subsequent
+          oxygen migration barrier.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: the barrier for the surface oxygen migration into the subsurface is significantly reduced
+        comment: PDFp4; specific polaron-first pathway. We do not use the numerical comparison whose high barrier
+          is attributed to an earlier source.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: migrations predominantly (always in our simulations at 500 and 700 K) started from a
+        comment: 'PDF p3: B-to-A in their notation (vacancy moves from subsurface to surface); the following
+          formula names the B1m configuration, a subsurface vacancy with one nearest-neighbor polaron. AIMD
+          observation on the surface.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q33-coordination:
+    label: 'Arnold: local distortion during an isolated-polaron transfer'
+    papers:
+    - citekey: arnoldTransportWindEffect2025
+      label: 'Arnold: local distortion during an isolated-polaron transfer'
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Arnold 2025 - On the Transport and Wind Effect of Small
+        Polarons in Ceria/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria.md'
+      selections:
+      - quote: The distances between this cerium ion and its surrounding oxygen ions are increased by
+        comment: Section2.3.1; immediately followingMathpix value0.08Å is not used quantitatively here. Vacancy-free
+          excess-electron calculation.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Most intriguingly, the density of the excess electron is equally distributed around both cerium
+          sites here. Some electron density of opposite spin can also be seen on the connecting oxygen ions.
+          The distances between both cerium ions and their coordinating oxygen ions are identical here.
+        comment: Section2.3.1 transition configuration. Supports coupled electronic and local structural change;
+          not exact bond-by-bond/angle behavior in a migrating-vacancy trajectory.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q34-sampling:
+    label: 'Grossfield: persistence and sampling limits'
+    papers:
+    - citekey: grossfieldBestPracticesQuantification2018
+      label: 'Grossfield: persistence and sampling limits'
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 2: VASP Workflow for Ceria AIMD (Convergence,
+        Restarts, Branch Tracking)/markdown_originals/Grossfield et al 2018 - Best Practices for Quantification
+        of Uncertainty and Sampling Quality in Molecular Simulations/Grossfield et al 2018 - Best Practices
+        for Quantification of Uncertainty and Sampling Quality in Molecular Simulations.md'
+      selections:
+      - quote: It is generally impossible to know whether configurational states absent from a trajectory are
+          appropriately absent because they are highly improbable (extremely high energy) or because the simulation
+          simply failed to visit them because of a high barrier or random chance.
+        comment: Sec6; absence of a transition does not establish equilibrium stability.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Only in this way can the relative populations of states be inferred from time spent in each
+          state.
+        comment: Sec3; preceding sentence requires repeated barrier crossings in the illustrative two-basin
+          system.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q34-equilibration:
+    label: 'Grossfield: equilibration and independent observations'
+    papers:
+    - citekey: grossfieldBestPracticesQuantification2018
+      label: 'Grossfield: equilibration and independent observations'
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 2: VASP Workflow for Ceria AIMD (Convergence,
+        Restarts, Branch Tracking)/markdown_originals/Grossfield et al 2018 - Best Practices for Quantification
+        of Uncertainty and Sampling Quality in Molecular Simulations/Grossfield et al 2018 - Best Practices
+        for Quantification of Uncertainty and Sampling Quality in Molecular Simulations.md'
+      selections:
+      - quote: Including early-time data, therefore, can systematically bias results.
+        comment: 'Sec5, PDFp12: equilibrium/steady-state estimates; does not require discarding transients
+          from a descriptive event history.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: There are two approaches to obtaining independent measurements. Arguably the best is to have
+          multiple independent simulations, each with different initial conditions.
+        comment: 'Sec4.4 PDFp10. Our inference: independently drawn velocities can supply distinct realizations
+          conditional on one structure; common structure alone is not dependence.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Due to correlations, however, the number of independent samples in a simulation is neither equal
+          to the number of observations nor known a priori; thus Eq. 8 is not directly useful.
+        comment: 'Sec7.3: saved frames are not automatically independent observations.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: how long must one wait before the system completely loses memory of its prior configuration?
+        comment: 'Sec. 6: memory time of a trajectory; supports the statement that runs sharing a starting
+          structure share its preparation until that memory is lost.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q34-duration:
+    label: 'Grossfield: duration must fit the observable'
+    papers:
+    - citekey: grossfieldBestPracticesQuantification2018
+      label: 'Grossfield: duration must fit the observable'
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 2: VASP Workflow for Ceria AIMD (Convergence,
+        Restarts, Branch Tracking)/markdown_originals/Grossfield et al 2018 - Best Practices for Quantification
+        of Uncertainty and Sampling Quality in Molecular Simulations/Grossfield et al 2018 - Best Practices
+        for Quantification of Uncertainty and Sampling Quality in Molecular Simulations.md'
+      selections:
+      - quote: The minimum duration needed to achieve significance is highly system dependent, and estimating
+          it in advance requires an understanding of the relevant timescales in the system and what properties
+          are to be calculated.
+        comment: 'Sec4.4 PDFp11: no universal picosecond requirement.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q34-surface-window:
+    label: 'Zhang: no observed motion in a finite window'
+    papers:
+    - citekey: zhangOxygenVacancyDynamicsEntanglement2019
+      label: 'Zhang: no observed motion in a finite window'
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Zhang et al 2019 - Oxygen-Vacancy Dynamics and Entanglement
+        with Polaron Hopping at the Reduced CeO2(111) Surface/Zhang et al 2019 - Oxygen-Vacancy Dynamics and
+        Entanglement with Polaron Hopping at the Reduced CeO2(111) Surface.md'
+      selections:
+      - quote: At room temperature (300 K), neither oxygen migration nor polaron hopping was observed during
+          the 60 ps simulation period.
+        comment: Surface PBE+U AIMD, PDFp2; finite observation, not a bulk stability threshold.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q42-thermal-background:
+    label: Thermal expansion and atomic displacements in stoichiometric ceria
+    papers:
+    - citekey: yashimaHightemperatureNeutronPowder2003
+      label: Yashima et al. (2003)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Yashima et al 2003 - High-temperature neutron powder
+        diffraction study of cerium dioxide CeO2 up to 1770 K/Yashima et al 2003 - High-temperature neutron
+        powder diffraction study of cerium dioxide CeO2 up to 1770 K.md'
+      selections:
+      - quote: Neutron powder diffraction measurements were performed in air with a 150-detector system
+        comment: Yashima et al., experimental procedure and results. Nearly stoichiometric ceria; this does
+          not measure vacancy-shell-resolved polaron geometries.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The occupancy of oxygen ion was refined and confirmed to be 1.0 .
+        comment: Yashima et al., experimental procedure and results. Nearly stoichiometric ceria; this does
+          not measure vacancy-shell-resolved polaron geometries.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The refined unit-cell parameter of ceria increased smoothly with an increase of temperature
+          due to the thermal expansion.
+        comment: Yashima et al., experimental procedure and results. Nearly stoichiometric ceria; this does
+          not measure vacancy-shell-resolved polaron geometries.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - image: images/eed6f8de-0368-4a41-a780-e50517f47440-3_789_749_1398_991.jpg
+        whole: true
+        sha256: 7d1d926a10fc6158a252bd3694a554c8da0f9e407bbfcfc0c4f0c83a82e91add
+        comment: Figure 4, original PDF page 786 checked. Single-atom displacement parameters increase with
+          temperature; these are not Ce–O bond-length variances or carrier–non-carrier differences.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: It was confirmed that the DebyeWaller factor of oxygen is larger than that of cerium at any
+          temperature in the whole temperature range from room temperature to 1770 K.
+        comment: 'Section 3 (text as converted, "DebyeWaller"): supports oxygen displaced more than cerium
+          at every temperature. Single-atom displacement parameters, not bond-length variances.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q43-spatial-baseline:
+    label: 'Relaxed local distortions and elastic response: spatial baseline'
+    papers:
+    - citekey: sunDisentanglingRoleSmall2017
+      label: Sun et al. (2017)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Sun et al 2017 - Disentangling the role of small polarons
+        and oxygen vacancies in CeO2/Sun et al 2017 - Disentangling the role of small polarons and oxygen vacancies
+        in CeO2.md'
+      selections:
+      - quote: The combination of the electron localization and the local lattice distortion comprises the
+          small polaron.
+        comment: Section III.B. Nearby text describes local Ce–O elongation. This establishes coupled electronic/structural
+          localization, not a spatial cutoff.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The energy barrier for this process was determined by first performing two separate calculations,
+          one for the small polaron on a given Ce site in the supercell (initial configuration), and the other
+          for the polaron on a nearest-neighbor site (final configuration).
+        comment: Section III.C. Separate relaxed endpoints underpin our inference about relocating local coordination
+          distortion; no displacement-versus-distance profile is reported here.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: arnoldTransportWindEffect2025
+      label: Arnold 2025 (RWTH Aachen dissertation)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Arnold 2025 - On the Transport and Wind Effect of Small
+        Polarons in Ceria/Arnold 2025 - On the Transport and Wind Effect of Small Polarons in Ceria.md'
+      selections:
+      - quote: This means that the local distortions around cerium sites will affect each other. This is made
+          very clear when considering that two oxygen ions in the first coordination shell around two cerium
+          ions are shared.
+        comment: Section 2.3.1, PDF page 31. Neighboring Ce coordination environments overlap through shared
+          oxygen ions. Doctoral dissertation, not a peer-reviewed article. PBE+U, Ueff = 5 eV, lattice parameter
+          fixed at 5.499 Å, 2×2×2 cell (Methods M.1.1).
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: In the 1NN complex, the distortions significantly differ in shape compared to the lone defects
+        comment: 'Section 4.2 and Figure 4.1: one polaron adjacent to the vacancy (singly positive cell with
+          compensating background). Doctoral dissertation, not a peer-reviewed article. PBE+U, Ueff = 5 eV,
+          lattice parameter fixed at 5.499 Å, 2×2×2 cell (Methods M.1.1).'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Conversely, the 2NN complex largely maintains the distortions induced by the lone defects
+        comment: 'Section 4.2: second-neighbor complex. The next sentence notes one exception, the oxygen ion
+          connecting the vacancy and the polaron, whose displacement increases.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: freysoldtFirstprinciplesCalculationsPoint2014
+      label: Freysoldt et al. (2014)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive
+        and Redox-Active Oxides/markdown_originals/Freysoldt et al 2014 - First-principles calculations for
+        point defects in solids/Freysoldt et al 2014 - First-principles calculations for point defects in solids.md'
+      selections:
+      - quote: since defects do not exert a net force, the displacement field decays as
+        comment: 'Section on elastic interactions: the following rendered expression is 1/r² (the lattice Green
+          function itself decays as 1/r). General harmonic-elasticity result for a single point defect; it
+          describes one configuration''s response, not the difference between two relaxed configurations.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: das2018ceria
+      label: Das et al. (2018)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles/Das et al 2018 - Anisotropic chemical
+        strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles.md'
+      selections:
+      - quote: Charge disproportionation and anisotropic local lattice distortions lead to anisotropic elastic
+          dipoles and an anisotropic long-range chemical expansion coefficient
+        comment: Section 3.2. Establishes the distinction between local bond distortion and long-range elastic
+          response for the neutral vacancy with two localized electrons; it does not measure a same-charge
+          polaron-relocation difference or its decay length.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q11-muhich-first-shell:
+    label: First-shell carrier and non-carrier bonds by direction
+    papers:
+    - citekey: muhichReEvaluatingCeO2Expansion2017
+      label: Muhich 2017 — relaxed neutral vacancy geometries
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Muhich 2017 - Re-Evaluating CeO2 Expansion Upon Reduction/Muhich
+        2017 - Re-Evaluating CeO2 Expansion Upon Reduction.md'
+      selections:
+      - table: 1
+        whole: true
+        sha256: 3e77f572ff2a459a255158277f728391cc67535fc71b05b7147cf36d9d44f68f
+        comment: Table 1 gives bond-type averages; the opposite-vacancy bond is separately in parentheses.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Distances do not include the bond length to the O anion 180° opposite the vacancy; this distance
+          is reported in parentheses.
+        comment: 'Table 1 footnote a: for first-shell Ce the first value averages the bonds other than the
+          one opposite the vacancy.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Therefore, a U correction of 3.125 eV is used as a compromise between electric and energetic
+          accuracy.
+        comment: 'Section 4: PBE+U in Quantum Espresso with ultrasoft pseudopotentials; U = 3.125 eV on Ce
+          4f.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Given the 81-atom super cell
+        comment: 'Section 2: one vacancy in an 81-atom (3 x 3 x 3 primitive) supercell.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Upon reduction, the unit cell expands by 0.8% from a calculated super cell vector length of
+        comment: 'Section 2: the supercell vectors relax on reduction (asymmetric cell), so the cell is not
+          held at fixed volume.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q11-muhich-second-shell:
+    label: Anisotropic expansion at a second-shell carrier
+    papers:
+    - citekey: muhichReEvaluatingCeO2Expansion2017
+      label: Muhich 2017 — relaxed neutral vacancy geometries
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Muhich 2017 - Re-Evaluating CeO2 Expansion Upon Reduction/Muhich
+        2017 - Re-Evaluating CeO2 Expansion Upon Reduction.md'
+      selections:
+      - image: images/d994280a-bac2-4cdd-af6d-6d7ddf568c5b-3_1347_716_231_1184.jpg
+        whole: true
+        sha256: 71654b2906405b391f14ed19a9410f31091c4d36f092c836fc67df9289d98c60
+        comment: Figure 2c shows the 2NN carrier bonds (2.45 Å) and adjacent Ce4+ bonds (2.35, 2.37 Å); the
+          2.58 Å bond is given in Section 2.1 text. Adjacent Ce4+ sites are not same-vacancy-shell controls.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: as shown in Table 1, while the eighth elongates even further to
+        comment: 'Section 2.1, 2x2NN: seven Ce3+-O bonds about 2.45 Å; the eighth 2.58 Å (value follows as
+          rendered math).'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: cation and an O anion bound to a Ce cation neighboring the O vacancy
+        comment: 'Section 2.1: the longest bond goes to an O also bonded to a first-shell Ce.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: distortions but rather to the O anion being pulled out of alignment by the
+        comment: 'Section 2.1: Muhich attributes the longest bond to that O being pulled out of alignment by
+          the first-shell Ce4+ as it relaxes away from the vacancy.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q12-plata-locality:
+    label: 'Local bond perturbation in vacancy-free ceria: author thesis version'
+    papers:
+    - citekey: plataramosCeriaAllSeasons2013
+      label: Plata 2013 thesis §4.2, author version of Plata, Márquez and Sanz
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Plata 2013 - Ceria for all seasons - Section 4.2 Electron
+        Mobility/Plata 2013 - Ceria for all seasons - Section 4.2 Electron Mobility.md'
+      selections:
+      - image: ./images/eb759717-7578-4bff-b205-05ca05c07b22-08_677_837_484_560.jpg
+        whole: true
+        sha256: 4dd67e2558bc7a7bf2bdcd59d499be9f6416477b38cf4af894e2013af610672f
+        comment: 'Figure4.4 / original thesis p84, verified against PDF96. PBE0: 2.429 carrier, 2.309 adjacent,
+          then2.342/2.336/2.336 Å. Perfect reference2.338 Å given in accompanying prose. Vacancy-free96atom
+          cell; this is not a vacancy-bound relocation-difference profile.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: These results indicate that the perturbation induced by the reduction almost exclusively involves
+          the first coordination shell around the concerned Ce center, which is consistent with the small polaron
+          nature experimentally proposed.
+        comment: Author interpretation; almost exclusively does not mean exact zero beyond this shell.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q12-muhich-compensation:
+    label: Carrier-shell expansion is locally compensated
+    papers:
+    - citekey: muhichReEvaluatingCeO2Expansion2017
+      label: Muhich2017 §2.1 Figure2
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Muhich 2017 - Re-Evaluating CeO2 Expansion Upon Reduction/Muhich
+        2017 - Re-Evaluating CeO2 Expansion Upon Reduction.md'
+      selections:
+      - image: images/d994280a-bac2-4cdd-af6d-6d7ddf568c5b-3_1347_716_231_1184.jpg
+        whole: true
+        sha256: 71654b2906405b391f14ed19a9410f31091c4d36f092c836fc67df9289d98c60
+        comment: 'Figure 2c-d, 2x2NN: carrier Ce-O bonds 2.45 Å, adjacent O-Ce4+ bonds 2.35 and 2.37 Å; Ce-Ce
+          distances 3.89-3.91 Å near the carrier versus 3.89 Å in oxidized ceria.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: are highly localized and are almost completely compensated by the contraction of the O-Ce bonds
+          one coordination shell away from the
+        comment: 'Introduction: the author''s summary of the 2x2NN result.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: does not significantly affect the cation lattice structure or size, or the anionic lattice outside
+          of its coordination shell
+        comment: 'Section 2.1: Ce3+-Ce4+ 3.90 Å versus 3.89 Å in oxidized ceria.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: which only induces short-range distortions in their coordinating O anions
+        comment: 'Section 2.2: contrasted with the long-range relaxation of the vacancy-adjacent cations.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: however, analysis of the other configurations results in the same conclusion
+        comment: 'Section 2: 1NN2NN and 2x1NN (SI S2) lead to the same conclusion.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q12-arrangement-strain:
+    label: Different carrier arrangements yield different equilibrium lattice strain
+    papers:
+    - citekey: wangChemicalStrainPoint2014
+      label: Wang et al.2014 Chemical Strain
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides
+        (Metastability, Convergence, Branch Control)/markdown_originals/Wang et al 2014 - Chemical Strain and
+        Point Defect Configurations in Reduced Ceria/Wang et al 2014 - Chemical Strain and Point Defect Configurations
+        in Reduced Ceria.md'
+      selections:
+      - quote: For each configuration, the supercell was kept cubic and constant-volume relaxations were performed
+          under a series of hydrostatic strains.
+        comment: Equilibrium lattice parameters fitted from energy-volume curves; distinguish cell strain from
+          internal displacements at a common cell.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Moreover, the local minimum defect configurations are clearly associated with different strain
+          states, which may indeed provide a potential explanation for experimentally observed elastic anomalies,
+          as discussed before.
+        comment: NN and NNN3 neutral arrangements have different equilibrium lattice parameters. This supports
+          a cell-wide contribution if separately relaxed cells are compared, not a measured spatial decay.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The equilibrium lattice parameters for the NN and NNN3 configurations in the cubic lattice were
+          found to be 5.4404 and
+        comment: 'Chemical Strain section: 5.4404 Å (NN) and 5.4428 Å (NNN3) versus 5.4287 Å stoichiometric
+          (values follow as rendered math).'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q22-periodic-hybrid:
+    label: Periodic HSE06 ordering of three neutral arrangements
+    papers:
+    - citekey: muhichReEvaluatingCeO2Expansion2017
+      label: Muhich 2017 — Supporting Information S1 (HSE06)
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Muhich 2017 - Re-Evaluating CeO2 Expansion Upon Reduction
+        - Supporting Information/Muhich 2017 - Re-Evaluating CeO2 Expansion Upon Reduction - Supporting Information.md'
+      selections:
+      - quote: which matched the DFT+U predicted ordering.
+        comment: 'SI S1: HSE06 order 2x2NN < 1NN2NN < 2x1NN (order given as rendered math just before), same
+          as PBE+U.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: configuration is 0.03 eV lower in energy than 1NN2NN and 0.08 eV lower in energy than the 2×1NN
+          configuration.
+        comment: 'SI S1: 2x2NN (both carriers second shell) lowest; 1NN2NN mixed; 2x1NN both first shell.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: -point and was allowed to fully relax.
+        comment: 'SI S1: VASP, 450 eV cutoff, Gamma-point only, full relaxation; periodic supercell, not an
+          embedded cluster.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q43-local-scale:
+    label: Relaxed local scale of carrier-associated bond changes
+    papers:
+    - citekey: plataramosCeriaAllSeasons2013
+      label: Plata 2013 thesis §4.2, author version of Plata, Márquez and Sanz
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Plata 2013 - Ceria for all seasons - Section 4.2 Electron
+        Mobility/Plata 2013 - Ceria for all seasons - Section 4.2 Electron Mobility.md'
+      selections:
+      - image: ./images/eb759717-7578-4bff-b205-05ca05c07b22-08_677_837_484_560.jpg
+        whole: true
+        sha256: 4dd67e2558bc7a7bf2bdcd59d499be9f6416477b38cf4af894e2013af610672f
+        comment: 'Figure4.4 / original thesis p84, verified against PDF96. PBE0: 2.429 carrier, 2.309 adjacent,
+          then2.342/2.336/2.336 Å. Perfect reference2.338 Å given in accompanying prose. Vacancy-free96atom
+          cell; this is not a vacancy-bound relocation-difference profile.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: These results indicate that the perturbation induced by the reduction almost exclusively involves
+          the first coordination shell around the concerned Ce center, which is consistent with the small polaron
+          nature experimentally proposed.
+        comment: Author interpretation; almost exclusively does not mean exact zero beyond this shell.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: muhichReEvaluatingCeO2Expansion2017
+      label: Muhich2017 §2.1 Figure2
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Muhich 2017 - Re-Evaluating CeO2 Expansion Upon Reduction/Muhich
+        2017 - Re-Evaluating CeO2 Expansion Upon Reduction.md'
+      selections:
+      - image: images/d994280a-bac2-4cdd-af6d-6d7ddf568c5b-3_1347_716_231_1184.jpg
+        whole: true
+        sha256: 71654b2906405b391f14ed19a9410f31091c4d36f092c836fc67df9289d98c60
+        comment: 'Figure 2c-d, 2x2NN: carrier Ce-O bonds 2.45 Å, adjacent O-Ce4+ bonds 2.35 and 2.37 Å; Ce-Ce
+          distances 3.89-3.91 Å near the carrier versus 3.89 Å in oxidized ceria.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: are highly localized and are almost completely compensated by the contraction of the O-Ce bonds
+          one coordination shell away from the
+        comment: 'Introduction: the author''s summary of the 2x2NN result.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: does not significantly affect the cation lattice structure or size, or the anionic lattice outside
+          of its coordination shell
+        comment: 'Section 2.1: Ce3+-Ce4+ 3.90 Å versus 3.89 Å in oxidized ceria.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: which only induces short-range distortions in their coordinating O anions
+        comment: 'Section 2.2: contrasted with the long-range relaxation of the vacancy-adjacent cations.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: however, analysis of the other configurations results in the same conclusion
+        comment: 'Section 2: 1NN2NN and 2x1NN (SI S2) lead to the same conclusion.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q52-bond-valence:
+    label: What bond-valence estimates validate in ceria
+    papers:
+    - citekey: shokoMixedValencyCerium2009
+      label: Shoko et al 2009
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Shoko et al 2009 - Mixed valency in cerium oxide crystallographic
+        phases/Shoko et al 2009 - Mixed valency in cerium oxide crystallographic phases.md'
+      selections:
+      - quote: We now give a few remarks about the accuracy of the bond valence method.
+        comment: 'Following paragraph propagates parameter and bond-length uncertainty: ±0.13vu CeO2 and ±0.12vu
+          A-Ce2O3. These are not classification error rates.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: It is interesting and important to compare our results to those obtained by other methods.
+        comment: Table II compares endpoint phases, not binary localized-electron site labels in the reduced
+          phases.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: all the distinct coordination spheres for both Ce and O atoms were identified
+        comment: Bond lengths come from published crystallographic data, so one valence is obtained for each
+          crystallographically distinct Ce site.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The mixed-valence in the crystal is not a result of the averaging of the oxidation states at
+          the different sites but a property of the individual sites
+        comment: Authors interpret fractional site valences as intrinsic mixed valence, not an average over
+          integer-valence sites.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: shokoChargeDistributionBulk2010
+      label: Shoko et al 2010
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Shoko et al 2010 - Charge distribution near bulk oxygen
+        vacancies in cerium oxides/Shoko et al 2010 - Charge distribution near bulk oxygen vacancies in cerium
+        oxides.md'
+      selections:
+      - quote: Since our determination of the charge distribution around vacancies is indirect
+        comment: Conclusion explicitly calls for complementary experimental probes; no same-structure carrier-label
+          validation.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q52-bv-dft:
+    label: Why the ceria DFT comparison is not a classifier score
+    papers:
+    - citekey: murgidaOrderingOxygenVacancies2014
+      label: Murgida et al 2014
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 3: Training Corpus Design for Reactive
+        and Redox-Active Oxides/markdown_originals/Murgida et al 2014 - Ordering of oxygen vacancies and excess
+        charge localization in bulk ceria; A DFT+U study/Murgida et al 2014 - Ordering of oxygen vacancies
+        and excess charge localization in bulk ceria; A DFT+U study.md'
+      selections:
+      - quote: Fixing the so-obtained lattice parameters and further relaxing the ionic positions without any
+          symmetry constraints resulted in fully localized electrons
+        comment: 'Following text: energy gains0.24/0.58eV for Ce11O20/Ce7O12; geometry changes during relaxation.
+          This is not testing BVM predictions against electronic labels at identical coordinates.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: in accord with the BV-method prediction
+        comment: Symmetry-constrained DFT+U result agrees with the bond-valence distribution; the unconstrained
+          relaxation that follows localizes the electrons.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q52-hdnn:
+    label: Geometry-only spin prediction in lithium manganese oxide
+    papers:
+    - citekey: eckhoffPredictingOxidationSpin2020
+      label: Eckhoff et al 2020
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive
+        Oxides/markdown_originals/Eckhoff et al 2020 - Predicting oxidation and spin states using high-dimensional
+        neural networks/Eckhoff et al 2020 - Predicting oxidation and spin states using high-dimensional neural
+        networks.md'
+      selections:
+      - quote: Starting from the available reference set, we used the atomic spins of 13669 randomly chosen
+          reference structures for training and the remaining 1559 structures for testing.
+        comment: Random structure split within Li_xMn2O4 reference data, not withheld trajectories.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: For the Mn ions the corresponding values are 0.028 and
+        comment: Following math gives testRMSE0.030hbar; max0.408hbar. These are continuous atomic-spin prediction
+          errors.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: of Mn ions in the test data have an error greater than
+        comment: The immediately preceding fraction is1.09%, threshold following is0.15hbar; not oxidation-label
+          misclassification percentage.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: is a measure for the size of the octahedra
+        comment: Q1 (breathing mode) is the size descriptor; Fig. 3a plots DFT Mn spin against it.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: octahedra show clear Jahn-Teller distortions caused by the single
+        comment: Mn(III)O6 octahedra are Jahn-Teller distorted by the single eg electron; Mn(IV)O6 distortions
+          come from thermal motion.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: allow to distinguish the chemical environments of
+        comment: Q1 and the Jahn-Teller amplitude distinguish Mn(III) and Mn(IV) environments in the vast majority
+          of reference structures; not quantified.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: neither simple descriptors nor ACSFs will allow for the unique assignment of the oxidation states
+          of all intermediate transition structures
+        comment: Authors expect intermediate structures during electron hopping to form a continuum of distortions
+          with no unique oxidation-state assignment.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q52-chgnet:
+    label: CHGNet magnetic-moment validation
+    papers:
+    - citekey: dengCHGNetPretrainedUniversal2023
+      label: Deng et al 2023
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive
+        Oxides/markdown_originals/Deng et al 2023 - CHGNet pretrained universal neural network potential/Deng
+        et al 2023 - CHGNet pretrained universal neural network potential.md'
+      selections:
+      - quote: Mean-absolute-errors (MAEs) of CHGNet on MPtrj test set of 157,955 structures from 14,572 materials.
+        comment: 'TableI With mag: momentMAE0.032muB, pooled testset; no ceria-specific carrier or arrangement
+          score.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: To further validate this hypothesis and the accuracy of CHGNet prediction, we used
+        comment: Following Fig4e comparison at0.4and1.5ns uses GGA+U magnetic moments; methods infer Mn valence
+          with4.2muB threshold.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: CHGNet (blue) shows highly accurate agreement with GGA
+        comment: 'Sentence continues: CHGNet infers the same tetrahedral-Mn valence states as GGA+U in the
+          two snapshots.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q52-patterns:
+    label: Oxidation-state pattern selection by predicted energy
+    papers:
+    - citekey: malicaTeachingOxidationStates2025
+      label: Malica and Marzari
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive
+        Oxides/markdown_originals/Malica and Marzari 2025 - Teaching oxidation states to neural networks/Malica
+        and Marzari 2025 - Teaching oxidation states to neural networks.md'
+      selections:
+      - quote: First, only configurations outside the training and validation datasets are chosen.
+        comment: Fig4 tests selected pre/postjump frames; not an aggregate trajectory accuracy.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The pattern of OSs given by
+        comment: 'Following paragraph andFig5: DFT+U+V pattern is minimum among56patterns for both selected
+          configurations of unseen x3/8,51atom cell.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: treats atoms of the same element with different oxidation states as different species
+        comment: Oxidation state is an input species label, so candidate patterns can be ranked by predicted
+          energy at fixed positions.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: In all cases, the ML model identifies the
+        comment: 'Fig. 4 caption: DFT+U+V pattern is lowest in energy for every configuration shown; no aggregate
+          trajectory rate.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q52-conditioned:
+    label: Charge-conditioned dynamics is a different inference task
+    papers:
+    - citekey: birschitzkyMachineLearningSmall2025
+      label: Birschitzky et al 2025
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive
+        Oxides/markdown_originals/Birschitzky et al 2025 - Machine Learning Small Polaron Dynamics/Birschitzky
+        et al 2025 - Machine Learning Small Polaron Dynamics.md'
+      selections:
+      - quote: Since small polarons discretely alter the oxidation state by ±1, we can encode each atom
+        comment: Current charge-state input supplements geometry; magnetization predictions and hopping validation
+          cannot be treated as blind geometry-only assignment.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q53-random:
+    label: q53-random
+    papers:
+    - citekey: eckhoffPredictingOxidationSpin2020
+      label: Eckhoff et al 2020 - Predicting oxidation and spin states using high-dimensional neural networks
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive
+        Oxides/markdown_originals/Eckhoff et al 2020 - Predicting oxidation and spin states using high-dimensional
+        neural networks/Eckhoff et al 2020 - Predicting oxidation and spin states using high-dimensional neural
+        networks.md'
+      selections:
+      - quote: Starting from the available reference set, we used the atomic spins of 13669 randomly chosen
+          reference structures for training and the remaining 1559 structures for testing.
+        comment: 'Section IV.B: random structure holdout, not a reported trajectory holdout.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The small spins on the Li and O ions are a numerical result of the method we employ to determine
+          the reference spins in the DFT calculations, which are not uniquely defined similar to atomic partial
+          charges.
+        comment: Reference spins are defined by the electronic projection; this does not itself invalidate
+          prediction.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: the structures have been obtained in MD simulations containing also continuous transitions
+        comment: 'Section IV.A: the reference structures come from molecular-dynamics simulations, so a random structure split can place frames of one simulation in both sets.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q53-materials:
+    label: q53-materials
+    papers:
+    - citekey: dengCHGNetPretrainedUniversal2023
+      label: Deng et al 2023 - CHGNet pretrained universal neural network potential
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive
+        Oxides/markdown_originals/Deng et al 2023 - CHGNet pretrained universal neural network potential/Deng
+        et al 2023 - CHGNet pretrained universal neural network potential.md'
+      selections:
+      - quote: Training, validation, and test sets of the MPtrj dataset were randomly selected based on the
+          145,923 compounds (based on the mp-id). As a result, different DFT tasks and their trajectory frames
+          can only be included in the same set conditioned on the compound.
+        comment: 'Methods A: compounds, not individual frames, partition the data.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The absolute values of DFT magmoms are used for training.
+        comment: Electronic target definition.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: are classified by CHGNet magmom threshold of
+        comment: 'Methods F: adjacent equation gives 4.2 muB and reference38. This establishes threshold provenance,
+          not a complete chronology of method selection.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q53-patterns:
+    label: q53-patterns
+    papers:
+    - citekey: malicaTeachingOxidationStates2025
+      label: Malica and Marzari 2025 - Teaching oxidation states to neural networks
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive
+        Oxides/markdown_originals/Malica and Marzari 2025 - Teaching oxidation states to neural networks/Malica
+        and Marzari 2025 - Teaching oxidation states to neural networks.md'
+      selections:
+      - quote: The red and blue stripes have been chosen to encompass the amplitude of fluctuations observed
+          in the
+        comment: 'Methods: bands chosen from400K dynamics; adjacent text specifies intermediate-occupation
+          filtering.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: In Fig. 4d, we show a portion of this new trajectory, which is completely independent of the
+          previous datasets.
+        comment: 800K x1/2 independent trajectory, selected arrangements.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The supercell thus includes 51 atoms.
+        comment: Adjacent paragraph gives unseen x3/8,800K,56patterns and agreement at A/B.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: This results in an ensemble of approximately 1000 frames with which we perform error analysis
+          and evaluate the performance of the model.
+        comment: Adjacent error measures are energies and forces, not an arrangement identification rate.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q53-extra-trajectories:
+    label: q53-extra-trajectories
+    papers:
+    - citekey: malicaTeachingOxidationStates2025
+      label: Malica and Marzari 2025 - Teaching oxidation states - Supplementary Information
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive
+        Oxides/markdown_originals/Malica and Marzari 2025 - Teaching oxidation states - Supplementary Information/Malica
+        and Marzari 2025 - Teaching oxidation states - Supplementary Information.md'
+      selections:
+      - quote: Consequently, this additional trajectory segment, with a length of approximately 6 ps, was not
+          considered for the random selection of frames for training.
+        comment: 'SI III: extension from9.1 to15.3ps at x.25; last jump beyond5ps afterrestart.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: we re-start a new molecular dynamics trajectory considering a temperature of 1000 K-even outside
+          the temperature range (400K-900K) used in the training and let evolve it for a few picoseconds.
+        comment: 'SI III: new x.75 trajectory.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The model predict the correct arrangements of oxidation states for both the initial and final
+          state.
+        comment: 'SI III: selected1000K event endpoints, not entiretrajectory scoring.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q53-external-chgnet:
+    label: q53-external-chgnet
+    papers:
+    - citekey: malicaTeachingOxidationStates2025
+      label: Malica and Marzari 2025 - Teaching oxidation states - Supplementary Information
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 5: MLIP Architecture Choices for Charge-Sensitive
+        Oxides/markdown_originals/Malica and Marzari 2025 - Teaching oxidation states - Supplementary Information/Malica
+        and Marzari 2025 - Teaching oxidation states - Supplementary Information.md'
+      selections:
+      - quote: we first relax our LMPO fully-lithiated (where all Mn are 2+) and fully-delithiated (where all
+          Mn are 3+) structures using the CHGNet potential and analyze the output magnetic moments.
+        comment: 'SI V: endmember calibration, not pre-existing universal moment threshold.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: The trends are similar to ours, but the oxidation states are less well-defined.
+        comment: 'SI V: qualitative third-party CHGNet comparison on mainFig4a–c frames. No numerical identification
+          rate.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q11-cross-study-bonds:
+    label: Published bond lengths for neutral first-shell Ce3+ pairs
+    papers:
+    - citekey: das2018ceria
+      label: Das et al. (2018)
+      path: 'Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron
+        Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Das et al 2018 - Anisotropic
+        chemical strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles/Das et al 2018 - Anisotropic
+        chemical strain in cubic ceria due to oxygen-vacancy-induced elastic dipoles.md'
+      selections:
+      - quote: contracted to lengths between
+        comment: 'Section 3.1: preceding words identify the seven bonds around vacancy-coordinated Ce4+.
+          The reference is the perfect lattice, not a carrier-minus-control difference. Numerical values
+          immediately adjacent to this prose selection are rendered mathematics, which the highlighter cannot
+          select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - image: images/e49d2335-69af-4849-bfb8-96f6f378b4fd-3_1080_1480_167_292.jpg
+        whole: true
+        sha256: 0804a8a3a4aff5c12d35d8919fbae6ec13ff38193e353cdeb95d74ac0a619a27
+        comment: Figure1, originalPDFp3, checked against Mathpix image. Paneld gives oxygen-framework angles,
+          not O–Ce–O angles. Table1 is now present separately in the Mathpix conversion. Caption pink=elongation/blue=contraction;
+          the following paragraph reverses these colors, a source-text error.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: elongated (as denoted by the pink bonds in Fig. 1c) to
+        comment: 'Section 3.1: preceding words specify six of seven Ce–O bonds around vacancy-coordinated
+          Ce3+. Both carriers in the first shell; GGA+U, Ueff = 4.5 eV, 2×2×2 (96-atom) cell with the cell
+          volume held fixed (PDFp3, now also present in the Mathpix conversion). The following sentence
+          reports the trans bond contracting to 2.33 Å. Mathpix conversion and originalPDFp4 now checked
+          together. Numerical values immediately adjacent to this prose selection are rendered mathematics,
+          which the highlighter cannot select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: or by -2%. Li et al.
+        comment: 'Section 3.1: trans Ce3+–O bond relative to the perfect lattice. The Mathpix conversion
+          and original PDF page 4 confirm the O–Ce3+–vacancy diagonal. This is not the sign of the carrier-minus-noncarrier
+          contrast. Numerical values immediately adjacent to this prose selection are rendered mathematics,
+          which the highlighter cannot select.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - table: 1
+        whole: true
+        sha256: efd3923ba8048d6cdb71809bb34e8572f1b14a1a177727fee741bca9956b031c
+        comment: 'Section 1.1 bond-length evidence: non-uniform-deformation rows of Table 1; native percent
+          changes and bond multiplicities for each Ce site type. Checked against original PDF page 3. No
+          mapping of non-carrier directional identities is supplied.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+    - citekey: muhichReEvaluatingCeO2Expansion2017
+      label: Muhich 2017 — relaxed neutral vacancy geometries
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Muhich 2017 - Re-Evaluating CeO2 Expansion Upon Reduction/Muhich
+        2017 - Re-Evaluating CeO2 Expansion Upon Reduction.md'
+      selections:
+      - table: 1
+        whole: true
+        sha256: 3e77f572ff2a459a255158277f728391cc67535fc71b05b7147cf36d9d44f68f
+        comment: Table 1 gives bond-type averages; the opposite-vacancy bond is separately in parentheses.
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Distances do not include the bond length to the O anion 180° opposite the vacancy; this distance
+          is reported in parentheses.
+        comment: 'Table 1 footnote a: for first-shell Ce the first value averages the bonds other than the
+          one opposite the vacancy.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Therefore, a U correction of 3.125 eV is used as a compromise between electric and energetic
+          accuracy.
+        comment: 'Section 4: PBE+U in Quantum Espresso with ultrasoft pseudopotentials; U = 3.125 eV on
+          Ce 4f.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Given the 81-atom super cell
+        comment: 'Section 2: one vacancy in an 81-atom (3 x 3 x 3 primitive) supercell.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: Upon reduction, the unit cell expands by 0.8% from a calculated super cell vector length
+          of
+        comment: 'Section 2: the supercell vectors relax on reduction (asymmetric cell), so the cell is
+          not held at fixed volume.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+  q11-muhich-first-shell-detail:
+    label: 'Muhich first-shell pair: three elongated and three near-pristine bonds'
+    papers:
+    - citekey: muhichReEvaluatingCeO2Expansion2017
+      label: Muhich 2017 supporting information — Section S2 and Figure S7c
+      path: 'Papers/Ceria Radiation Chemistry and Hypothesis Anchors/Section 3: Defect Chemistry and Oxygen
+        Transport in Reduced Ceria/markdown_originals/Muhich 2017 - Re-Evaluating CeO2 Expansion Upon Reduction
+        - Supporting Information/Muhich 2017 - Re-Evaluating CeO2 Expansion Upon Reduction - Supporting
+        Information.md'
+      selections:
+      - quote: The same cause of expansion is also found in the 2×1NN configuration.
+        comment: 'Section S2 paragraph: three Ce3+–O bonds ~2.41 Å, three ~2.38 Å, and the opposite-vacancy
+          bond 2.30 Å. The formula-rich sentence following this selection supplies the values.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - quote: three remain relatively unchanged
+        comment: 'Section S2: the following mathematics gives 2.38 Å; this distinguishes the pattern from
+          the six lengthened bonds reported by Das.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15
+      - image: ./images/71c391be-bc1b-4ade-b2ea-c3e7a6f3fb5b-10_1626_820_248_248.jpg
+        rect:
+        - 0.59
+        - 0.34
+        - 0.4
+        - 0.29
+        sha256: f754c412a64ceee3a5187d41e1eeaf25d4bb48a0d32c626c1f520a0c95d46b52
+        comment: 'Figure S7c: first-shell Ce3+–O bond types, 2.41, 2.38 and 2.30 Å. Panel e labels the opposite-vacancy
+          bond differently (2.33 Å); the 2.30 Å value used here follows S2 prose, panel c and main Table
+          1.'
+        color: '#c37b24'
+        darkColor: '#efb565'
+        opacity: 0.15

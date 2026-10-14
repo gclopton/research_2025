@@ -1,0 +1,161 @@
+{
+  "version": 1,
+  "claims": {
+    "local-search": {
+      "label": "local search",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al. 2023",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "may lie within a local minimum or on a saddle point of the potential energy surface"
+            }
+          ]
+        }
+      ]
+    },
+    "ceria-localization": {
+      "label": "ceria localization",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al. 2023",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "This leads to many competing states depending on both the defect-polaron and polaron-polaron distances."
+            },
+            {
+              "quote": "For ceria and rutile, the two electrons donated by the defect localise on lattice cations reducing them to Ce/Ti(III)."
+            }
+          ]
+        }
+      ]
+    },
+    "bond-distortion": {
+      "label": "bond distortion",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al. 2023",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "we use the number of missing/additional valence electrons of the defect species to determine the number of nearest neighbour atoms to distort."
+            },
+            {
+              "quote": "Similar bond distortions have previously been applied by Pham and Deskins"
+            },
+            {
+              "quote": "to locate the ground state of small polarons in three metal oxides."
+            }
+          ]
+        }
+      ]
+    },
+    "radial-map": {
+      "label": "radial distortion",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al. 2023",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "are distorted by varying amounts, with the range set by the minimum and maximum distortion factors"
+            }
+          ]
+        }
+      ]
+    },
+    "neighbor-count": {
+      "label": "electron count and trial range",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al. 2023",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "we use the number of missing/additional valence electrons of the defect species to determine the number of nearest neighbour atoms to distort."
+            },
+            {
+              "quote": "While these parameters may be varied, in our work, we found a distortion range of ± 60%"
+            },
+            {
+              "quote": "to be an optimal choice, with a sufficiently wide and dense distortion mesh to identify all known energy-lowering distortions"
+            }
+          ]
+        }
+      ]
+    },
+    "rattle": {
+      "label": "Rattle motivation and benchmark choices",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al. 2023",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "This aids in escaping from any metastable symmetry trapping and locate small, symmetry-breaking distortions (i.e., nearby lower energy basins)."
+            },
+            {
+              "quote": "In general, we found values between 0.05-0.25 Å to give good performance"
+            },
+            {
+              "quote": "However, this yielded inferior performance for several defects (less bond distortions leading to the ground state) without significant reduction in the number of ionic relaxation steps"
+            }
+          ]
+        }
+      ]
+    },
+    "dimer-motivation": {
+      "label": "Vacancy-neighbor rebonding and anion dimers",
+      "papers": [
+        {
+          "citekey": "mosquera2023groundstate",
+          "label": "Mosquera-Lois et al. 2023",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids/Mosquera-Lois et al 2023 - Identifying the ground state structures of point defects in solids.md",
+          "selections": [
+            {
+              "quote": "For vacancies, the distortion typically entails two of the under-coordinated defect neighbours displacing toward each other to form a bond"
+            },
+            {
+              "quote": "Within the cases reported in Table 1, it is instructive to further consider the antimony vacancies"
+            },
+            {
+              "quote": "we observe greater net bonding anion-anion interactions"
+            }
+          ]
+        }
+      ]
+    },
+    "occupation-energy": {
+      "label": "Rotationally invariant occupation correction and potential",
+      "papers": [
+        {
+          "citekey": "dudarevElectronenergylossSpectraStructural1998",
+          "label": "Dudarev et al. 1998, p.1506, equations 5 and 6",
+          "path": "Papers/DFT + U Reference Data and MLIP Training/Section 1: DFT+U Methodology for f-Electron Oxides (Metastability, Convergence, Branch Control)/markdown_originals/Dudarev et al 1998 - Electron-energy-loss spectra and the structural stability of nickel oxide; An LSDA+U study/Dudarev et al 1998 - Electron-energy-loss spectra and the structural stability of nickel oxide; An LSDA+U study.md",
+          "selections": [
+            {
+              "quote": "It is a simple matter to see how Eq. (4) can be written in a form which is invariant with respect to a unitary transformation of orbitals.",
+              "comment": "Equation (5) and its potential derivative (6) checked against PDF page 2. Chapter applies the same trace form to the Ce 4f subspace; the paper illustrates Ni 3d."
+            },
+            {
+              "quote": "Since Eqs. (3) and (2) compensate each other exactly in the limit of integer occupation numbers, the second term on the right-hand side of Eq. (5) vanishes in that limit and this makes Eq. (5) suitable for evaluating the cohesive energy of the solid.",
+              "comment": "Equation (5) and its potential derivative (6) checked against PDF page 2. Chapter applies the same trace form to the Ce 4f subspace; the paper illustrates Ni 3d."
+            },
+            {
+              "quote": "The matrix of the one-electron potential is given by the derivative of Eq. (5)",
+              "comment": "Equation (5) and its potential derivative (6) checked against PDF page 2. Chapter applies the same trace form to the Ce 4f subspace; the paper illustrates Ni 3d."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

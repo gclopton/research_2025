@@ -1,3 +1,10 @@
+---
+citekey: malicaTeachingOxidationStates2025
+doi: 10.1038/s41524-025-01709-z
+zotero_item_type: journalArticle
+source_version: publisher PDF
+---
+
 # Teaching oxidation states to neural networks 
 
 Cristiano Malica ${ }^{\mathbf{1}}$ ⊗ \& Nicola Marzari ${ }^{\mathbf{1}, \mathbf{2 , 3}}$
