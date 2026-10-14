@@ -2,6 +2,7 @@
 """Local paper intake: one PDF and one reading conversion per source, many libraries."""
 import argparse, contextlib, hashlib, json, os, re, shutil, sys, tempfile, unicodedata, uuid, subprocess
 from pathlib import Path
+from datetime import datetime, timezone
 
 CATALOG = Path('.paper-library/catalog.json')
 def catalog_path(v):
@@ -73,6 +74,7 @@ def main():
     conv=sub.add_parser('convert');conv.add_argument('source');conv.add_argument('--converter',type=Path,default=Path.home()/'ObsidianVaults/me_510/tools/mathpix_chapters_to_obsidian.py')
     imp=sub.add_parser('import');imp.add_argument('pdf',type=Path);imp.add_argument('--library',required=True);imp.add_argument('--title');imp.add_argument('--doi',default='');imp.add_argument('--use-existing',help='Source ID after reviewing candidate matches')
     reg=sub.add_parser('register-conversion');reg.add_argument('source');reg.add_argument('markdown',help='Vault-relative path to the completed Mathpix reading copy')
+    clean=sub.add_parser('mark-cleaned',help='Record completed PDF/OCR/evidence review, not conversion alone');clean.add_argument('source')
     pre=sub.add_parser('conversion-input');pre.add_argument('source',help='Print existing conversion or canonical PDF before running Mathpix')
     add=sub.add_parser('add');add.add_argument('source');add.add_argument('library')
     args=parser.parse_args();v=args.vault.expanduser().resolve();c=json.loads(catalog_path(v).read_text())
@@ -111,6 +113,14 @@ def main():
         return
     with transaction(v) as c:
         if args.command=='add':membership(c,args.source,args.library)
+        elif args.command=='mark-cleaned':
+            s=c['sources'][args.source]
+            if not s.get('conversion'):raise ValueError('A Markdown reading copy is required before cleanup review')
+            pdf=within(v,s['pdf']['path']);md=within(v,s['conversion']['path'])
+            pdf_hash=digest(pdf)
+            if pdf_hash!=s['pdf']['sha256']:raise ValueError('PDF identity changed; review before recording cleanup')
+            s['cleanup']={'verifiedAt':datetime.now(timezone.utc).isoformat(),'pdfSha256':pdf_hash,'markdownSha256':digest(md)}
+            print(json.dumps({'source':args.source,'cleanup':s['cleanup']}))
         elif args.command=='register-conversion':
             s=c['sources'][args.source];p=within(v,args.markdown)
             if not p.is_file() or p.suffix.lower()!='.md':raise ValueError('Choose an existing Markdown conversion')

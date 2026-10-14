@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": 1,
+  "revision": 5,
   "sources": {
     "src_34af80c5fa3a40": {
       "title": "01 - Introduction",
@@ -1556,12 +1556,12 @@
       "doi": "10.1016/j.cattod.2024.114946"
     },
     "src_11cd7f35380f41": {
-      "title": "DFT+U Study of CeO2 and Its Native Defects",
+      "title": "Study of CeO2 and Its Native Defects by Density Functional Theory with Repulsive Potential",
       "pdf": {
         "path": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/pdfs/Huang et al 2014 - DFT+U Study of CeO2 and Its Native Defects.pdf",
-        "sha256": "c769cf15feb2239d6a1079fb557ea1c241b24fb8fb7cda6ca4082bdba6ecf656",
-        "pages": 19,
-        "bytes": 999116
+        "sha256": "689b0b32746bf9584c99c3543735b85bf5d2243f3ef7fde5c1d25394aabaec29",
+        "pages": 9,
+        "bytes": 5527821
       },
       "aliases": [],
       "authors": "Huang et al",
@@ -1572,7 +1572,20 @@
       "evidence": [
         "/Users/gradyclopton/ObsidianVaults/research_2025/Evidence/22T.yaml#q11-oxygen-displacements"
       ],
-      "citekey": "huangDFT+UStudyCeO22014"
+      "citekey": "huangDFT+UStudyCeO22014",
+      "doi": "10.1021/jp506625h",
+      "sourceVersion": "published",
+      "equivalentPdfs": [
+        {
+          "sha256": "c769cf15feb2239d6a1079fb557ea1c241b24fb8fb7cda6ca4082bdba6ecf656",
+          "reason": "superseded author manuscript"
+        }
+      ],
+      "cleanup": {
+        "verifiedAt": "2026-10-14T03:08:11.025900+00:00",
+        "pdfSha256": "689b0b32746bf9584c99c3543735b85bf5d2243f3ef7fde5c1d25394aabaec29",
+        "markdownSha256": "fb1d51ed359811e961bfa9b79dcdbc152699f62ce698c39c1aeb6bc03cd182c3"
+      }
     },
     "src_a6d4eae7951446": {
       "title": "Oxygen vacancy ordering within anion-deficient Ceria",
@@ -4567,7 +4580,12 @@
         "/Users/gradyclopton/ObsidianVaults/research_2025/Evidence/22T.yaml#q22-single-energies"
       ],
       "citekey": "zhangConsistentPredictionDefect2023",
-      "doi": "10.1021/acs.chemmater.2c03019"
+      "doi": "10.1021/acs.chemmater.2c03019",
+      "cleanup": {
+        "verifiedAt": "2026-10-14T03:05:10.700548+00:00",
+        "pdfSha256": "797c0f1adc3533d1ee11d3061a9b7a28c5c0d04846b2fb60a6109f1390e65b58",
+        "markdownSha256": "d91d83754352b0de73bd33c558769cdbe23e36a7937c61978a3c307dcc044e1e"
+      }
     },
     "src_62f31db5d74c4f": {
       "title": "Performance Comparisons of NequIP and DPMD Machine Learning Interatomic Potentials for Tobermorites",

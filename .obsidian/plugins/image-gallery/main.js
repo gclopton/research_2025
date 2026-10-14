@@ -2689,6 +2689,11 @@ function moveLibrary(c, id, parent) {
   if (id === parent || parent && libraryTrail(c, parent).includes(id)) throw Error("A library cannot be placed inside itself");
   c.libraries[id].parent = parent;
 }
+function paperCleanupBadge(source) {
+  const review = source.cleanup;
+  const verified = !!source.conversion && !!review && review.pdfSha256 === source.pdf.sha256 && /^[a-f0-9]{64}$/.test(review.markdownSha256) && Number.isFinite(Date.parse(review.verifiedAt));
+  return verified ? { icon: "\u2728", label: `OCR cleanup reviewed \xB7 ${new Date(review.verifiedAt).toLocaleDateString(void 0, { year: "numeric", month: "long", day: "numeric" })}` } : { icon: "\u{1F922}", label: "Awaiting OCR cleanup" };
+}
 
 // src/library-storage.ts
 var fs = __toESM(require("node:fs/promises"));
@@ -3370,6 +3375,8 @@ var PaperLibraryView = class extends import_obsidian3.ItemView {
       const memberships = links.createEl("button", { text: `${count} ${count === 1 ? "library" : "libraries"}` });
       memberships.onclick = (e) => this.paperMenu(e, id);
       if (s.evidence?.length) links.createSpan({ text: "\u2022 Evidence", cls: "ig-library-evidence" });
+      const cleanup = paperCleanupBadge(s);
+      links.createSpan({ cls: "ig-library-cleanup", text: cleanup.icon, attr: { role: "img", "aria-label": cleanup.label, title: cleanup.label } });
       card.oncontextmenu = (e) => {
         e.preventDefault();
         this.paperMenu(e, id);

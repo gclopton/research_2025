@@ -13,3 +13,5 @@ Run `check` after intake or a catalog change. The gallery also reports possible 
 Migration receipt and recovery snapshot are outside this vault under `Documents/ChatGPT/BDM Calculation Campaign/Diagnostics/Paper library - 2026-10-13`. The catalog retains retired paths as aliases. Evidence files and all canonical source content were retained unchanged during consolidation.
 
 Move paper folders through Obsidian while Image Gallery is running. The vault-root catalog tracks those moves, keeps evidence redirects, and updates the intake destination. Run the integrity check after a move. External moves made while Obsidian is closed require path repair before further intake.
+
+After completing OCR cleanup against the published PDF and verifying math, figures, tables, references and saved evidence selections, run `python3 .paper-library/paper-library.py --vault . mark-cleaned SOURCE_ID`. This records a dated cleanup review and the PDF/Markdown hashes. Library cards show ✨ for reviewed papers and 🤢 for those awaiting cleanup. Do not stamp a conversion merely because Mathpix completed. Repeat review after replacing or substantially revising the reading copy.

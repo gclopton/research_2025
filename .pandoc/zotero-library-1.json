@@ -8958,5 +8958,40 @@
         ]
       ]
     }
+  },
+  {
+    "id": "huangDFT+UStudyCeO22014",
+    "type": "article-journal",
+    "citation-key": "huangDFT+UStudyCeO22014",
+    "container-title": "The Journal of Physical Chemistry C",
+    "DOI": "10.1021/jp506625h",
+    "issue": "42",
+    "language": "en-US",
+    "page": "24248-24256",
+    "title": "Study of CeO2 and Its Native Defects by Density Functional Theory with Repulsive Potential",
+    "URL": "https://doi.org/10.1021/jp506625h",
+    "volume": "118",
+    "author": [
+      {
+        "family": "Huang",
+        "given": "Bolong"
+      },
+      {
+        "family": "Gillen",
+        "given": "Roland"
+      },
+      {
+        "family": "Robertson",
+        "given": "John"
+      }
+    ],
+    "issued": {
+      "date-parts": [
+        [
+          "2014"
+        ]
+      ]
+    },
+    "container-title-short": "J. Phys. Chem. C"
   }
 ]

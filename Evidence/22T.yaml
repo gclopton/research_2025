@@ -275,10 +275,10 @@ claims:
         Chemistry/markdown_originals/Huang et al 2014 - DFT+U Study of CeO2 and Its Native Defects/Huang et
         al 2014 - DFT+U Study of CeO2 and Its Native Defects.md'
       selections:
-      - quote: eight neighboring oxygen atoms move off their ideal lattice sites towards the vacancy site since
-          vacancy site is an effective positive charge center, while neighboring Ce atoms move away from the
+      - quote: eight neighboring oxygen atoms move off their ideal lattice sites toward the vacancy site since
+          a vacancy site is an effective positive charge center, while neighboring Ce atoms move away from the
           vacancy
-        comment: 'Section 4.2, PDF page 4. Read the immediately following equations and prose: 0.25 Å for oxygen
+        comment: 'Section 4.2, published PDF pages 3–4. Read the immediately following equations and prose: 0.25 Å for oxygen
           bridging two Ce4+, 0.01 Å for the two-Ce3+ bridge, 0.15 Å for mixed coordination. Here motion is
           toward the vacancy; Das reports 0.01 Å away for the carrier bridge. The ambiguous subsequent Ce3+
           motion sentence is not used.'
@@ -695,7 +695,7 @@ claims:
       selections:
       - table: 5
         whole: true
-        sha256: 303d052d4605684d9a51ed156d2090dc865e7be7554cf2756aec5352697e8918
+        sha256: 1aad75cf5bdf2840d0ec9a73d0bc69d58237942700489ad41c5189cfaf5e70f1
         comment: Original PDF page13 visually verified. M-L has nine entries; hybrid QM/MM covers only selected
           rows. Mixed NN1-NNN2 is below NNN1-NNN4 by0.07eV(PBE0),0.10eV(BB1K),0.014eV(M-L).
         color: '#c37b24'
