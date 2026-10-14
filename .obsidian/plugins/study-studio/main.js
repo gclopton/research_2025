@@ -39132,7 +39132,7 @@ function reviewMarkdown(report, jsonName) {
 var import_obsidian24 = require("obsidian");
 var READER = "study-evidence-reader";
 function imageFile(app, source, path) {
-  const direct = app.metadataCache.getFirstLinkpathDest(path, paperSourcePath(app, source));
+  const direct = app.metadataCache.getFirstLinkpathDest(paperSourcePath(app, path), paperSourcePath(app, source));
   if (direct) return direct;
   return app.vault.getFiles().find((f) => app.vault.getResourcePath(f).split("?")[0] === path.split("?")[0]) || null;
 }

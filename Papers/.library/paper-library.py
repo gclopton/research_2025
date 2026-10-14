@@ -3,7 +3,10 @@
 import argparse, contextlib, hashlib, json, os, re, shutil, sys, tempfile, unicodedata, uuid, subprocess
 from pathlib import Path
 
-CATALOG = Path('Papers/.library/catalog.json')
+CATALOG = Path('.paper-library/catalog.json')
+def catalog_path(v):
+    current=v/CATALOG
+    return current if current.is_file() else v/'Papers/.library/catalog.json'
 def digest(p):
     h=hashlib.sha256()
     with p.open('rb') as f:
@@ -24,7 +27,7 @@ def matches(c,sha='',title='',doi=''):
 
 @contextlib.contextmanager
 def transaction(v):
-    path=v/CATALOG;lock=path.with_suffix('.json.lock');fd=os.open(lock,os.O_CREAT|os.O_EXCL|os.O_WRONLY);tmp=None
+    path=catalog_path(v);lock=path.with_suffix('.json.lock');fd=os.open(lock,os.O_CREAT|os.O_EXCL|os.O_WRONLY);tmp=None
     try:
         raw=path.read_bytes();c=json.loads(raw);yield c
         if path.read_bytes()!=raw:raise RuntimeError('Catalog changed during update; retry')
@@ -50,13 +53,13 @@ def check(v,c):
                 if not p.is_file():errors.append('Missing '+s[field]['path'])
         p=within(v,s['pdf']['path'])
         if p.is_file() and digest(p)!=s['pdf']['sha256']:errors.append('Changed PDF '+s['pdf']['path'])
-    for p in (v/'Papers').rglob('*.pdf'):
+    for p in within(v,c.get('sourceRoot','Papers')).rglob('*.pdf'):
         sha=digest(p)
         if sha in seen:errors.append(f'Duplicate PDF: {p.relative_to(v)} = {seen[sha]}')
         else:seen[sha]=str(p.relative_to(v))
         kind,ids=matches(c,sha,p.stem)
         if str(p.resolve()) not in registered and ids:errors.append('Unregistered matching PDF '+str(p.relative_to(v)))
-    for p in (v/'Papers').rglob('*.md'):
+    for p in within(v,c.get('sourceRoot','Papers')).rglob('*.md'):
         if 'markdown_originals' not in p.parts or str(p.resolve()) in registered:continue
         kind,ids=matches(c,title=p.stem)
         if ids:errors.append('Unregistered matching conversion '+str(p.relative_to(v)))
@@ -72,7 +75,7 @@ def main():
     reg=sub.add_parser('register-conversion');reg.add_argument('source');reg.add_argument('markdown',help='Vault-relative path to the completed Mathpix reading copy')
     pre=sub.add_parser('conversion-input');pre.add_argument('source',help='Print existing conversion or canonical PDF before running Mathpix')
     add=sub.add_parser('add');add.add_argument('source');add.add_argument('library')
-    args=parser.parse_args();v=args.vault.expanduser().resolve();c=json.loads((v/CATALOG).read_text())
+    args=parser.parse_args();v=args.vault.expanduser().resolve();c=json.loads(catalog_path(v).read_text())
     if args.command=='libraries':print(json.dumps(c['libraries'],indent=2));return
     if args.command=='find':
         sha=digest(args.pdf) if args.pdf else '';kind,ids=matches(c,sha,args.title or (args.pdf.stem if args.pdf else ''),args.doi)
@@ -90,9 +93,9 @@ def main():
         pdf=within(v,source['pdf']['path'])
         if digest(pdf)!=source['pdf']['sha256']:raise ValueError('PDF identity changed; review before conversion')
         if not args.converter.is_file():raise ValueError('Specify the installed Mathpix chapter converter with --converter')
-        output=v/'Papers/Sources'/args.source/'markdown_originals'
+        output=within(v,c.get('sourceRoot','Papers'))/'Sources'/args.source/'markdown_originals'
         # One source lock prevents simultaneous paid conversion jobs for the same paper.
-        source_lock=v/'Papers/.library'/('convert-'+args.source+'.lock')
+        source_lock=catalog_path(v).parent/('convert-'+args.source+'.lock')
         fd=os.open(source_lock,os.O_CREAT|os.O_EXCL|os.O_WRONLY)
         try:
             with tempfile.TemporaryDirectory(prefix='paper-conversion-') as temp:
@@ -126,7 +129,7 @@ def main():
             elif kind=='exact':source=ids[0]
             elif ids:raise ValueError('Possible existing paper. Review with find, then import --use-existing SOURCE: '+', '.join(ids))
             else:
-                source='src_'+uuid.uuid4().hex[:14];folder=v/'Papers/Sources'/source;folder.mkdir(parents=True)
+                source='src_'+uuid.uuid4().hex[:14];folder=within(v,c.get('sourceRoot','Papers'))/'Sources'/source;folder.mkdir(parents=True)
                 dest=folder/args.pdf.name
                 with dest.open('xb') as f:f.write(data)
                 c['sources'][source]={'title':title,'pdf':{'path':str(dest.relative_to(v)),'sha256':sha,'bytes':len(data)}}
