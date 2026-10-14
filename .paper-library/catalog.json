@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": 5,
+  "revision": 7,
   "sources": {
     "src_34af80c5fa3a40": {
       "title": "01 - Introduction",
@@ -1582,7 +1582,8 @@
         }
       ],
       "cleanup": {
-        "verifiedAt": "2026-10-14T03:08:11.025900+00:00",
+        "markdownPath": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Huang et al 2014 - DFT+U Study of CeO2 and Its Native Defects/Huang et al 2014 - DFT+U Study of CeO2 and Its Native Defects.md",
+        "verifiedAt": "2026-10-14T03:12:18.097180+00:00",
         "pdfSha256": "689b0b32746bf9584c99c3543735b85bf5d2243f3ef7fde5c1d25394aabaec29",
         "markdownSha256": "fb1d51ed359811e961bfa9b79dcdbc152699f62ce698c39c1aeb6bc03cd182c3"
       }
@@ -4582,7 +4583,8 @@
       "citekey": "zhangConsistentPredictionDefect2023",
       "doi": "10.1021/acs.chemmater.2c03019",
       "cleanup": {
-        "verifiedAt": "2026-10-14T03:05:10.700548+00:00",
+        "markdownPath": "Papers/DFT + U Reference Data and MLIP Training/Section 6: MLIP Validation Targets for Ceria Redox Chemistry/markdown_originals/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2/Zhang et al 2023 - Toward a Consistent Prediction of Defect Chemistry in CeO2.md",
+        "verifiedAt": "2026-10-14T03:12:18.152831+00:00",
         "pdfSha256": "797c0f1adc3533d1ee11d3061a9b7a28c5c0d04846b2fb60a6109f1390e65b58",
         "markdownSha256": "d91d83754352b0de73bd33c558769cdbe23e36a7937c61978a3c307dcc044e1e"
       }

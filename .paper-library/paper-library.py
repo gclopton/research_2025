@@ -119,7 +119,7 @@ def main():
             pdf=within(v,s['pdf']['path']);md=within(v,s['conversion']['path'])
             pdf_hash=digest(pdf)
             if pdf_hash!=s['pdf']['sha256']:raise ValueError('PDF identity changed; review before recording cleanup')
-            s['cleanup']={'verifiedAt':datetime.now(timezone.utc).isoformat(),'pdfSha256':pdf_hash,'markdownSha256':digest(md)}
+            s['cleanup']={'markdownPath':s['conversion']['path'],'verifiedAt':datetime.now(timezone.utc).isoformat(),'pdfSha256':pdf_hash,'markdownSha256':digest(md)}
             print(json.dumps({'source':args.source,'cleanup':s['cleanup']}))
         elif args.command=='register-conversion':
             s=c['sources'][args.source];p=within(v,args.markdown)

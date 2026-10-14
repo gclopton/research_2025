@@ -2635,6 +2635,7 @@ function relocatePaperPaths(c, old, next, folder = false) {
     const before = ref.path;
     ref.path = moved(before);
     s.aliases ??= [];
+    if (ref === s.conversion && s.cleanup?.markdownPath === before) s.cleanup.markdownPath = ref.path;
     for (const a of s.aliases) a.target = moved(a.target);
     s.aliases = s.aliases.filter((a) => a.path !== ref.path && a.path !== before);
     s.aliases.push({ path: before, target: ref.path });
@@ -2691,8 +2692,8 @@ function moveLibrary(c, id, parent) {
 }
 function paperCleanupBadge(source) {
   const review = source.cleanup;
-  const verified = !!source.conversion && !!review && review.pdfSha256 === source.pdf.sha256 && /^[a-f0-9]{64}$/.test(review.markdownSha256) && Number.isFinite(Date.parse(review.verifiedAt));
-  return verified ? { icon: "\u2728", label: `OCR cleanup reviewed \xB7 ${new Date(review.verifiedAt).toLocaleDateString(void 0, { year: "numeric", month: "long", day: "numeric" })}` } : { icon: "\u{1F922}", label: "Awaiting OCR cleanup" };
+  const verified = !!source.conversion && !!review && review.markdownPath === source.conversion?.path && review.pdfSha256 === source.pdf.sha256 && /^[a-f0-9]{64}$/.test(review.markdownSha256) && Number.isFinite(Date.parse(review.verifiedAt));
+  return verified ? { icon: "\u2728", label: `OCR cleanup reviewed \xB7 ${new Date(review.verifiedAt).toLocaleDateString(void 0, { year: "numeric", month: "long", day: "numeric" })}` } : { icon: "\u{1F922}", label: source.conversion ? "Awaiting OCR cleanup" : "No reading copy yet" };
 }
 
 // src/library-storage.ts
@@ -3376,6 +3377,7 @@ var PaperLibraryView = class extends import_obsidian3.ItemView {
       memberships.onclick = (e) => this.paperMenu(e, id);
       if (s.evidence?.length) links.createSpan({ text: "\u2022 Evidence", cls: "ig-library-evidence" });
       const cleanup = paperCleanupBadge(s);
+      card.setAttribute("aria-label", `${s.title} \xB7 ${cleanup.label}`);
       links.createSpan({ cls: "ig-library-cleanup", text: cleanup.icon, attr: { role: "img", "aria-label": cleanup.label, title: cleanup.label } });
       card.oncontextmenu = (e) => {
         e.preventDefault();
@@ -3437,6 +3439,9 @@ var PaperLibraryView = class extends import_obsidian3.ItemView {
   paperMenu(e, id) {
     const c = this.owner.catalog, s = c.sources[id];
     const m = new import_obsidian3.Menu();
+    const cleanup = paperCleanupBadge(s);
+    m.addItem((i) => i.setTitle(`${cleanup.icon} ${cleanup.label}`).setDisabled(true));
+    m.addSeparator();
     m.addItem((i) => i.setTitle("Open reading copy").setDisabled(!s.conversion).onClick(() => this.openPaper(id)));
     m.addItem((i) => i.setTitle("Open PDF").onClick(() => this.openPaper(id, true)));
     m.addItem((i) => i.setTitle("Add to library\u2026").onClick(() => this.owner.pickLibrary((lib) => this.owner.add(id, lib), "Add paper to library")));
